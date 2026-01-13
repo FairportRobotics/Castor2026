@@ -1,0 +1,11 @@
+build{
+    dependsOn ':lib:Posty:lib:build'
+    dependsOn ':lib:RoboLib:lib:build'
+}
+
+dependencies{
+    // Team 578 libraries
+    implementation project(':lib:Posty:lib')
+    implementation project(':lib:RoboLib:lib')
+}
+

@@ -1,0 +1,6 @@
+[submodule "lib/Posty"]
+	path = lib/Posty
+	url = git@github.com:FairportRobotics/Posty.git
+[submodule "lib/RoboLib"]
+	path = lib/RoboLib
+	url = git@github.com:FairportRobotics/RoboLib
