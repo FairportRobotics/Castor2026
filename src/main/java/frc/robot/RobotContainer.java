@@ -4,13 +4,16 @@
 
 package frc.robot;
 
+import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveBuilder;
+import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveDriveSubsystem;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,10 +29,25 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  public static SwerveDriveSubsystem driveSubsystem;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    SwerveBuilder swerveBuilder = new SwerveBuilder();
+
+    driveSubsystem = swerveBuilder
+                    .withCanbusName("Drive")
+                    .withPigeonId(2)
+                    .withSwerveModule(
+                      swerveBuilder.new SwerveModuleBuilder()
+                      .withDriveMotorId(1)
+                      // There is a lot more in this object. But hopefully you get the point
+                      .build()
+                    ).build();
+
   }
 
   /**
