@@ -26,4 +26,15 @@ public final class Constants {
 
     public static final RobotType CURRENT_MODE = RobotType.REAL;
   }
+
+  public static class TurretConstants{
+
+    public static final String kLimelightCameraName = "limelight_turret";
+
+    public static final int kRotationMotorId = 1;
+    public static final int kRotationEncoderId = 1;
+
+    public static final int kHoodMotorId = 2;
+    public static final int kHoodEncoderId = 2;
+  }
 }
