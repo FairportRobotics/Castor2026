@@ -6,8 +6,11 @@ package frc.robot;
 
 import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveBuilder;
 import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveDriveSubsystem;
+import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -31,6 +34,14 @@ public class RobotContainer {
 
   public static SwerveDriveSubsystem driveSubsystem;
 
+  private double driveP = 0.5;
+  private double driveI = 0.0;
+  private double driveD = 0.0;
+
+  private double steerP = 0.5;
+  private double steerI = 0.0;
+  private double steerD = 0.0;
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -40,13 +51,75 @@ public class RobotContainer {
 
     driveSubsystem = swerveBuilder
                     .withCanbusName("Drive")
-                    .withPigeonId(2)
+                    .withPigeonId(20)
                     .withSwerveModule(
                       swerveBuilder.new SwerveModuleBuilder()
-                      .withDriveMotorId(1)
-                      // There is a lot more in this object. But hopefully you get the point
+                      .withDriveMotorId(12)
+                      .withDriveKP(driveP)
+                      .withDriveKI(driveI)
+                      .withDriveKD(driveD)
+                      .withSteerMotorId(3)
+                      .withSteerKP(steerP)
+                      .withSteerKI(steerI)
+                      .withSteerKD(steerD)
+                      .withSteerEncoderId(10)
+                      .withModuleLocation(new Translation2d(-1, 1))
+                      .withModuleName("Front Left")
+                      .withGearRatio(8.14)
+                      .withWheelDiameter(0.1016)
                       .build()
-                    ).build();
+                    )
+                    .withSwerveModule(
+                      swerveBuilder.new SwerveModuleBuilder()
+                      .withDriveMotorId(5)
+                      .withDriveKP(driveP)
+                      .withDriveKI(driveI)
+                      .withDriveKD(driveD)
+                      .withSteerMotorId(6)
+                      .withSteerKP(steerP)
+                      .withSteerKI(steerI)
+                      .withSteerKD(steerD)
+                      .withSteerEncoderId(4)
+                      .withModuleLocation(new Translation2d(1, 1))
+                      .withModuleName("Front Right")
+                      .withGearRatio(8.14)
+                      .withWheelDiameter(0.1016)
+                      .build())
+                    .withSwerveModule(
+                      swerveBuilder.new SwerveModuleBuilder()
+                      .withDriveMotorId(9)
+                      .withDriveKP(driveP)
+                      .withDriveKI(driveI)
+                      .withDriveKD(driveD)
+                      .withSteerMotorId(11)
+                      .withSteerKP(steerP)
+                      .withSteerKI(steerI)
+                      .withSteerKD(steerD)
+                      .withSteerEncoderId(4)
+                      .withModuleLocation(new Translation2d(1, -1))
+                      .withModuleName("Back Right")
+                      .withGearRatio(8.14)
+                      .withWheelDiameter(0.1016)
+                      .build())
+                      .withSwerveModule(
+                      swerveBuilder.new SwerveModuleBuilder()
+                      .withDriveMotorId(8)
+                      .withDriveKP(driveP)
+                      .withDriveKI(driveI)
+                      .withDriveKD(driveD)
+                      .withSteerMotorId(2)
+                      .withSteerKP(steerP)
+                      .withSteerKI(steerI)
+                      .withSteerKD(steerD)
+                      .withSteerEncoderId(7)
+                      .withModuleLocation(new Translation2d(-1, -1))
+                      .withModuleName("Back Left")
+                      .withGearRatio(8.14)
+                      .withWheelDiameter(0.1016)
+                      .build())
+                    .build();
+
+    driveSubsystem.setDefaultCommand(getDriveCommand());
 
   }
 
@@ -67,6 +140,22 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+  }
+
+  public Command getDriveCommand(){
+    return Commands.run(new Runnable() {
+
+      @Override
+      public void run() {
+        driveSubsystem.setChassisSpeedsFromJoystick(
+          m_driverController.getLeftX() * Math.abs(m_driverController.getLeftX()),
+          m_driverController.getLeftY() * Math.abs(m_driverController.getLeftY()),
+          m_driverController.getRightX() * Math.abs(m_driverController.getRightX()));
+
+        Logger.recordOutput("SwerveState", driveSubsystem.getModuleStates());
+      }
+
+    }, driveSubsystem);
   }
 
   /**
