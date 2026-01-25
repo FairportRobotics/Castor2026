@@ -3,10 +3,9 @@ from phoenix6.hardware import TalonFX
 from phoenix6.configs.talon_fx_configs import TalonFXConfiguration
 from phoenix6.signals import NeutralModeValue
 from phoenix6.controls import VoltageOut
-from wpimath import units
 
 
-class Intake:
+class Agitator:
     motor: TalonFX
     voltage = magicbot.will_reset_to(0.0)
 
@@ -18,11 +17,8 @@ class Intake:
         config.motor_output.neutral_mode = NeutralModeValue.BRAKE
         self.motor.configurator.apply(config)
 
-    def extend(self):
-        pass  # Implement extension logic here
+    def spin(self):
+        self.voltage = 1.0
 
-    def retract(self):
-        pass  # Implement retraction logic here
-
-    def set_voltage(self, voltage: units.volts):
-        self.voltage = voltage
+    def stop(self):
+        self.voltage = 0.0
