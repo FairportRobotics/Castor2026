@@ -1,11 +1,12 @@
 import components
 import constants
 import genie
-
+from pykit.logger import Logger
 
 class MyRobot(genie.GenieRobot):
     controller: components.XboxController
-    pigeon: components.Pigeon
+    #pigeon: components.Pigeon
+    logger: Logger
 
     def createObjects(self):
         """Create motors and stuff here"""

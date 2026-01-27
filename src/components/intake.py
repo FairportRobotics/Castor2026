@@ -24,5 +24,11 @@ class Intake:
     def retract(self):
         pass  # Implement retraction logic here
 
+    def spin(self):
+        self.voltage = 1
+
+    def stop(self):
+        self.voltage = 0
+
     def set_voltage(self, voltage: units.volts):
         self.voltage = voltage

@@ -1,6 +1,6 @@
 import math
 from phoenix6.hardware.pigeon2 import Pigeon2
-import navx
+#import navx
 
 
 class Pigeon:
@@ -33,7 +33,7 @@ class Pigeon:
     def set_yaw(self, angle):
         self.gyro.set_yaw(angle)
 
-
+'''
 class NavX:
     gyro: navx.AHRS  # Either navx.AHRS.create_spi() or navx.AHRS.create_i2c()
 
@@ -72,3 +72,4 @@ class NavX:
 
     def zero_yaw(self) -> None:
         self.gyro.zeroYaw()
+'''
