@@ -10,6 +10,7 @@ import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveModule;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -38,13 +39,15 @@ public class RobotContainer {
 
   public static SwerveDriveSubsystem driveSubsystem;
 
-  private double driveP = 0.5;
+  private double driveP = 0.1;
   private double driveI = 0.0;
-  private double driveD = 0.0;
+  private double driveD = 0.01;
+  private double driveKV = 0.2;
 
-  private double steerP = 0.5;
+  private double steerP = 0.1;
   private double steerI = 0.0;
   private double steerD = 0.0;
+  private double steerKV = 0.1;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -64,10 +67,12 @@ public class RobotContainer {
                       .withDriveKP(driveP)
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
+                      .withDriveKV(driveKV)
                       .withSteerMotorId(3)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
+                      .withSteerKV(steerKV)
                       .withSteerEncoderId(10)
                       .withModuleLocation(new Translation2d(1, 1))
                       .withModuleName("Front Left")
@@ -81,11 +86,13 @@ public class RobotContainer {
                       .withDriveKP(driveP)
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
+                      .withDriveKV(driveKV)
                       .withSteerMotorId(6)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
-                      .withSteerEncoderId(4)
+                      .withSteerKV(steerKV)
+                      .withSteerEncoderId(1)
                       .withModuleLocation(new Translation2d(1, -1))
                       .withModuleName("Front Right")
                       .withGearRatio(8.14)
@@ -97,10 +104,12 @@ public class RobotContainer {
                       .withDriveKP(driveP)
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
+                      .withDriveKV(driveKV)
                       .withSteerMotorId(2)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
+                      .withSteerKV(steerKV)
                       .withSteerEncoderId(7)
                       .withModuleLocation(new Translation2d(-1, 1))
                       .withModuleName("Back Left")
@@ -113,11 +122,13 @@ public class RobotContainer {
                       .withDriveKP(driveP)
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
+                      .withDriveKV(driveKV)
                       .withSteerMotorId(11)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
-                      .withSteerEncoderId(4) // TODO: Duplicate ID
+                      .withSteerKV(steerKV)
+                      .withSteerEncoderId(4)
                       .withModuleLocation(new Translation2d(-1, -1))
                       .withModuleName("Back Right")
                       .withGearRatio(8.14)
@@ -156,7 +167,9 @@ public class RobotContainer {
         driveSubsystem.setChassisSpeedsFromJoystickFieldRelative(
           -(m_driverController.getLeftY() * Math.abs(m_driverController.getLeftY())),
           -(m_driverController.getLeftX() * Math.abs(m_driverController.getLeftX())),
-          -(m_driverController.getRawAxis(3) * Math.abs(m_driverController.getRawAxis(3))));
+          -(m_driverController.getRawAxis(4) * Math.abs(m_driverController.getRawAxis(4))));
+
+        // driveSubsystem.setChassisSpeed(new ChassisSpeeds(0, 0, 0));
 
         Logger.recordOutput("SwerveState", driveSubsystem.getModuleStates());
         Logger.recordOutput("Pose Estimation", driveSubsystem.getRobotPose());
