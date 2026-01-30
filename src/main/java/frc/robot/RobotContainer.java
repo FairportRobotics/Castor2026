@@ -11,6 +11,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -44,10 +45,10 @@ public class RobotContainer {
   private double driveD = 0.01;
   private double driveKV = 0.2;
 
-  private double steerP = 0.1;
-  private double steerI = 0.0;
-  private double steerD = 0.0;
-  private double steerKV = 0.1;
+  private double steerP = 50;
+  private double steerI = 1;
+  private double steerD = 1;
+  private double steerKV = 0;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -73,6 +74,7 @@ public class RobotContainer {
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
                       .withSteerKV(steerKV)
+                      .withSteerOffset(0.048828)
                       .withSteerEncoderId(10)
                       .withModuleLocation(new Translation2d(1, 1))
                       .withModuleName("Front Left")
@@ -87,11 +89,13 @@ public class RobotContainer {
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
                       .withDriveKV(driveKV)
+                      .withDriveInverted()
                       .withSteerMotorId(6)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
                       .withSteerKV(steerKV)
+                      .withSteerOffset(0.244875)
                       .withSteerEncoderId(1)
                       .withModuleLocation(new Translation2d(1, -1))
                       .withModuleName("Front Right")
@@ -110,6 +114,7 @@ public class RobotContainer {
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
                       .withSteerKV(steerKV)
+                      .withSteerOffset(0.430176)
                       .withSteerEncoderId(7)
                       .withModuleLocation(new Translation2d(-1, 1))
                       .withModuleName("Back Left")
@@ -123,11 +128,13 @@ public class RobotContainer {
                       .withDriveKI(driveI)
                       .withDriveKD(driveD)
                       .withDriveKV(driveKV)
+                      .withDriveInverted()
                       .withSteerMotorId(11)
                       .withSteerKP(steerP)
                       .withSteerKI(steerI)
                       .withSteerKD(steerD)
                       .withSteerKV(steerKV)
+                      .withSteerOffset(0.012695)
                       .withSteerEncoderId(4)
                       .withModuleLocation(new Translation2d(-1, -1))
                       .withModuleName("Back Right")
@@ -164,23 +171,16 @@ public class RobotContainer {
 
       @Override
       public void run() {
-        driveSubsystem.setChassisSpeedsFromJoystickFieldRelative(
+        driveSubsystem.setChassisSpeedsFromJoystickRobotRelative(
           -(m_driverController.getLeftY() * Math.abs(m_driverController.getLeftY())),
           -(m_driverController.getLeftX() * Math.abs(m_driverController.getLeftX())),
           -(m_driverController.getRawAxis(4) * Math.abs(m_driverController.getRawAxis(4))));
 
-        // driveSubsystem.setChassisSpeed(new ChassisSpeeds(0, 0, 0));
+        // driveSubsystem.setChassisSpeed(new ChassisSpeeds(1, 0, 0));
 
-        Logger.recordOutput("SwerveState", driveSubsystem.getModuleStates());
+        Logger.recordOutput("RequestedSwerveState", driveSubsystem.getRequestedModuleStates());
+        Logger.recordOutput("ActualSwerveState", driveSubsystem.getActualModuleStates());
         Logger.recordOutput("Pose Estimation", driveSubsystem.getRobotPose());
-
-        for(int i = 0;i<driveSubsystem.getNumberOfModules();i++){
-          SwerveModule mod = driveSubsystem.getModules()[i];
-          String modName = mod.getModuleName();
-
-          Logger.recordOutput(modName + " wheel speed", mod.getDriveWheelSpeed());
-          Logger.recordOutput(modName + " steer rotation", mod.getSteerRotations());
-        }
       }
 
     }, driveSubsystem);
