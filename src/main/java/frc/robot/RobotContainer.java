@@ -4,17 +4,13 @@
 
 package frc.robot;
 
-import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveBuilder;
-import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveDriveSubsystem;
-import org.fairportrobotics.frc.robolib.DriveSystems.SwerveDrive.SwerveModule;
+import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveBuilder;
+import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveDriveSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
