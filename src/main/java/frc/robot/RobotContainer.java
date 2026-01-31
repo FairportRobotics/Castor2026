@@ -4,18 +4,13 @@
 
 package frc.robot;
 
-import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveBuilder;
-import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveDriveSubsystem;
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
 /**
@@ -34,112 +29,12 @@ public class RobotContainer {
 
   // private final CommandPS4Controller m_driverController = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
 
-  public static SwerveDriveSubsystem driveSubsystem;
-
-  private double driveP = 0.1;
-  private double driveI = 0.0;
-  private double driveD = 0.01;
-  private double driveKV = 0.2;
-
-  private double steerP = 50;
-  private double steerI = 1;
-  private double steerD = 1;
-  private double steerKV = 0;
+  public final DriveSubsystem driveSubsystem = new DriveSubsystem(m_driverController);
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-
-    SwerveBuilder swerveBuilder = new SwerveBuilder();
-
-    driveSubsystem = swerveBuilder
-                    .withCanbusName("Drive")
-                    .withPigeonId(20)
-                    .withMaxLinearVelocity(3.0)
-                    .withMaxAngularVelocity(Math.PI * 2)
-                    .withSwerveModule(
-                      swerveBuilder.new SwerveModuleBuilder()
-                      .withDriveMotorId(12)
-                      .withDriveKP(driveP)
-                      .withDriveKI(driveI)
-                      .withDriveKD(driveD)
-                      .withDriveKV(driveKV)
-                      .withSteerMotorId(3)
-                      .withSteerKP(steerP)
-                      .withSteerKI(steerI)
-                      .withSteerKD(steerD)
-                      .withSteerKV(steerKV)
-                      .withSteerOffset(0.048828)
-                      .withSteerEncoderId(10)
-                      .withModuleLocation(new Translation2d(1, 1))
-                      .withModuleName("Front Left")
-                      .withGearRatio(8.14)
-                      .withWheelDiameter(0.1016)
-                      .build()
-                    )
-                    .withSwerveModule(
-                      swerveBuilder.new SwerveModuleBuilder()
-                      .withDriveMotorId(5)
-                      .withDriveKP(driveP)
-                      .withDriveKI(driveI)
-                      .withDriveKD(driveD)
-                      .withDriveKV(driveKV)
-                      .withDriveInverted()
-                      .withSteerMotorId(6)
-                      .withSteerKP(steerP)
-                      .withSteerKI(steerI)
-                      .withSteerKD(steerD)
-                      .withSteerKV(steerKV)
-                      .withSteerOffset(0.244875)
-                      .withSteerEncoderId(1)
-                      .withModuleLocation(new Translation2d(1, -1))
-                      .withModuleName("Front Right")
-                      .withGearRatio(8.14)
-                      .withWheelDiameter(0.1016)
-                      .build())
-                    .withSwerveModule(
-                      swerveBuilder.new SwerveModuleBuilder()
-                      .withDriveMotorId(8)
-                      .withDriveKP(driveP)
-                      .withDriveKI(driveI)
-                      .withDriveKD(driveD)
-                      .withDriveKV(driveKV)
-                      .withSteerMotorId(2)
-                      .withSteerKP(steerP)
-                      .withSteerKI(steerI)
-                      .withSteerKD(steerD)
-                      .withSteerKV(steerKV)
-                      .withSteerOffset(0.430176)
-                      .withSteerEncoderId(7)
-                      .withModuleLocation(new Translation2d(-1, 1))
-                      .withModuleName("Back Left")
-                      .withGearRatio(8.14)
-                      .withWheelDiameter(0.1016)
-                      .build())
-                    .withSwerveModule(
-                      swerveBuilder.new SwerveModuleBuilder()
-                      .withDriveMotorId(9)
-                      .withDriveKP(driveP)
-                      .withDriveKI(driveI)
-                      .withDriveKD(driveD)
-                      .withDriveKV(driveKV)
-                      .withDriveInverted()
-                      .withSteerMotorId(11)
-                      .withSteerKP(steerP)
-                      .withSteerKI(steerI)
-                      .withSteerKD(steerD)
-                      .withSteerKV(steerKV)
-                      .withSteerOffset(0.012695)
-                      .withSteerEncoderId(4)
-                      .withModuleLocation(new Translation2d(-1, -1))
-                      .withModuleName("Back Right")
-                      .withGearRatio(8.14)
-                      .withWheelDiameter(0.1016)
-                      .build())
-                    .build();
-
-    driveSubsystem.setDefaultCommand(getDriveCommand());
 
   }
 
@@ -160,26 +55,6 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-  }
-
-  public Command getDriveCommand(){
-    return Commands.run(new Runnable() {
-
-      @Override
-      public void run() {
-        driveSubsystem.setChassisSpeedsFromJoystickRobotRelative(
-          -(m_driverController.getLeftY() * Math.abs(m_driverController.getLeftY())),
-          -(m_driverController.getLeftX() * Math.abs(m_driverController.getLeftX())),
-          -(m_driverController.getRawAxis(4) * Math.abs(m_driverController.getRawAxis(4))));
-
-        // driveSubsystem.setChassisSpeed(new ChassisSpeeds(1, 0, 0));
-
-        Logger.recordOutput("RequestedSwerveState", driveSubsystem.getRequestedModuleStates());
-        Logger.recordOutput("ActualSwerveState", driveSubsystem.getActualModuleStates());
-        Logger.recordOutput("Pose Estimation", driveSubsystem.getRobotPose());
-      }
-
-    }, driveSubsystem);
   }
 
   /**
