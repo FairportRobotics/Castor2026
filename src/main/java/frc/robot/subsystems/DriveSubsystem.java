@@ -24,9 +24,9 @@ public class DriveSubsystem extends TestableSubsystem {
     private double driveD = 0.01;
     private double driveKV = 0.2;
 
-    private double steerP = 50;
-    private double steerI = 1;
-    private double steerD = 1;
+    private double steerP = 20;
+    private double steerI = 0;
+    private double steerD = 0.0;
     private double steerKV = 0;
 
     public DriveSubsystem(CommandXboxController xboxController) {
@@ -48,7 +48,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                .withSteerOffset(0.048828)
+                                .withSteerOffset(0.359375)
                                 .withSteerEncoderId(10)
                                 .withModuleLocation(new Translation2d(1, 1))
                                 .withModuleName("Front Left")
@@ -68,7 +68,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                .withSteerOffset(0.244875)
+                                .withSteerOffset(0.406494)
                                 .withSteerEncoderId(1)
                                 .withModuleLocation(new Translation2d(1, -1))
                                 .withModuleName("Front Right")
@@ -87,7 +87,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                .withSteerOffset(0.430176)
+                                .withSteerOffset(0.211670)
                                 .withSteerEncoderId(7)
                                 .withModuleLocation(new Translation2d(-1, 1))
                                 .withModuleName("Back Left")
@@ -107,7 +107,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                .withSteerOffset(0.012695)
+                                .withSteerOffset(-0.235107)
                                 .withSteerEncoderId(4)
                                 .withModuleLocation(new Translation2d(-1, -1))
                                 .withModuleName("Back Right")
