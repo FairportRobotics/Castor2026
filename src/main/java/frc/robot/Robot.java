@@ -4,14 +4,17 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import org.fairportrobotics.frc.posty.PostyManager;
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +34,19 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public static String getVersion() {
+    try {
+      Scanner scan = new Scanner(new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/versionfile.txt"));
+      String ver = scan.nextLine();
+      scan.close();
+
+      return ver;
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -40,6 +56,7 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
 
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("Software Version", getVersion());
 
     if (isReal()) {
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
@@ -50,12 +67,15 @@ public class Robot extends LoggedRobot {
       // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
       // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
       // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
     // the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
+
+    Logger.recordOutput("Software Version", getVersion());
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
@@ -110,7 +130,7 @@ public class Robot extends LoggedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
 
