@@ -48,7 +48,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                .withSteerOffset(0.359375)
+                                .withSteerOffset(1.752197)
                                 .withSteerEncoderId(10)
                                 .withModuleLocation(new Translation2d(1, 1))
                                 .withModuleName("Front Left")
