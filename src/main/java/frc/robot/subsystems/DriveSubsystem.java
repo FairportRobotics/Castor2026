@@ -35,7 +35,7 @@ public class DriveSubsystem extends TestableSubsystem {
                 .withCanbusName("Drive")
                 .withPigeonId(1)
                 .withMaxLinearVelocity(3.0)
-                .withMaxAngularVelocity(Math.PI * 2)
+                .withMaxAngularVelocity(Math.PI)
                 .withSwerveModule(
                         swerveBuilder.new SwerveModuleBuilder()
                                 .withDriveMotorId(12)
