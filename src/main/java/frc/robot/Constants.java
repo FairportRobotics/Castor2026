@@ -23,7 +23,43 @@ public final class Constants {
       REAL,
       REPLAY
     }
-
     public static final RobotType CURRENT_MODE = RobotType.REAL;
+  
   }
+  // Swerve offsets as of 3/2/26
+  public static class SwerveDriveOffsets {
+    public static final float FRONT_LEFT_MOTOR_OFFSET = -0.336426f;
+    public static final float FRONT_RIGHT_MOTOR_OFFSET = 0.108887f;
+    public static final float BACK_LEFT_MOTOR_OFFSET = -0.492432f;
+    public static final float BACK_RIGHT_MOTOR_OFFSET = 0.470215f;
+  }
+  /*
+   * Numbers starting with 1 (E.g. 11, 12, 13) are in the Front Left of the robot
+   * Numbers starting with 2 (E.g. 21, 22, 23) are in the Front Right of the robot
+   * Numbers starting with 3 (E.g. 31, 32, 33) are in the Back Left of the robot
+   * Numbers starting with 4 (E.g. 41, 42, 43) are in the Back Right of the robot
+   * Laters numbers will be added for more subsystems
+   * Single diget numbers (E.g. 1, 2, 3) are extra, non-motor, pieces that require IDs, such as the Pigeon
+   */
+  public static class SwerveDriveIDs {
+    public static final int FRONT_LEFT_STEER_ID = 11;
+    public static final int FRONT_LEFT_DRIVE_ID = 12;
+    public static final int FRONT_LEFT_ENCODER_ID = 13;
+    public static final int FRONT_RIGHT_STEER_ID = 21;
+    public static final int FRONT_RIGHT_DRIVE_ID = 22;
+    public static final int FRONT_RIGHT_ENCODER_ID = 23;
+    public static final int BACK_LEFT_STEER_ID = 31;
+    public static final int BACK_LEFT_DRIVE_ID = 32;
+    public static final int BACK_LEFT_ENCODER_ID = 33;
+    public static final int BACK_RIGHT_STEER_ID = 41;
+    public static final int BACK_RIGHT_DRIVE_ID = 42;
+    public static final int BACK_RIGHT_ENCODER_ID = 43;
+  }
+  //Bird
+  public static class ExtraIDEntities {
+    public static final int PIGEON_ID = 1;
+  }
+  
+
+  
 }
