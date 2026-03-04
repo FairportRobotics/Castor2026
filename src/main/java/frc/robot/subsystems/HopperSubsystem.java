@@ -23,28 +23,28 @@ public class HopperSubsystem extends TestableSubsystem {
     kickerMotor = new TalonFX(1);
   } 
 
-public void feed(){
+  public void feed(){
 
-  kickerMotor.set(0.5);
-}
+    kickerMotor.set(0.5);
+  }
 
-public void reverse(){
+  public void reverse(){
 
-  kickerMotor.set(-0.5);
+    kickerMotor.set(-0.5);
 
-} 
+  } 
 
-public void stop(){
+  public void stop(){
 
-  kickerMotor.set(0);
-}
+    kickerMotor.set(0);
+  }
 
-public void spin(double speed){
+  public void spin(double speed){
 
-  spindexerMotor.set(speed);
-}
+    spindexerMotor.set(speed);
+  }
 
-/**
+  /**
    * Example command factory method.
    *
    * @return a command
