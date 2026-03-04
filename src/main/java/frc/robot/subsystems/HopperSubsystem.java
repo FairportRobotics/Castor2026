@@ -6,17 +6,45 @@ package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
+
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class HopperSubsystem extends TestableSubsystem {
 
-    private Talonsrx 
+    private TalonFX spindexerMotor;
+    private TalonFX kickerMotor;
   /** Creates a new HopperSubsystem. */
-  public HopperSubsystem() {}
+  public HopperSubsystem() {
+    spindexerMotor = new TalonFX(0);
+    kickerMotor = new TalonFX(1);
+  } 
 
-  /**
+public void feed(){
+
+  kickerMotor.set(0.5);
+}
+
+public void reverse(){
+
+  kickerMotor.set(-0.5);
+
+} 
+
+public void stop(){
+
+  kickerMotor.set(0);
+}
+
+public void spin(double speed){
+
+  spindexerMotor.set(speed);
+}
+
+/**
    * Example command factory method.
    *
    * @return a command
