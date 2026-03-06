@@ -60,6 +60,10 @@ public final class Constants {
     public static final int PIGEON_ID = 1;
   }
   
-
+  public static class IntakeConstants {
+    public static final int EXTEND_CHANNEL = 0;
+    public static final int RETRACT_CHANNEL = 1;
+    public static final int INTAKE_MOTOR_ID = 2; 
+  }
   
 }
