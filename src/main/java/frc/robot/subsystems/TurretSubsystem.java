@@ -28,8 +28,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
-  private TalonFX turret;
-  private TalonFX launcher;
+  private TalonFX turretMotor;
+  private TalonFX launcherMotor;
   private Servo hood;
   private CANcoder hoodEncoder;
   private Angle limitPos;
@@ -39,9 +39,9 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public TurretSubsystem() {
     turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.LIMIT_CHANNEL);
-    turret = new TalonFX(Constants.ShooterConstants.TURRET_ID);
+    turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_ID);
 
-    launcher = new TalonFX(Constants.ShooterConstants.LAUNCHER_ID);
+    launcherMotor = new TalonFX(Constants.ShooterConstants.LAUNCHER_ID);
 
     hood = new Servo(Constants.ShooterConstants.HOOD_CHANNEL);
     hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);
@@ -54,7 +54,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void setLauncher(double speed)
   {
-    launcher.set(speed);
+    launcherMotor.set(speed);
   }
 
   public void setTargetElevation(Angle elev)
@@ -67,7 +67,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void startHoming()
   {
-    turret.set(Constants.ShooterConstants.HOMING_SPEED);
+    turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
     currentState = TurretState.HOMING;
   }
 
@@ -77,21 +77,21 @@ public class TurretSubsystem extends TestableSubsystem {
 
     if(!passedLimit())
     {
-      turret.set(speed);
+      turretMotor.set(speed);
     }
     else
     {
-      turret.set(0);
+      turretMotor.set(0);
     }
   }
 
-  public boolean passedLimit()
+  public boolean passedLimit(){
     return (getTurretAngle().gt(limitPos) && turretGoingPos) || (getTurretAngle().lt(limitNeg) && !turretGoingPos);
   }
 
   public Angle getTurretAngle()
   {
-    return turret.getPosition().refresh().getValue().times(Constants.ShooterConstants.GEAR_RATIO);
+    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.GEAR_RATIO);
   }
 
   @Override
@@ -115,8 +115,8 @@ public class TurretSubsystem extends TestableSubsystem {
     if(turretLimitSwitch.get())
     {
       currentState = TurretState.MANUAL;
-      turret.set(0);
-      turret.setPosition(0);
+      turretMotor.set(0);
+      turretMotor.setPosition(0);
     }
   }
 
@@ -124,7 +124,7 @@ public class TurretSubsystem extends TestableSubsystem {
   {
     if(passedLimit())
     {
-      turret.set(0);
+      turretMotor.set(0);
     }
 
     Angle curElev = hoodEncoder.getAbsolutePosition().getValue();
