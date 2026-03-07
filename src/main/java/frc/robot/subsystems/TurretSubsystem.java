@@ -46,8 +46,8 @@ public class TurretSubsystem extends TestableSubsystem {
     hood = new Servo(Constants.ShooterConstants.HOOD_CHANNEL);
     hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);
     currentState = TurretState.INIT;
-    limitNeg = Constants.ShooterConstants.LIMIT_NEG;
-    limitPos = Constants.ShooterConstants.LIMIT_POS;
+    limitNeg = Constants.ShooterConstants.LIMIT_AXIMUTH_NEG;
+    limitPos = Constants.ShooterConstants.LIMIT_AXIMUTH_POS;
     turretGoingPos = false;
     targElev = edu.wpi.first.units.Units.Degrees.of(45);
   }
