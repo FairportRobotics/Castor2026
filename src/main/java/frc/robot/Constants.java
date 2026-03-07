@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.measure.Angle;
+import java.security.PublicKey;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -81,5 +82,10 @@ public final class Constants {
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
+  }
+  
+  public static class HopperConstants {
+    public static final int KICKER_MOTOR_ID = 0;
+    public static final int SPINDEXER_MOTOR_ID = 1;    
   }
 }

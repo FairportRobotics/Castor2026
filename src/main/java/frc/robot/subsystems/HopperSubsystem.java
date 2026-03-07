@@ -10,7 +10,7 @@ import org.fairportrobotics.frc.posty.test.PostTest;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
-
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class HopperSubsystem extends TestableSubsystem {
@@ -19,28 +19,23 @@ public class HopperSubsystem extends TestableSubsystem {
     private TalonFX kickerMotor;
   /** Creates a new HopperSubsystem. */
   public HopperSubsystem() {
-    spindexerMotor = new TalonFX(0);
-    kickerMotor = new TalonFX(1);
+    spindexerMotor = new TalonFX(Constants.HopperConstants.SPINDEXER_MOTOR_ID);
+    kickerMotor = new TalonFX(Constants.HopperConstants.KICKER_MOTOR_ID);
   } 
 
-  public void feed(){
-
+  public void feed() {
     kickerMotor.set(0.5);
   }
 
-  public void reverse(){
-
+  public void reverse() {
     kickerMotor.set(-0.5);
-
   } 
 
-  public void stop(){
-
+  public void stop() {
     kickerMotor.set(0);
   }
 
-  public void spin(double speed){
-
+  public void spin(double speed) {
     spindexerMotor.set(speed);
   }
 
