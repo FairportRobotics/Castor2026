@@ -77,11 +77,13 @@ public final class Constants {
     public static final int LAUNCHER_ID = 2;
     public static final int HOOD_CHANNEL = 3;
     public static final int HOOD_ENCODER_ID = 4;
-    public static final Angle LIMIT_POS = edu.wpi.first.units.Units.Degrees.of(265);
-    public static final Angle LIMIT_NEG = edu.wpi.first.units.Units.Degrees.of(5);
+    public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(265);
+    public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
+    public static final double HOMING_SPEED = .35;
+    public static final double GEAR_RATIO  = 1;
   }
   
   public static class HopperConstants {

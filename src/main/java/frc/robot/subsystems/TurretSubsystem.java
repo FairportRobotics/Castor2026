@@ -20,14 +20,14 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretSubsystem extends TestableSubsystem {
-  public enum ShootyRootyTootyState {
+  public enum TurretState {
     INIT,
     HOMING,
     MANUAL;
   }
 
-  private ShootyRootyTootyState currentState;
-  private DigitalInput limitSwitch;
+  private TurretState currentState;
+  private DigitalInput turretLimitSwitch;
   private TalonFX turret;
   private TalonFX launcher;
   private Servo hood;
@@ -38,12 +38,14 @@ public class TurretSubsystem extends TestableSubsystem {
   private Angle targElev;
 
   public TurretSubsystem() {
-    limitSwitch = new DigitalInput(Constants.ShooterConstants.LIMIT_CHANNEL);
+    turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.LIMIT_CHANNEL);
     turret = new TalonFX(Constants.ShooterConstants.TURRET_ID);
+
     launcher = new TalonFX(Constants.ShooterConstants.LAUNCHER_ID);
+
     hood = new Servo(Constants.ShooterConstants.HOOD_CHANNEL);
     hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);
-    currentState = ShootyRootyTootyState.INIT;
+    currentState = TurretState.INIT;
     limitNeg = Constants.ShooterConstants.LIMIT_NEG;
     limitPos = Constants.ShooterConstants.LIMIT_POS;
     turretGoingPos = false;
@@ -63,11 +65,10 @@ public class TurretSubsystem extends TestableSubsystem {
     }
   }
 
-  private static final double homingSpeed=.35;
   public void startHoming()
   {
-    turret.set(homingSpeed);
-    currentState = ShootyRootyTootyState.HOMING;
+    turret.set(Constants.ShooterConstants.HOMING_SPEED);
+    currentState = TurretState.HOMING;
   }
 
   public void startRotate(double speed)
@@ -85,14 +86,12 @@ public class TurretSubsystem extends TestableSubsystem {
   }
 
   public boolean passedLimit()
-  {
-    return ((getTurretAngle().gt(limitPos) && turretGoingPos)||(getTurretAngle().lt(limitNeg) && !turretGoingPos));
+    return (getTurretAngle().gt(limitPos) && turretGoingPos) || (getTurretAngle().lt(limitNeg) && !turretGoingPos);
   }
 
-  private static final double turretGearRatio=1;
   public Angle getTurretAngle()
   {
-    return turret.getPosition().refresh().getValue().times(turretGearRatio);
+    return turret.getPosition().refresh().getValue().times(Constants.ShooterConstants.GEAR_RATIO);
   }
 
   @Override
@@ -113,9 +112,9 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private void periodicHoming()
   {
-    if(limitSwitch.get())
+    if(turretLimitSwitch.get())
     {
-      currentState = ShootyRootyTootyState.MANUAL;
+      currentState = TurretState.MANUAL;
       turret.set(0);
       turret.setPosition(0);
     }
