@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.measure.Angle;
 import java.security.PublicKey;
 
 /**
@@ -66,6 +69,21 @@ public final class Constants {
     public static final int EXTEND_CHANNEL = 0;
     public static final int RETRACT_CHANNEL = 1;
     public static final int INTAKE_MOTOR_ID = 2; 
+  }
+
+  public static class ShooterConstants {
+    public static final int LIMIT_CHANNEL = 0;
+    public static final int TURRET_ID = 1;
+    public static final int LAUNCHER_ID = 2;
+    public static final int HOOD_CHANNEL = 3;
+    public static final int HOOD_ENCODER_ID = 4;
+    public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(265);
+    public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
+    public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
+    public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
+    public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
+    public static final double HOMING_SPEED = .35;
+    public static final double TURRET_GEAR_RATIO  = 1;
   }
   
   public static class HopperConstants {
