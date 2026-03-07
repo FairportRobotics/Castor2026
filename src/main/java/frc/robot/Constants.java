@@ -83,7 +83,7 @@ public final class Constants {
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
     public static final double HOMING_SPEED = .35;
-    public static final double TURET_GEAR_RATIO  = 1;
+    public static final double TURRET_GEAR_RATIO  = 1;
   }
   
   public static class HopperConstants {
