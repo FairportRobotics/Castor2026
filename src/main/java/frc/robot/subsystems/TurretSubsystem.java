@@ -91,7 +91,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public Angle getTurretAngle()
   {
-    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.GEAR_RATIO);
+    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURET_GEAR_RATIO);
   }
 
   @Override
