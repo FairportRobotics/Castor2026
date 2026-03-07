@@ -14,9 +14,9 @@ import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class Intake extends TestableSubsystem {
+public class IntakeSubsystem extends TestableSubsystem {
   /** Creates a new ExampleSubsystem. */
-  public Intake() 
+  public IntakeSubsystem() 
   {
     extendRelay = new DigitalOutput(Constants.IntakeConstants.EXTEND_CHANNEL);
     retractRelay = new DigitalOutput(Constants.IntakeConstants.RETRACT_CHANNEL);
