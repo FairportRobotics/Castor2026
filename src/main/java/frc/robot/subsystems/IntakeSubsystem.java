@@ -7,50 +7,49 @@ package frc.robot.subsystems;
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
+import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeSubsystem extends TestableSubsystem {
   /** Creates a new ExampleSubsystem. */
+
+  private TalonFX intakeMotor;
+  private WPI_TalonSRX deployMotor;
+
   public IntakeSubsystem() 
   {
-    extendRelay = new DigitalOutput(Constants.IntakeConstants.EXTEND_CHANNEL);
-    retractRelay = new DigitalOutput(Constants.IntakeConstants.RETRACT_CHANNEL);
     intakeMotor = new TalonFX(Constants.IntakeConstants.INTAKE_MOTOR_ID);
-    retractRelay.set(false);
-    extendRelay.set(false);
+    deployMotor = new WPI_TalonSRX(Constants.IntakeConstants.DEPLOY_MOTOR_ID);
   }
 
   public void neutral()
   {
-    retractRelay.set(false);
-    extendRelay.set(false);
+    deployMotor.set(0);
   }
 
   public void extend()
   {
-    retractRelay.set(false);
-    extendRelay.set(true);
+    deployMotor.set(1);
+
   }
 
   public void retract()
   {
-    extendRelay.set(false);
-    retractRelay.set(true);
+    deployMotor.set(-1);
+
   }
 
   public void setSpeed(double speed)
   {
     intakeMotor.set(speed);
   }
-
-  private DigitalOutput extendRelay;
-  private DigitalOutput retractRelay;
-  private TalonFX intakeMotor;
 
   /**
    * Example command factory method.

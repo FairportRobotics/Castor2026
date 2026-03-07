@@ -66,9 +66,8 @@ public final class Constants {
   }
   
   public static class IntakeConstants {
-    public static final int EXTEND_CHANNEL = 0;
-    public static final int RETRACT_CHANNEL = 1;
-    public static final int INTAKE_MOTOR_ID = 2; 
+    public static final int DEPLOY_MOTOR_ID = 0;
+    public static final int INTAKE_MOTOR_ID = 1; 
   }
 
   public static class ShooterConstants {
