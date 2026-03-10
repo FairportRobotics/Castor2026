@@ -37,13 +37,11 @@ public class IntakeSubsystem extends TestableSubsystem {
   public void extend()
   {
     deployMotor.set(1);
-
   }
 
   public void retract()
   {
     deployMotor.set(-1);
-
   }
 
   public void setSpeed(double speed)
