@@ -10,6 +10,8 @@ import org.fairportrobotics.frc.posty.test.PostTest;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import frc.robot.Constants;
@@ -29,7 +31,7 @@ public class TurretSubsystem extends TestableSubsystem {
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
   private TalonFX turretMotor;
-  private TalonFX launcherMotor;
+  private SparkMax launcherMotor;
   private Servo hood;
   private CANcoder hoodEncoder;
   private Angle limitPos;
@@ -41,7 +43,7 @@ public class TurretSubsystem extends TestableSubsystem {
     turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.LIMIT_CHANNEL);
     turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_ID);
 
-    launcherMotor = new TalonFX(Constants.ShooterConstants.LAUNCHER_ID);
+    launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_ID, MotorType.kBrushless);
 
     hood = new Servo(Constants.ShooterConstants.HOOD_CHANNEL);
     hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);

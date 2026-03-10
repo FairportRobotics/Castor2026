@@ -3,11 +3,11 @@
 These are the jobs to be completed first, to ensure we have minimal functionality for RIT
 
 - Add subsystems to robot
-    - Define unique IDs and channels for all devices in Constants.java
-    - Add subsystems to the RobotContainer
+    - Define unique IDs and channels for all devices in Constants.java IP
+    - Add subsystems to the RobotContainer X
 
 - Updates to subsystems
-    - Update launcher wheel to a Neo/SparkMax
+    - Update launcher wheel to a Neo/SparkMax X
 
 - Define basic commands for manual fire mode
     - Y/Top button: Deploy the intake (and run the rollers)
