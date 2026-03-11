@@ -54,10 +54,7 @@ public class TurretSubsystem extends TestableSubsystem {
     targElev = edu.wpi.first.units.Units.Degrees.of(45);
   }
 
-  public void setLauncher(double speed)
-  {
-    launcherMotor.set(speed);
-  }
+  public void setLauncher(double speed) {launcherMotor.set(speed);}
 
   public void setTargetElevation(Angle elev)
   {
