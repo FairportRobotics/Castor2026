@@ -3,7 +3,6 @@
 These are the jobs to be completed first, to ensure we have minimal functionality for RIT
 
 - Add subsystems to robot
-    - Define unique IDs and channels for all devices in Constants.java (IP Dom)
     - Add subsystems to the RobotContainer X
 
 - Updates to subsystems X
@@ -27,6 +26,19 @@ These are the jobs to be completed first, to ensure we have minimal functionalit
             - Could be a time offset (i.e. wait for N seconds for the motor to spin up)
             - Ideally, check the encoder speed (will need the encoders for auto launch)
 
+- Define unique IDs and channels for all devices in Constants.java
+
+- Test all motors and reverse directions if required
+    - Direction flags are present in Constants.java Particular values of concern are marked with TODO comments
+
+# Secondary priority
+
+These are to be completed after the top priority tasks. Currently, they focus on getting automatic targeting working.
+
+- Integrate limelight positioning
+
+- Integrate automatic aiming
+
 - Advanced movement functions:
     - L Bumper: "Nudging" mode:
         - On press: 
@@ -43,11 +55,3 @@ These are the jobs to be completed first, to ensure we have minimal functionalit
         - On button release/exit:
             - Return the deflector to its previous state
             - Restore intake to previous state
-
-# Secondary priority
-
-These are to be completed after the top priority tasks. Currently, they focus on getting automatic targeting working.
-
-- Integrate limelight positioning
-
-- Integrate automatic aiming
