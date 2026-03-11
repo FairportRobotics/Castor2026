@@ -3,24 +3,24 @@
 These are the jobs to be completed first, to ensure we have minimal functionality for RIT
 
 - Add subsystems to robot
-    - Define unique IDs and channels for all devices in Constants.java IP Dom
+    - Define unique IDs and channels for all devices in Constants.java (IP Dom)
     - Add subsystems to the RobotContainer X
 
 - Updates to subsystems X
     - Update launcher wheel to a Neo/SparkMax X
 
 - Define basic commands for manual fire mode
-    - Y/Top button: Deploy the intake (and run the rollers)
+    - Y/Top button: Deploy the intake (and run the rollers) (TO MAP)
         - Could be a single command
         - Could be 2 commands in sequence
 
-    - B/Right button: Reverse the intake
+    - B/Right button: Reverse the intake (TO MAP)
         - Unclear if this should touch the deploy motor. ATM suggest leaving the deploy motor alone
 
-    - A/Bottom button: Retract the intake (and stop the rollers)
+    - A/Bottom button: Retract the intake (and stop the rollers) (TO MAP)
 
     - D-pad: Set deflector to pre-programmed angle
-        - Suggestion: Implement this once, and make the angle an member variable of the command
+        - Suggestion: Implement this once, and make the angle an member variable of the command (TO MAP)
 
     - Both Triggers: Spin up flywheel (if not already spun up) and then start the kicker.
         - Re: Sensing flywheel speed
