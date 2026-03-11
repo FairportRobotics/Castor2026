@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
+
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
+import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 import frc.robot.Constants;
-import frc.robot.commands.ManualHopperCommand;
 
 public class HopperSubsystem extends TestableSubsystem {
 
@@ -18,7 +20,10 @@ public class HopperSubsystem extends TestableSubsystem {
   /** Creates a new HopperSubsystem. */
   public HopperSubsystem() {
     spindexerMotor = new TalonFX(Constants.HopperConstants.SPINDEXER_MOTOR_ID);
+    SetMotorDirection(spindexerMotor, Constants.HopperConstants.SPINDEXER_MOTOR_DIRECTION);
+
     kickerMotor = new TalonFX(Constants.HopperConstants.KICKER_MOTOR_ID);
+    SetMotorDirection(kickerMotor, Constants.HopperConstants.KICKER_MOTOR_DIRECTION);
   } 
 
   public void feed() {kickerMotor.set(0.5);}

@@ -9,16 +9,13 @@ import org.fairportrobotics.frc.posty.test.PostTest;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
+
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
+import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 
-import java.time.chrono.ThaiBuddhistChronology;
-
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -32,9 +29,12 @@ public class IntakeSubsystem extends TestableSubsystem {
   public IntakeSubsystem() 
   {
     intakeMotor = new TalonFX(Constants.IntakeConstants.INTAKE_MOTOR_ID);
+    SetMotorDirection(intakeMotor, Constants.IntakeConstants.INTAKE_MOTOR_DIRECTION);
+
     deployMotor = new WPI_TalonSRX(Constants.IntakeConstants.DEPLOY_MOTOR_ID);
     deployMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
     deployMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    deployMotor.setInverted(Constants.IntakeConstants.DEPLOY_MOTOR_INVERTED);
   }
 
   public void neutral()
