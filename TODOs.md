@@ -10,19 +10,19 @@ These are the jobs to be completed first, to ensure we have minimal functionalit
     - Update launcher wheel to a Neo/SparkMax X
 
 - Define basic commands for manual fire mode
-    - Y/Top button: Deploy the intake (and run the rollers) (TO MAP)
+    - Y/Top button: Deploy the intake (and run the rollers) X
         - Could be a single command
         - Could be 2 commands in sequence
 
-    - B/Right button: Reverse the intake (TO MAP)
+    - B/Right button: Reverse the intake X
         - Unclear if this should touch the deploy motor. ATM suggest leaving the deploy motor alone
 
-    - A/Bottom button: Retract the intake (and stop the rollers) (TO MAP)
+    - A/Bottom button: Retract the intake (and stop the rollers) X
 
     - D-pad: Set deflector to pre-programmed angle
-        - Suggestion: Implement this once, and make the angle an member variable of the command (TO MAP)
+        - Suggestion: Implement this once, and make the angle an member variable of the command X
 
-    - Both Triggers: Spin up flywheel (if not already spun up) and then start the kicker.
+    - Both Triggers: Spin up flywheel (if not already spun up) and then start the kicker. X
         - Re: Sensing flywheel speed
             - Could be a time offset (i.e. wait for N seconds for the motor to spin up)
             - Ideally, check the encoder speed (will need the encoders for auto launch)
