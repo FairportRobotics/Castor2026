@@ -70,9 +70,13 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    m_driverController.y().onTrue(intakeSubsystem.deployCommand());
+    /*m_driverController.y().onTrue(intakeSubsystem.deployCommand());
     m_driverController.a().onTrue(intakeSubsystem.retractCommand());
-    m_driverController.b().onTrue(intakeSubsystem.reverseCommand());
+    m_driverController.b().onTrue(intakeSubsystem.reverseCommand());*/
+
+    m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
+    m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
+    m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
   }
 
   /**

@@ -69,17 +69,32 @@ public class IntakeSubsystem extends TestableSubsystem {
 
   public Command deployCommand()
   {
-    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(50), () -> setSpeed(0), this));
+    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(.5), () -> setSpeed(0), this));
   }
 
   public Command reverseCommand()
   {
-    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(-50), () -> setSpeed(0), this));
+    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(-.5), () -> setSpeed(0), this));
   }
 
   public Command retractCommand()
   {
     return this.runOnce(() -> setSpeed(0)).andThen(new FunctionalCommand(this::retract, this::retract, interrupted -> neutral(), this::isRetracted, this));
+  }
+
+  public Command startSpeedCommand()
+  {
+    return this.runOnce(() -> setSpeed(.5));
+  }
+
+  public Command killSpeedCommand()
+  {
+    return this.runOnce(() -> setSpeed(0));
+  }
+
+  public Command revSpeedCommand()
+  {
+    return this.runOnce(() -> setSpeed(-.5));
   }
 
   @PostTest(name = "A friendly name", enabled = true)
