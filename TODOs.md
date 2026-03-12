@@ -3,29 +3,41 @@
 These are the jobs to be completed first, to ensure we have minimal functionality for RIT
 
 - Add subsystems to robot
-    - Define unique IDs and channels for all devices in Constants.java IP
     - Add subsystems to the RobotContainer X
 
-- Updates to subsystems
+- Updates to subsystems X
     - Update launcher wheel to a Neo/SparkMax X
 
 - Define basic commands for manual fire mode
-    - Y/Top button: Deploy the intake (and run the rollers)
+    - Y/Top button: Deploy the intake (and run the rollers) X
         - Could be a single command
         - Could be 2 commands in sequence
 
-    - B/Right button: Reverse the intake
+    - B/Right button: Reverse the intake X
         - Unclear if this should touch the deploy motor. ATM suggest leaving the deploy motor alone
 
-    - A/Bottom button: Retract the intake (and stop the rollers)
+    - A/Bottom button: Retract the intake (and stop the rollers) X
 
     - D-pad: Set deflector to pre-programmed angle
-        - Suggestion: Implement this once, and make the angle an member variable of the command
+        - Suggestion: Implement this once, and make the angle an member variable of the command X
 
-    - Both Triggers: Spin up flywheel (if not already spun up) and then start the kicker.
+    - Both Triggers: Spin up flywheel (if not already spun up) and then start the kicker. X
         - Re: Sensing flywheel speed
             - Could be a time offset (i.e. wait for N seconds for the motor to spin up)
             - Ideally, check the encoder speed (will need the encoders for auto launch)
+
+- Define unique IDs and channels for all devices in Constants.java
+
+- Test all motors and reverse directions if required
+    - Direction flags are present in Constants.java Particular values of concern are marked with TODO comments
+
+# Secondary priority
+
+These are to be completed after the top priority tasks. Currently, they focus on getting automatic targeting working.
+
+- Integrate limelight positioning
+
+- Integrate automatic aiming
 
 - Advanced movement functions:
     - L Bumper: "Nudging" mode:
@@ -43,11 +55,3 @@ These are the jobs to be completed first, to ensure we have minimal functionalit
         - On button release/exit:
             - Return the deflector to its previous state
             - Restore intake to previous state
-
-# Secondary priority
-
-These are to be completed after the top priority tasks. Currently, they focus on getting automatic targeting working.
-
-- Integrate limelight positioning
-
-- Integrate automatic aiming

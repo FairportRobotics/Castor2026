@@ -149,7 +149,6 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.intakeSubsystem.extend();
   }
 
   /** This function is called periodically during operator control. */

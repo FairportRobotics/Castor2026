@@ -9,6 +9,8 @@ import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.measure.Angle;
 import java.security.PublicKey;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -82,11 +84,19 @@ public final class Constants {
     public static final int HOOD_ENCODER_ID = 62;
     public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(265);
     public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
+    public static final double HOMING_SPEED = .35;
+    public static final double TURRET_GEAR_RATIO  = 1;
+
+    public static final int HOOD_SERVO_CHANNEL = 3;
+    public static final boolean HOOD_SERVO_INVERTED = true; // TODO: Test this
+    public static final int HOOD_ENCODER_ID = 4;
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final double HOMING_SPEED = .35;
-    public static final double TURRET_GEAR_RATIO  = 1;
+    public static final Angle DEFLECTOR_STORED_ANGLE = edu.wpi.first.units.Units.Degrees.of(0);
+    public static final Angle DEFLECTOR_SET_ANGLE1 = edu.wpi.first.units.Units.Degrees.of(20);
+    public static final Angle DEFLECTOR_SET_ANGLE2 = edu.wpi.first.units.Units.Degrees.of(40);
+    public static final Angle DEFLECTOR_SET_ANGLE3 = edu.wpi.first.units.Units.Degrees.of(60);
   }
   /*
    * Making comments is fun AND helpful if they actually tell you something about the code.

@@ -7,15 +7,18 @@ package frc.robot.subsystems;
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
-import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.wpilibj.DigitalOutput;
+import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
+import static org.fairportrobotics.frc.robolib.motors.Utils.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 public class IntakeSubsystem extends TestableSubsystem {
   /** Creates a new ExampleSubsystem. */
@@ -26,7 +29,12 @@ public class IntakeSubsystem extends TestableSubsystem {
   public IntakeSubsystem() 
   {
     intakeMotor = new TalonFX(Constants.IntakeConstants.INTAKE_MOTOR_ID);
+    SetMotorDirection(intakeMotor, Constants.IntakeConstants.INTAKE_MOTOR_DIRECTION);
+
     deployMotor = new WPI_TalonSRX(Constants.IntakeConstants.DEPLOY_MOTOR_ID);
+    deployMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    deployMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    deployMotor.setInverted(Constants.IntakeConstants.DEPLOY_MOTOR_INVERTED);
   }
 
   public void neutral()
@@ -49,38 +57,29 @@ public class IntakeSubsystem extends TestableSubsystem {
     intakeMotor.set(speed);
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  public boolean isDeployed()
+  {
+    return deployMotor.isFwdLimitSwitchClosed()==1;
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public boolean isRetracted()
+  {
+    return deployMotor.isRevLimitSwitchClosed()==1;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public Command deployCommand()
+  {
+    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(50), () -> setSpeed(0), this));
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+  public Command reverseCommand()
+  {
+    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(-50), () -> setSpeed(0), this));
+  }
+
+  public Command retractCommand()
+  {
+    return this.runOnce(() -> setSpeed(0)).andThen(new FunctionalCommand(this::retract, this::retract, interrupted -> neutral(), this::isRetracted, this));
   }
 
   @PostTest(name = "A friendly name", enabled = true)

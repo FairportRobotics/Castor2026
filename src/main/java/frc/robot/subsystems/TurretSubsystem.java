@@ -5,21 +5,20 @@
 package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
-import org.fairportrobotics.frc.posty.test.PostTest;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
-import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import frc.robot.Constants;
+import static org.fairportrobotics.frc.robolib.motors.Utils.*;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretSubsystem extends TestableSubsystem {
   public enum TurretState {
@@ -30,7 +29,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
-  private TalonFX turretMotor;
+  // TODO: Reinsert the turret once motor is installed
+  //private TalonFX turretMotor;
   private SparkMax launcherMotor;
   private Servo hood;
   private CANcoder hoodEncoder;
@@ -40,12 +40,16 @@ public class TurretSubsystem extends TestableSubsystem {
   private Angle targElev;
 
   public TurretSubsystem() {
-    turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.LIMIT_CHANNEL);
-    turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_ID);
+    turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.TURRET_LIMIT_CHANNEL);
+    //turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_MOTOR_ID);
+    //SetMotorDirection(turretMotor, Constants.ShooterConstants.TURRET_MOTOR_DIRECTION);
 
-    launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_ID, MotorType.kBrushless);
+    launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+    SparkMaxConfig config = new SparkMaxConfig()
+      .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO_2);
+    config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
 
-    hood = new Servo(Constants.ShooterConstants.HOOD_CHANNEL);
+    hood = new Servo(Constants.ShooterConstants.HOOD_SERVO_CHANNEL);
     hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);
     currentState = TurretState.INIT;
     limitNeg = Constants.ShooterConstants.LIMIT_AXIMUTH_NEG;
@@ -54,10 +58,7 @@ public class TurretSubsystem extends TestableSubsystem {
     targElev = edu.wpi.first.units.Units.Degrees.of(45);
   }
 
-  public void setLauncher(double speed)
-  {
-    launcherMotor.set(speed);
-  }
+  public void setLauncher(double speed) {launcherMotor.set(speed);}
 
   public void setTargetElevation(Angle elev)
   {
@@ -69,7 +70,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void startHoming()
   {
-    turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
+    //turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
     currentState = TurretState.HOMING;
   }
 
@@ -79,11 +80,11 @@ public class TurretSubsystem extends TestableSubsystem {
 
     if(!passedLimit())
     {
-      turretMotor.set(speed);
+      //turretMotor.set(speed);
     }
     else
     {
-      turretMotor.set(0);
+      //turretMotor.set(0);
     }
   }
 
@@ -93,7 +94,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public Angle getTurretAngle()
   {
-    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    // return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    return Units.Degrees.of(0.0);
   }
 
   @Override
@@ -117,8 +119,8 @@ public class TurretSubsystem extends TestableSubsystem {
     if(turretLimitSwitch.get())
     {
       currentState = TurretState.MANUAL;
-      turretMotor.set(0);
-      turretMotor.setPosition(0);
+      //turretMotor.set(0);
+      //turretMotor.setPosition(0);
     }
   }
 
@@ -126,7 +128,12 @@ public class TurretSubsystem extends TestableSubsystem {
   {
     if(passedLimit())
     {
-      turretMotor.set(0);
+      //turretMotor.set(0);
+    }
+
+    int k = 1;
+    if(Constants.ShooterConstants.HOOD_SERVO_INVERTED) {
+      k=-1;
     }
 
     Angle curElev = hoodEncoder.getAbsolutePosition().getValue();
@@ -134,11 +141,11 @@ public class TurretSubsystem extends TestableSubsystem {
     {
       if(targElev.gt(curElev))
       {
-        hood.set(50);
+        hood.set(k * 0.5);
       }
       else
       {
-        hood.set(-50);
+        hood.set(k * -0.5);
       }
     }
     else
