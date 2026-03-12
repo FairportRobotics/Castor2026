@@ -13,6 +13,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ManualHopperCommand;
+import frc.robot.commands.ManualIntake;
 import frc.robot.commands.ManualShootCommand;
 import frc.robot.commands.SetDeflectorCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -79,6 +80,8 @@ public class RobotContainer {
     m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
     m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
+
+    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }
 
   /**
