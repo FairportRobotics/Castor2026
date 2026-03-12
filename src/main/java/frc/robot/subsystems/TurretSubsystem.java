@@ -29,7 +29,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
-  private TalonFX turretMotor;
+  // TODO: Reinsert the turret once motor is installed
+  //private TalonFX turretMotor;
   private SparkMax launcherMotor;
   private Servo hood;
   private CANcoder hoodEncoder;
@@ -40,8 +41,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public TurretSubsystem() {
     turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.TURRET_LIMIT_CHANNEL);
-    turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_MOTOR_ID);
-    SetMotorDirection(turretMotor, Constants.ShooterConstants.TURRET_MOTOR_DIRECTION);
+    //turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_MOTOR_ID);
+    //SetMotorDirection(turretMotor, Constants.ShooterConstants.TURRET_MOTOR_DIRECTION);
 
     launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
     SparkMaxConfig config = new SparkMaxConfig()
@@ -69,7 +70,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void startHoming()
   {
-    turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
+    //turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
     currentState = TurretState.HOMING;
   }
 
@@ -79,11 +80,11 @@ public class TurretSubsystem extends TestableSubsystem {
 
     if(!passedLimit())
     {
-      turretMotor.set(speed);
+      //turretMotor.set(speed);
     }
     else
     {
-      turretMotor.set(0);
+      //turretMotor.set(0);
     }
   }
 
@@ -93,7 +94,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public Angle getTurretAngle()
   {
-    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    // return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    return Units.Degrees.of(0.0);
   }
 
   @Override
@@ -117,8 +119,8 @@ public class TurretSubsystem extends TestableSubsystem {
     if(turretLimitSwitch.get())
     {
       currentState = TurretState.MANUAL;
-      turretMotor.set(0);
-      turretMotor.setPosition(0);
+      //turretMotor.set(0);
+      //turretMotor.setPosition(0);
     }
   }
 
@@ -126,7 +128,7 @@ public class TurretSubsystem extends TestableSubsystem {
   {
     if(passedLimit())
     {
-      turretMotor.set(0);
+      //turretMotor.set(0);
     }
 
     int k = 1;
