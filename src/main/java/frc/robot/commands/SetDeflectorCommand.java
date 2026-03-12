@@ -8,9 +8,11 @@ import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
+//The Turret does NOT move, hood does NOT move, it will die
+
 /** An example command that uses an example subsystem. **/
 public class SetDeflectorCommand extends Command {
-  private final TurretSubsystem m_subsystem;
+  /*private final TurretSubsystem m_subsystem;
   private Angle deployAngle;
 
   public SetDeflectorCommand(TurretSubsystem subsystem, Angle deployAngle) {
@@ -28,5 +30,5 @@ public class SetDeflectorCommand extends Command {
   @Override
   public boolean isFinished() {
     return true;
-  }
+  }*/
 }

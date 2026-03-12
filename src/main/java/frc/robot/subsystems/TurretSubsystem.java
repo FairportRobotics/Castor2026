@@ -126,7 +126,9 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private void periodicManual()
   {
-    if(passedLimit())
+    //If the hood or turret move, it will be a uh-oh, so DONT MOVE THEM
+    
+    /*if(passedLimit())
     {
       //turretMotor.set(0);
     }
@@ -151,6 +153,6 @@ public class TurretSubsystem extends TestableSubsystem {
     else
     {
       hood.set(0);
-    }
+    }*/
   }
 }
