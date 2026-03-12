@@ -39,12 +39,15 @@ public final class Constants {
     public static final float BACK_RIGHT_MOTOR_OFFSET = 0.470215f;
   }
   /*
+   * Single digit numbers (E.g. 1, 2, 3) are extra, non-motor, pieces that require IDs, such as the Pigeon
    * Numbers starting with 1 (E.g. 11, 12, 13) are in the Front Left of the robot
    * Numbers starting with 2 (E.g. 21, 22, 23) are in the Front Right of the robot
    * Numbers starting with 3 (E.g. 31, 32, 33) are in the Back Left of the robot
    * Numbers starting with 4 (E.g. 41, 42, 43) are in the Back Right of the robot
-   * Laters numbers will be added for more subsystems
-   * Single diget numbers (E.g. 1, 2, 3) are extra, non-motor, pieces that require IDs, such as the Pigeon
+   * Numbers starting with 5 (E.g. 51, 52, 53) are on the Intake
+   * Numbers starting with 6 (E.g. 61, 62, 63) are on the Shooter
+   * Numbers starting with 7 (E.g. 71, 72, 73) are on the Hopper
+   * Later numbers will be added for more subsystems
    */
   public static class SwerveDriveIDs {
     public static final int FRONT_LEFT_STEER_ID = 11;
@@ -60,22 +63,23 @@ public final class Constants {
     public static final int BACK_RIGHT_DRIVE_ID = 42;
     public static final int BACK_RIGHT_ENCODER_ID = 43;
   }
-  //Bird
+  
   public static class ExtraIDEntities {
     public static final int PIGEON_ID = 1;
+    //If the Limelights have IDs, add them here.
   }
   
   public static class IntakeConstants {
-    public static final int DEPLOY_MOTOR_ID = 12;
-    public static final int INTAKE_MOTOR_ID = 1; 
+    public static final int DEPLOY_MOTOR_ID = 51;
+    public static final int INTAKE_MOTOR_ID = 52;
   }
 
   public static class ShooterConstants {
     public static final int LIMIT_CHANNEL = 0;
-    public static final int TURRET_ID = 1;
-    public static final int LAUNCHER_ID = 2;
+    public static final int TURRET_ID = 61;
+    public static final int LAUNCHER_ID = 62;
     public static final int HOOD_CHANNEL = 3;
-    public static final int HOOD_ENCODER_ID = 4;
+    public static final int HOOD_ENCODER_ID = 62;
     public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(265);
     public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
@@ -84,9 +88,12 @@ public final class Constants {
     public static final double HOMING_SPEED = .35;
     public static final double TURRET_GEAR_RATIO  = 1;
   }
-  
+  /*
+   * Making comments is fun AND helpful if they actually tell you something about the code.
+   * This one doesn't.
+   */
   public static class HopperConstants {
-    public static final int KICKER_MOTOR_ID = 0;
-    public static final int SPINDEXER_MOTOR_ID = 1;    
+    public static final int KICKER_MOTOR_ID = 71;
+    public static final int SPINDEXER_MOTOR_ID = 72;
   }
 }
