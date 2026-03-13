@@ -26,6 +26,7 @@ public class ManualShootCommand extends Command {
     if(m_controller.getLeftTriggerAxis()>.5 || m_controller.getRightTriggerAxis()>.5)
     {
       m_subsystem.setLauncher(1);
+      System.out.println("Test");
     }
     else
     {
