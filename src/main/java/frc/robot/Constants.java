@@ -87,7 +87,7 @@ public final class Constants {
     public static final double HOMING_SPEED = .35;
     public static final double TURRET_GEAR_RATIO  = 0;
 
-    public static final int HOOD_SERVO_CHANNEL = 0;
+    public static final int HOOD_SERVO_CHANNEL = 9;
     public static final boolean HOOD_SERVO_INVERTED = true; // TODO: Test this
     public static final int HOOD_ENCODER_ID = 0;
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(.5);
