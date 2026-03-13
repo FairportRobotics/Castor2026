@@ -36,11 +36,11 @@ public class ManualIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_XboxController.getRightBumper()==true)
+    if(m_XboxController.getLeftBumper()==true)
     {
       m_subsystem.extend();
     }
-    else if(m_XboxController.getLeftBumper()==true)
+    else if(m_XboxController.getRightBumper()==true)
     {
       m_subsystem.retract();
     }

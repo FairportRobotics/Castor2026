@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.measure.Angle;
 import java.security.PublicKey;
+import java.util.Queue;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -105,5 +106,6 @@ public final class Constants {
 
     public static final int SPINDEXER_MOTOR_ID = 8;
     public static final InvertedValue SPINDEXER_MOTOR_DIRECTION = InvertedValue.Clockwise_Positive;
+    public static final double SPINDEXER_MOTOR_SPEED = 0;
   }
 }

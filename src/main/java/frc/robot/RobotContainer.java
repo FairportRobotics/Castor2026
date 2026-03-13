@@ -40,7 +40,7 @@ public class RobotContainer {
 
   public final DriveSubsystem driveSubsystem = new DriveSubsystem(m_driverController);
 
-  //public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   public final TurretSubsystem turretSubsystem = new TurretSubsystem();
 
@@ -75,11 +75,11 @@ public class RobotContainer {
     m_driverController.a().onTrue(intakeSubsystem.retractCommand());
     m_driverController.b().onTrue(intakeSubsystem.reverseCommand());*/
 
-    /*m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
+    m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
     m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
 
-    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));*/
+    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }
 
   /**
