@@ -126,12 +126,12 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private void periodicManual()
   {
-    //If the hood or turret move, it will be a uh-oh, so DONT MOVE THEM
+    //If the turret move, it will be a uh-oh, so DONT MOVE IT
     
     /*if(passedLimit())
     {
       //turretMotor.set(0);
-    }
+    }*/
 
     int k = 1;
     if(Constants.ShooterConstants.HOOD_SERVO_INVERTED) {
@@ -153,6 +153,6 @@ public class TurretSubsystem extends TestableSubsystem {
     else
     {
       hood.set(0);
-    }*/
+    }
   }
 }

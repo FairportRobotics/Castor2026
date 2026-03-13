@@ -90,13 +90,13 @@ public final class Constants {
     public static final int HOOD_SERVO_CHANNEL = 0;
     public static final boolean HOOD_SERVO_INVERTED = true; // TODO: Test this
     public static final int HOOD_ENCODER_ID = 0;
-    public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(10000);
-    public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(0);
+    public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(.5);
+    public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
     public static final Angle DEFLECTOR_STORED_ANGLE = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final Angle DEFLECTOR_SET_ANGLE1 = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final Angle DEFLECTOR_SET_ANGLE2 = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final Angle DEFLECTOR_SET_ANGLE3 = edu.wpi.first.units.Units.Degrees.of(0);
+    public static final Angle DEFLECTOR_SET_ANGLE1 = edu.wpi.first.units.Units.Degrees.of(20);
+    public static final Angle DEFLECTOR_SET_ANGLE2 = edu.wpi.first.units.Units.Degrees.of(40);
+    public static final Angle DEFLECTOR_SET_ANGLE3 = edu.wpi.first.units.Units.Degrees.of(60);
   }
   
   public static class HopperConstants {

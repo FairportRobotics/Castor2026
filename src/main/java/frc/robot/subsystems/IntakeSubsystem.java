@@ -96,14 +96,4 @@ public class IntakeSubsystem extends TestableSubsystem {
   {
     return this.runOnce(() -> setSpeed(-.5));
   }
-
-  @PostTest(name = "A friendly name", enabled = true)
-  public void myFailingPostTest(){
-    assertThat(true).isFalse();
-  }
-
-  @PostTest(enabled = true)
-  public void myPassingPostTest(){
-    assertThat("Hello World").endWith("World");
-  }
 }

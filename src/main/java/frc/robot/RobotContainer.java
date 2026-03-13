@@ -66,14 +66,12 @@ public class RobotContainer {
     turretSubsystem.setDefaultCommand(new ManualShootCommand(turretSubsystem, m_driverController.getHID()));
     hopperSubsystem.setDefaultCommand(new ManualHopperCommand(hopperSubsystem, m_driverController.getHID()));
 
-    //The shooter will tear its self apart if deflector moves, so dont move it
-
-    /*m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
+    m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
     m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    m_driverController.y().onTrue(intakeSubsystem.deployCommand());
+    /*m_driverController.y().onTrue(intakeSubsystem.deployCommand());
     m_driverController.a().onTrue(intakeSubsystem.retractCommand());
     m_driverController.b().onTrue(intakeSubsystem.reverseCommand());*/
 
