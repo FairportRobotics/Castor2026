@@ -61,6 +61,8 @@ public class TurretSubsystem extends TestableSubsystem {
     if(Constants.ShooterConstants.HOOD_SERVO_INVERTED){
       elev=Units.Degrees.of(300).minus(elev);
     }
+    elev=elev.div(1.5);
+    elev=elev.div(Constants.ShooterConstants.DEFLECTOR_SERVO_RATIO);
     hood.setAngle(elev.in(Units.Degrees));
   }
 

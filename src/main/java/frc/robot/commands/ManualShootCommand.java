@@ -24,20 +24,20 @@ public class ManualShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_controller.getRightTriggerAxis()>.4)
-    {
-      m_subsystem.setLauncher(.6);
-      m_controller.setRumble(RumbleType.kBothRumble, .33);
-    }
-    else if(m_controller.getRightTriggerAxis()>.6)
-    {
-      m_subsystem.setLauncher(.8);
-      m_controller.setRumble(RumbleType.kBothRumble, .67);
-    }
-    else if(m_controller.getRightTriggerAxis()>.8)
+    if(m_controller.getRightTriggerAxis()>.8)
     {
       m_subsystem.setLauncher(1);
       m_controller.setRumble(RumbleType.kBothRumble, 1);
+    }
+    else if(m_controller.getRightTriggerAxis()>.5)
+    {
+      m_subsystem.setLauncher(.7);
+      m_controller.setRumble(RumbleType.kBothRumble, .67);
+    }
+    else if(m_controller.getRightTriggerAxis()>.2)
+    {
+      m_subsystem.setLauncher(.5);
+      m_controller.setRumble(RumbleType.kBothRumble, .33);
     }
     else
     {
