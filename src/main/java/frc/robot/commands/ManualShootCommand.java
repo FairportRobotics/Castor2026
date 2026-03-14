@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -23,14 +24,25 @@ public class ManualShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_controller.getLeftTriggerAxis()>.5 || m_controller.getRightTriggerAxis()>.5)
+    if(m_controller.getRightTriggerAxis()>.4)
+    {
+      m_subsystem.setLauncher(.6);
+      m_controller.setRumble(RumbleType.kBothRumble, .33);
+    }
+    else if(m_controller.getRightTriggerAxis()>.6)
+    {
+      m_subsystem.setLauncher(.8);
+      m_controller.setRumble(RumbleType.kBothRumble, .67);
+    }
+    else if(m_controller.getRightTriggerAxis()>.8)
     {
       m_subsystem.setLauncher(1);
-      System.out.println("Test");
+      m_controller.setRumble(RumbleType.kBothRumble, 1);
     }
     else
     {
       m_subsystem.setLauncher(0);
+      m_controller.setRumble(RumbleType.kBothRumble, 0);
     }
   }
 

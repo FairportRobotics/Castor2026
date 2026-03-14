@@ -67,21 +67,21 @@ public class TurretSubsystem extends TestableSubsystem {
   public void startHoming()
   {
     //turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
-    currentState = TurretState.HOMING;
+    //currentState = TurretState.HOMING;
   }
 
   public void startRotate(double speed)
   {
-    turretGoingPos=speed>0;
+    /*turretGoingPos=speed>0;
 
     if(!passedLimit())
     {
-      //turretMotor.set(speed);
+      turretMotor.set(speed);
     }
     else
     {
-      //turretMotor.set(0);
-    }
+      turretMotor.set(0);
+    }*/
   }
 
   public boolean passedLimit(){
@@ -128,7 +128,5 @@ public class TurretSubsystem extends TestableSubsystem {
     {
       //turretMotor.set(0);
     }*/
-
-
   }
 }

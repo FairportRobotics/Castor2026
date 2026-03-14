@@ -84,7 +84,7 @@ public class IntakeSubsystem extends TestableSubsystem {
 
   public Command startSpeedCommand()
   {
-    return this.runOnce(() -> setSpeed(.5));
+    return this.runOnce(() -> setSpeed(-.5));
   }
 
   public Command killSpeedCommand()
@@ -94,6 +94,6 @@ public class IntakeSubsystem extends TestableSubsystem {
 
   public Command revSpeedCommand()
   {
-    return this.runOnce(() -> setSpeed(-.5));
+    return this.runOnce(() -> setSpeed(.5));
   }
 }

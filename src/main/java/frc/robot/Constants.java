@@ -102,10 +102,10 @@ public final class Constants {
   
   public static class HopperConstants {
     public static final int KICKER_MOTOR_ID = 9;
-    public static final InvertedValue KICKER_MOTOR_DIRECTION = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue KICKER_MOTOR_DIRECTION = InvertedValue.Clockwise_Positive;
 
     public static final int SPINDEXER_MOTOR_ID = 8;
-    public static final InvertedValue SPINDEXER_MOTOR_DIRECTION = InvertedValue.Clockwise_Positive;
-    public static final double SPINDEXER_MOTOR_SPEED = 0;
+    public static final InvertedValue SPINDEXER_MOTOR_DIRECTION = InvertedValue.CounterClockwise_Positive;
+    public static final double SPINDEXER_MOTOR_SPEED = .6;
   }
 }
