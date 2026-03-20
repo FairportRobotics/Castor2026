@@ -9,8 +9,13 @@ import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveModule;
 import org.littletonrobotics.junction.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -50,7 +55,7 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .withSteerKI(steerI)
                                 .withSteerKD(steerD)
                                 .withSteerKV(steerKV)
-                                //If the offsets don't work, contact Tyler W or Dom G
+                                // If the offsets don't work, contact Tyler W or Dom G
                                 .withSteerOffset(Constants.SwerveDriveOffsets.FRONT_LEFT_MOTOR_OFFSET)
                                 .withSteerEncoderId(Constants.SwerveDriveIDs.FRONT_LEFT_ENCODER_ID)
                                 .withModuleLocation(new Translation2d(1, 1))
@@ -132,10 +137,36 @@ public class DriveSubsystem extends TestableSubsystem {
 
                 Logger.recordOutput("RequestedSwerveState", driveSystem.getRequestedModuleStates());
                 Logger.recordOutput("ActualSwerveState", driveSystem.getActualModuleStates());
-                Logger.recordOutput("Pose Estimation", driveSystem.getRobotPose());
+                Logger.recordOutput("Pose Estimation", driveSystem.getRobotPose3d());
             }
 
         }, this));
+
+        RobotConfig config;
+        try {
+            config = RobotConfig.fromGUISettings();
+
+            AutoBuilder.configure(
+                    driveSystem::getRobotPose2d,
+                    driveSystem::setPose2d,
+                    driveSystem::getRobotRelativeSpeeds,
+                    (speeds, feedforwards) -> driveSystem.setChassisSpeed(speeds, new Translation2d()),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(5.0, 0, 0),
+                            new PIDConstants(5.0, 0, 0)),
+                    config,
+                    () -> {
+                        var alliance = DriverStation.getAlliance();
+                        if (alliance.isPresent()) {
+                            return alliance.get() == DriverStation.Alliance.Red;
+                        }
+                        return false;
+                    },
+                    this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -152,14 +183,17 @@ public class DriveSubsystem extends TestableSubsystem {
     }
 
     @PostTest()
-    public void DriveSubsystem_CanDevicesConnected(){
+    public void DriveSubsystem_CanDevicesConnected() {
 
         SwerveModule[] modules = driveSystem.getModules();
 
-        for(int i=0;i < modules.length; i++){
-            assertThat(modules[i].getDriveMotor().isConnected()).as(modules[i].getModuleName() + " drive motor is not connected").isTrue();
-            assertThat(modules[i].getSteerMotor().isConnected()).as(modules[i].getModuleName() + " steer motor is not connected").isTrue();
-            assertThat(modules[i].getSteerEncoder().isConnected()).as(modules[i].getModuleName() + " CANCoder is not connected").isTrue();
+        for (int i = 0; i < modules.length; i++) {
+            assertThat(modules[i].getDriveMotor().isConnected())
+                    .as(modules[i].getModuleName() + " drive motor is not connected").isTrue();
+            assertThat(modules[i].getSteerMotor().isConnected())
+                    .as(modules[i].getModuleName() + " steer motor is not connected").isTrue();
+            assertThat(modules[i].getSteerEncoder().isConnected())
+                    .as(modules[i].getModuleName() + " CANCoder is not connected").isTrue();
         }
 
         assertThat(driveSystem.getGyro().isConnected()).as("Pigeon is not connected").isTrue();
