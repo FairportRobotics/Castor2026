@@ -40,14 +40,6 @@ public class ManualIntake extends Command {
     {
       m_subsystem.extend();
     }
-    else if(m_XboxController.getRightBumper()==true)
-    {
-      m_subsystem.retract();
-    }
-    else
-    {
-      m_subsystem.neutral();
-    }
   }
 
   // Called once the command ends or is interrupted.
