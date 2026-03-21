@@ -163,7 +163,6 @@ public class DriveSubsystem extends TestableSubsystem {
         }
 
         assertThat(driveSystem.getGyro().isConnected()).as("Pigeon is not connected").isTrue();
-
     }
 
 }
