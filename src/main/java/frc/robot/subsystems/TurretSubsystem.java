@@ -33,11 +33,9 @@ public class TurretSubsystem extends TestableSubsystem {
   //private TalonFX turretMotor;
   private SparkMax launcherMotor;
   private Servo hood;
-  private CANcoder hoodEncoder;
   private Angle limitPos;
   private Angle limitNeg;
   private boolean turretGoingPos;
-  private Angle targElev;
 
   public TurretSubsystem() {
     turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.TURRET_LIMIT_CHANNEL);
@@ -50,42 +48,42 @@ public class TurretSubsystem extends TestableSubsystem {
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
 
     hood = new Servo(Constants.ShooterConstants.HOOD_SERVO_CHANNEL);
-    hoodEncoder = new CANcoder(Constants.ShooterConstants.HOOD_ENCODER_ID);
     currentState = TurretState.INIT;
     limitNeg = Constants.ShooterConstants.LIMIT_AXIMUTH_NEG;
     limitPos = Constants.ShooterConstants.LIMIT_AXIMUTH_POS;
     turretGoingPos = false;
-    targElev = edu.wpi.first.units.Units.Degrees.of(45);
   }
 
   public void setLauncher(double speed) {launcherMotor.set(speed);}
 
   public void setTargetElevation(Angle elev)
   {
-    if(elev.gt(Constants.ShooterConstants.LIMIT_ELEVATION_NEG) && elev.lt(Constants.ShooterConstants.LIMIT_ELEVATION_POS))
-    {
-      targElev=elev;
+    if(Constants.ShooterConstants.HOOD_SERVO_INVERTED){
+      elev=Units.Degrees.of(300).minus(elev);
     }
+    elev=elev.div(1.5);
+    elev=elev.div(Constants.ShooterConstants.DEFLECTOR_SERVO_RATIO);
+    hood.setAngle(elev.in(Units.Degrees));
   }
 
   public void startHoming()
   {
     //turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
-    currentState = TurretState.HOMING;
+    //currentState = TurretState.HOMING;
   }
 
   public void startRotate(double speed)
   {
-    turretGoingPos=speed>0;
+    /*turretGoingPos=speed>0;
 
     if(!passedLimit())
     {
-      //turretMotor.set(speed);
+      turretMotor.set(speed);
     }
     else
     {
-      //turretMotor.set(0);
-    }
+      turretMotor.set(0);
+    }*/
   }
 
   public boolean passedLimit(){
@@ -126,31 +124,11 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private void periodicManual()
   {
-    if(passedLimit())
+    //If the turret move, it will be a uh-oh, so DONT MOVE IT
+    
+    /*if(passedLimit())
     {
       //turretMotor.set(0);
-    }
-
-    int k = 1;
-    if(Constants.ShooterConstants.HOOD_SERVO_INVERTED) {
-      k=-1;
-    }
-
-    Angle curElev = hoodEncoder.getAbsolutePosition().getValue();
-    if(targElev.minus(curElev).abs(Units.Degrees)>Constants.ShooterConstants.TARGET_ELEVATION_DIF.in(Units.Degrees))
-    {
-      if(targElev.gt(curElev))
-      {
-        hood.set(k * 0.5);
-      }
-      else
-      {
-        hood.set(k * -0.5);
-      }
-    }
-    else
-    {
-      hood.set(0);
-    }
+    }*/
   }
 }

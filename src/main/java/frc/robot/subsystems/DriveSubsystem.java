@@ -128,7 +128,7 @@ public class DriveSubsystem extends TestableSubsystem {
 
             @Override
             public void run() {
-                driveSystem.setChassisSpeedsFromJoystickRobotRelative(
+                driveSystem.setChassisSpeedsFromJoystickFieldRelative(
                         -(xboxController.getLeftY() * Math.abs(xboxController.getLeftY())),
                         -(xboxController.getLeftX() * Math.abs(xboxController.getLeftX())),
                         -(xboxController.getRawAxis(4) * Math.abs(xboxController.getRawAxis(4))));
@@ -197,7 +197,6 @@ public class DriveSubsystem extends TestableSubsystem {
         }
 
         assertThat(driveSystem.getGyro().isConnected()).as("Pigeon is not connected").isTrue();
-
     }
 
 }

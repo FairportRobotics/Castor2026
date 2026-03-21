@@ -4,46 +4,49 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
-import frc.robot.subsystems.HopperSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ManualHopperCommand extends Command {
-  private final HopperSubsystem m_subsystem;
-  private final XboxController m_xboxController;
+public class ManualIntake extends Command {
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final IntakeSubsystem m_subsystem;
+  private final XboxController m_XboxController;
 
-  public ManualHopperCommand(HopperSubsystem subsystem, XboxController xboxController) {
+  /**
+   * Creates a new ExampleCommand.
+   *
+   * @param subsystem The subsystem used by this command.
+   */
+  public ManualIntake(IntakeSubsystem subsystem, XboxController xboxController) {
     m_subsystem = subsystem;
-    m_xboxController = xboxController;
+    m_XboxController = xboxController;
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_xboxController.getLeftTriggerAxis()>.5 && m_xboxController.getRightTriggerAxis()>.2)
+    if(m_XboxController.getLeftBumper()==true)
     {
-      m_subsystem.feed();
+      m_subsystem.extend();
+    }
+    else if(m_XboxController.getRightBumper()==true)
+    {
+      m_subsystem.retract();
     }
     else
     {
-      m_subsystem.stop();
-    }
-    if(m_xboxController.getRightBumper())
-    {
-      m_subsystem.spin(Constants.HopperConstants.SPINDEXER_MOTOR_SPEED);
-    }
-    if(m_xboxController.getLeftBumper())
-    {
-      m_subsystem.spin(0);
+      m_subsystem.neutral();
     }
   }
 

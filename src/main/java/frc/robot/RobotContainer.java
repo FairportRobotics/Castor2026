@@ -18,6 +18,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ManualHopperCommand;
+import frc.robot.commands.ManualIntake;
 import frc.robot.commands.ManualShootCommand;
 import frc.robot.commands.SetDeflectorCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -81,9 +82,15 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    m_driverController.y().onTrue(intakeSubsystem.deployCommand());
+    /*m_driverController.y().onTrue(intakeSubsystem.deployCommand());
     m_driverController.a().onTrue(intakeSubsystem.retractCommand());
-    m_driverController.b().onTrue(intakeSubsystem.reverseCommand());
+    m_driverController.b().onTrue(intakeSubsystem.reverseCommand());*/
+
+    m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
+    m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
+    //m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
+
+    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }
 
   /**
