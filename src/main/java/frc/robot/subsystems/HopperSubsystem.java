@@ -7,8 +7,10 @@ package frc.robot.subsystems;
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
@@ -22,10 +24,10 @@ public class HopperSubsystem extends TestableSubsystem {
   /** Creates a new HopperSubsystem. */
   public HopperSubsystem() {
     spindexerMotor = new TalonFX(Constants.HopperConstants.SPINDEXER_MOTOR_ID);
-    SetMotorDirection(spindexerMotor, Constants.HopperConstants.SPINDEXER_MOTOR_DIRECTION);
+    spindexerMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(Constants.HopperConstants.SPINDEXER_MOTOR_DIRECTION));
 
     kickerMotor = new TalonFX(Constants.HopperConstants.KICKER_MOTOR_ID);
-    SetMotorDirection(kickerMotor, Constants.HopperConstants.KICKER_MOTOR_DIRECTION);
+    kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(Constants.HopperConstants.KICKER_MOTOR_DIRECTION));
   } 
 
   public void feedKicker() {kickerMotor.set(0.5);}
@@ -40,8 +42,8 @@ public class HopperSubsystem extends TestableSubsystem {
 
   @PostTest(enabled = true)
   public void hopperSystem_CANDevicesConnected(){
-    assertThat(kickerMotor.isConnected()).isTrue().as("Kicker motor not connected!");
-    assertThat(spindexerMotor.isConnected()).isTrue().as("Spindexer motor not connected!");
+    assertThat(kickerMotor.isConnected()).as("Kicker motor not connected!").isTrue();
+    assertThat(spindexerMotor.isConnected()).as("Spindexer motor not connected!").isTrue();
   }
 
 }

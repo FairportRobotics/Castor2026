@@ -169,8 +169,9 @@ public class DriveSubsystem extends TestableSubsystem {
                     },
                     this);
 
-            autoChooser = AutoBuilder.buildAutoChooser();
-            SmartDashboard.putData("Auto Chooser", autoChooser);
+            // autoChooser = AutoBuilder.buildAutoChooser();
+            // autoChooser.addOption("Do Nothing", Commands.none());
+            // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,7 +192,8 @@ public class DriveSubsystem extends TestableSubsystem {
     }
 
     public Command getAutoCommand(){
-        return autoChooser.getSelected();
+        return Commands.none();
+        // return autoChooser.getSelected();
     }
 
     @PostTest()

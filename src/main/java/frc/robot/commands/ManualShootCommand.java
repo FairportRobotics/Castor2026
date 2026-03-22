@@ -27,17 +27,17 @@ public class ManualShootCommand extends Command {
   public void execute() {
     if(m_controller.getRightTriggerAxis()>.8)
     {
-      m_subsystem.setLauncher(1);
+      m_subsystem.setLauncher(5000);
       m_controller.setRumble(RumbleType.kBothRumble, 1);
     }
     else if(m_controller.getRightTriggerAxis()>.5)
     {
-      m_subsystem.setLauncher(.7);
+      m_subsystem.setLauncher(3000);
       m_controller.setRumble(RumbleType.kBothRumble, .67);
     }
     else if(m_controller.getRightTriggerAxis()>.2)
     {
-      m_subsystem.setLauncher(.5);
+      m_subsystem.setLauncher(2000);
       m_controller.setRumble(RumbleType.kBothRumble, .33);
     }
     else

@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
+import org.littletonrobotics.junction.Logger;
+
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -37,6 +39,8 @@ public class TurretSubsystem extends TestableSubsystem {
     HOMING,
     MANUAL;
   }
+
+  private final boolean LOGGING = true;
 
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
@@ -76,7 +80,7 @@ public class TurretSubsystem extends TestableSubsystem {
     SparkMaxConfig config = new SparkMaxConfig()
       .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
-    config.closedLoop.p(1).i(0).d(0).outputRange(0, 5000);
+    config.closedLoop.p(1).i(0).d(0.1).outputRange(0, 5000);
     config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     launcherMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     launcherControler = launcherMotor.getClosedLoopController();
@@ -158,6 +162,12 @@ public class TurretSubsystem extends TestableSubsystem {
       default:
         break;
     }
+
+    if(LOGGING)
+    {
+      Logger.recordOutput("Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
+    }
+
   }
 
   private void periodicHoming()
@@ -182,8 +192,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @PostTest()
   public void TurretSubsystem_CANDevicesConnected(){
-    assertThat(launcherMotor.getDeviceId()).isGreaterThan(0).as("Launcher motor not connected!");
-    assertThat(turretMotor.isConnected()).isTrue().as("Turret motor not connected!");
+    assertThat(launcherMotor.getDeviceId()).as("Launcher motor not connected!").isGreaterThan(0);
+    assertThat(turretMotor.isConnected()).as("Turret motor not connected!").isTrue();
   }
 
 }

@@ -31,7 +31,7 @@ public class AutoShootCommandChassisTurret extends Command{
         this.intakeSubsystem = intakeSubsystem;
         this.turretSubsystem = turretSubsystem;
 
-        autoCenterController = new PIDController(0, 0, 0);
+        autoCenterController = new PIDController(0.1, 0, 0);
         autoCenterController.setTolerance(1);
         autoCenterController.setSetpoint(0);
     }
@@ -51,6 +51,8 @@ public class AutoShootCommandChassisTurret extends Command{
         LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_PIPELINE_NUMBER);
 
         LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
+
+        // driveSubsystem. autoCenterController.calculate(0);
 
         if(turretSubsystem.isLauncherUpToSpeed() && autoCenterController.atSetpoint()){
             hopperSubsystem.feedKicker();
