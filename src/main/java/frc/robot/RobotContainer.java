@@ -16,13 +16,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ManualHopperCommand;
 import frc.robot.commands.ManualIntake;
 import frc.robot.commands.ManualShootCommand;
 import frc.robot.commands.SetDeflectorCommand;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -35,13 +33,13 @@ import frc.robot.subsystems.TurretSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   // private final CommandPS4Controller m_driverController = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
+
+  private final SendableChooser<Command> autoChooser;
 
   public final DriveSubsystem driveSubsystem = new DriveSubsystem(m_driverController);
 
@@ -53,10 +51,11 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Configure the trigger bindings
     configureBindings();
-
   }
 
   /**
@@ -68,6 +67,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+
   private void configureBindings() {
     turretSubsystem.setDefaultCommand(new ManualShootCommand(turretSubsystem, m_driverController.getHID()));
     hopperSubsystem.setDefaultCommand(new ManualHopperCommand(hopperSubsystem, m_driverController.getHID()));
@@ -77,13 +77,8 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    /*m_driverController.y().onTrue(intakeSubsystem.deployCommand());
-    m_driverController.a().onTrue(intakeSubsystem.retractCommand());
-    m_driverController.b().onTrue(intakeSubsystem.reverseCommand());*/
-
     m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
-    //m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
 
     intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }
@@ -95,6 +90,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return driveSubsystem.getAutoCommand();
+    return autoChooser.getSelected();
   }
 }

@@ -6,6 +6,10 @@ package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkMax;
@@ -17,6 +21,7 @@ import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 
@@ -29,8 +34,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
-  // TODO: Reinsert the turret once motor is installed
-  //private TalonFX turretMotor;
+  private TalonFX turretMotor;
   private SparkMax launcherMotor;
   private Servo hood;
   private Angle limitPos;
@@ -55,6 +59,11 @@ public class TurretSubsystem extends TestableSubsystem {
   }
 
   public void setLauncher(double speed) {launcherMotor.set(speed);}
+
+  public void turretControl(double position)
+  {
+      turretMotor.setControl(new PositionDutyCycle(position));
+  }
 
   public void setTargetElevation(Angle elev)
   {
