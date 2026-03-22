@@ -9,6 +9,7 @@ import org.fairportrobotics.frc.posty.TestableSubsystem;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -62,7 +63,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void turretControl(double position)
   {
-      turretMotor.setControl(new PositionDutyCycle(position));
+      turretMotor.setControl(new PositionVoltage(position));
   }
 
   public void setTargetElevation(Angle elev)
