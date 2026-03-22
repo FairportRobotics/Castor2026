@@ -25,6 +25,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretSubsystem extends TestableSubsystem {
   public enum TurretState {
@@ -74,6 +75,11 @@ public class TurretSubsystem extends TestableSubsystem {
     elev=elev.div(1.5);
     elev=elev.div(Constants.ShooterConstants.DEFLECTOR_SERVO_RATIO);
     hood.setAngle(elev.in(Units.Degrees));
+  }
+
+  public Command revSpeedCommand()
+  {
+    return this.runOnce(() -> setLauncher(-.5));
   }
 
   public void startHoming()

@@ -37,49 +37,14 @@ public class IntakeSubsystem extends TestableSubsystem {
     deployMotor.setInverted(Constants.IntakeConstants.DEPLOY_MOTOR_INVERTED);
   }
 
-  public void neutral()
-  {
-    deployMotor.set(0);
-  }
-
   public void extend()
   {
     deployMotor.set(1);
   }
 
-  public void retract()
-  {
-    deployMotor.set(-1);
-  }
-
   public void setSpeed(double speed)
   {
     intakeMotor.set(speed);
-  }
-
-  public boolean isDeployed()
-  {
-    return deployMotor.isFwdLimitSwitchClosed()==1;
-  }
-
-  public boolean isRetracted()
-  {
-    return deployMotor.isRevLimitSwitchClosed()==1;
-  }
-
-  public Command deployCommand()
-  {
-    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(.5), () -> setSpeed(0), this));
-  }
-
-  public Command reverseCommand()
-  {
-    return new FunctionalCommand(this::extend, this::extend, interrupted -> neutral(), this::isDeployed, this).andThen(Commands.startEnd(() -> setSpeed(-.5), () -> setSpeed(0), this));
-  }
-
-  public Command retractCommand()
-  {
-    return this.runOnce(() -> setSpeed(0)).andThen(new FunctionalCommand(this::retract, this::retract, interrupted -> neutral(), this::isRetracted, this));
   }
 
   public Command startSpeedCommand()

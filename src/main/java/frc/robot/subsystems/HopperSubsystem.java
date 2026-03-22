@@ -9,6 +9,8 @@ import org.fairportrobotics.frc.posty.test.PostTest;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 import frc.robot.Constants;
@@ -33,6 +35,11 @@ public class HopperSubsystem extends TestableSubsystem {
   public void stop() {kickerMotor.set(0);}
 
   public void spin(double speed) {spindexerMotor.set(speed);}
+
+  public Command revSpeedCommand()
+  {
+    return this.runOnce(() -> reverse());
+  }
 
   @PostTest(name = "A friendly name", enabled = true)
   public void myFailingPostTest(){
