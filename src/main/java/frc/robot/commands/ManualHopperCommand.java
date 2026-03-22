@@ -23,7 +23,7 @@ public class ManualHopperCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    m_subsystem.spindexerOn();;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,19 +31,19 @@ public class ManualHopperCommand extends Command {
   public void execute() {
     if(m_xboxController.getLeftTriggerAxis()>.5 && m_xboxController.getRightTriggerAxis()>.2)
     {
-      m_subsystem.feed();
+      m_subsystem.feedKicker();
     }
     else
     {
-      m_subsystem.stop();
+      m_subsystem.stopKicker();
     }
     if(m_xboxController.getRightBumper())
     {
-      m_subsystem.spin(Constants.HopperConstants.SPINDEXER_MOTOR_SPEED);
+      m_subsystem.spindexerOn();
     }
     if(m_xboxController.getLeftBumper())
     {
-      m_subsystem.spin(0);
+      m_subsystem.spindexerOff();
     }
   }
 

@@ -5,24 +5,28 @@
 package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
+import org.fairportrobotics.frc.posty.test.PostTest;
+import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
-import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Constants;
-import static org.fairportrobotics.frc.robolib.motors.Utils.*;
-
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,21 +42,46 @@ public class TurretSubsystem extends TestableSubsystem {
   private DigitalInput turretLimitSwitch;
   private TalonFX turretMotor;
   private SparkMax launcherMotor;
+  private SparkClosedLoopController launcherControler;
+
   private Servo hood;
   private Angle limitPos;
   private Angle limitNeg;
   private boolean turretGoingPos;
 
   public TurretSubsystem() {
-    turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.TURRET_LIMIT_CHANNEL);
-    //turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_MOTOR_ID);
-    //SetMotorDirection(turretMotor, Constants.ShooterConstants.TURRET_MOTOR_DIRECTION);
 
+    // Turret configuration
+    turretLimitSwitch = new DigitalInput(Constants.ShooterConstants.TURRET_LIMIT_CHANNEL);
+    turretMotor = new TalonFX(Constants.ShooterConstants.TURRET_MOTOR_ID);
+    turretMotor.getConfigurator().apply(
+      new TalonFXConfiguration()
+        .withSlot0(
+          new Slot0Configs()
+            .withKP(1.0)
+            .withKI(0)
+            .withKD(0)
+        )
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+        )
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+        )
+    );
+
+    // Launcher configuration
     launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
     SparkMaxConfig config = new SparkMaxConfig()
-      .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO_2);
+      .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
+    config.closedLoop.p(1).i(0).d(0).outputRange(0, 5000);
+    config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
+    launcherMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    launcherControler = launcherMotor.getClosedLoopController();
 
+    // Hood configuration
     hood = new Servo(Constants.ShooterConstants.HOOD_SERVO_CHANNEL);
     currentState = TurretState.INIT;
     limitNeg = Constants.ShooterConstants.LIMIT_AXIMUTH_NEG;
@@ -60,7 +89,11 @@ public class TurretSubsystem extends TestableSubsystem {
     turretGoingPos = false;
   }
 
-  public void setLauncher(double speed) {launcherMotor.set(speed);}
+  public void setLauncher(double speed) {launcherControler.setSetpoint(speed, ControlType.kVelocity);}
+
+  public boolean isLauncherUpToSpeed() {
+    return launcherControler.isAtSetpoint();
+  }
 
   public void turretControl(double position)
   {
@@ -108,8 +141,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public Angle getTurretAngle()
   {
-    // return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
-    return Units.Degrees.of(0.0);
+    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
   }
 
   @Override
@@ -147,4 +179,11 @@ public class TurretSubsystem extends TestableSubsystem {
       //turretMotor.set(0);
     }*/
   }
+
+  @PostTest()
+  public void TurretSubsystem_CANDevicesConnected(){
+    assertThat(launcherMotor.getDeviceId()).isGreaterThan(0).as("Launcher motor not connected!");
+    assertThat(turretMotor.isConnected()).isTrue().as("Turret motor not connected!");
+  }
+
 }

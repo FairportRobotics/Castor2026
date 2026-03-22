@@ -79,9 +79,6 @@ public class RobotContainer {
 
     m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
-    m_driverController.b().onTrue(intakeSubsystem.revSpeedCommand());
-    m_driverController.b().onTrue(hopperSubsystem.revSpeedCommand());
-    m_driverController.b().onTrue(turretSubsystem.revSpeedCommand());
 
     intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }

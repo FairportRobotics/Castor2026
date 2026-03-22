@@ -28,26 +28,20 @@ public class HopperSubsystem extends TestableSubsystem {
     SetMotorDirection(kickerMotor, Constants.HopperConstants.KICKER_MOTOR_DIRECTION);
   } 
 
-  public void feed() {kickerMotor.set(0.5);}
+  public void feedKicker() {kickerMotor.set(0.5);}
 
-  public void reverse() {kickerMotor.set(-0.5);} 
+  public void reverseKicker() {kickerMotor.set(-0.5);} 
 
-  public void stop() {kickerMotor.set(0);}
+  public void stopKicker() {kickerMotor.stopMotor();}
 
-  public void spin(double speed) {spindexerMotor.set(speed);}
+  public void spindexerOn() { spindexerMotor.set(0.5);}
 
-  public Command revSpeedCommand()
-  {
-    return this.runOnce(() -> reverse());
-  }
-
-  @PostTest(name = "A friendly name", enabled = true)
-  public void myFailingPostTest(){
-    assertThat(true).isFalse();
-  }
+  public void spindexerOff() { spindexerMotor.stopMotor();}
 
   @PostTest(enabled = true)
-  public void myPassingPostTest(){
-    assertThat("Hello World").endWith("World");
+  public void hopperSystem_CANDevicesConnected(){
+    assertThat(kickerMotor.isConnected()).isTrue().as("Kicker motor not connected!");
+    assertThat(spindexerMotor.isConnected()).isTrue().as("Spindexer motor not connected!");
   }
+
 }

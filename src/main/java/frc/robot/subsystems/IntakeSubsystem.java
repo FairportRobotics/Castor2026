@@ -61,4 +61,10 @@ public class IntakeSubsystem extends TestableSubsystem {
   {
     return this.runOnce(() -> setSpeed(.5));
   }
+
+  @PostTest(enabled = true)
+  public void IntakeSubsystem_CANDevicesConnected(){
+    assertThat(intakeMotor.isConnected()).isTrue().as("Intake motor not connected!");
+    assertThat(deployMotor.isAlive()).isTrue().as("Deploy controller not connected!");
+  }
 }
