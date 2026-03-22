@@ -16,12 +16,17 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants;
 
 public class DriveSubsystem extends TestableSubsystem {
+
+    private SendableChooser<Command> autoChooser;
 
     private SwerveBuilder swerveBuilder = new SwerveBuilder();
     private SwerveDriveSystem driveSystem;
@@ -164,6 +169,9 @@ public class DriveSubsystem extends TestableSubsystem {
                     },
                     this);
 
+            autoChooser = AutoBuilder.buildAutoChooser();
+            SmartDashboard.putData("Auto Chooser", autoChooser);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -180,6 +188,10 @@ public class DriveSubsystem extends TestableSubsystem {
     public void simulationPeriodic() {
         super.simulationPeriodic();
         driveSystem.simulationPeriodic();
+    }
+
+    public Command getAutoCommand(){
+        return autoChooser.getSelected();
     }
 
     @PostTest()

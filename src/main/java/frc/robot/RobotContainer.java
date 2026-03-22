@@ -43,8 +43,6 @@ public class RobotContainer {
 
   // private final CommandPS4Controller m_driverController = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
 
-  private final SendableChooser<Command> autoChooser;
-
   public final DriveSubsystem driveSubsystem = new DriveSubsystem(m_driverController);
 
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
@@ -55,9 +53,6 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Configure the trigger bindings
     configureBindings();
@@ -100,6 +95,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autoChooser.getSelected();
+    return driveSubsystem.getAutoCommand();
   }
 }

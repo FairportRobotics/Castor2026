@@ -55,8 +55,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
+    String swVersion = getVersion();
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
-    Logger.recordMetadata("Software Version", getVersion());
+    Logger.recordMetadata("Software Version", swVersion);
 
     if (isReal()) {
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
@@ -75,7 +76,9 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
 
-    Logger.recordOutput("Software Version", getVersion());
+    // Print out software version
+    Logger.recordOutput("Software Version", swVersion);
+    System.out.println("Robot Software Version: " + swVersion);
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
