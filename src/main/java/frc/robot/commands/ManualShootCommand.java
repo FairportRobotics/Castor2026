@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ManualShootCommand extends Command {
   private final TurretSubsystem m_subsystem;
   private final XboxController m_controller;
-  private double tempAng;
 
   public ManualShootCommand(TurretSubsystem subsystem, XboxController controller) {
     m_subsystem = subsystem;

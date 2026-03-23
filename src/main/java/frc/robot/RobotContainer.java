@@ -60,6 +60,7 @@ public class RobotContainer {
   private void configureBindings() {
     turretSubsystem.setDefaultCommand(new ManualShootCommand(turretSubsystem, m_driverController.getHID()));
     hopperSubsystem.setDefaultCommand(new ManualHopperCommand(hopperSubsystem, m_driverController.getHID()));
+    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
 
     m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
     m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
@@ -69,9 +70,8 @@ public class RobotContainer {
     m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
 
-    m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, intakeSubsystem, turretSubsystem));
+    m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 
-    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
   }
 
   /**

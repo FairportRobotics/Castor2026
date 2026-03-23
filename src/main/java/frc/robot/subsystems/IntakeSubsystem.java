@@ -17,8 +17,6 @@ import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 public class IntakeSubsystem extends TestableSubsystem {
   /** Creates a new ExampleSubsystem. */

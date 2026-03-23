@@ -10,11 +10,7 @@ import org.fairportrobotics.frc.posty.test.PostTest;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
-import edu.wpi.first.wpilibj2.command.Command;
-
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
-import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 import frc.robot.Constants;
 
 public class HopperSubsystem extends TestableSubsystem {

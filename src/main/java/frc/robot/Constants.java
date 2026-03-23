@@ -22,9 +22,16 @@ public final class Constants {
   }
 
   public static class CameraConstanst {
+
+    public static class IDFilters {
+      public static final int[] RED_HUB_SHOOTING_IDS = new int[]{ 8, 9, 10, 11 };
+      public static final int[] BLUE_HUB_SHOOTING_IDS = new int[]{ 27, 26, 25, 24 };
+    }
+
     public static final String BACK_CAMERA_NAME = "back";
     public static final int BACK_LOCALIZATION_PIPELINE_NUMBER = 0;
-    public static final int BACK_HUB_TRACKING_PIPELINE_NUMBER = 1;
+    public static final int BACK_HUB_TRACKING_2D_PIPELINE_NUMBER = 1;
+    public static final int BACK_HUB_TRACKING_3D_PIPELINE_NUMBER = 2;
 
     public static final String FRONT_CAMERA_NAME = "front";
     public static final int FRONT_LOCALIZATION_PIPELINE_NUMBER = 0;

@@ -6,15 +6,18 @@ import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveBuilder;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveDriveSystem;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveModule;
+import org.fairportrobotics.frc.robolib.vision.limelight.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -129,6 +132,10 @@ public class DriveSubsystem extends TestableSubsystem {
                                 .build())
                 .build();
 
+
+        // Set vision measurement confidence values
+        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 9999999));
+
         this.setDefaultCommand(Commands.run(new Runnable() {
 
             @Override
@@ -169,9 +176,9 @@ public class DriveSubsystem extends TestableSubsystem {
                     },
                     this);
 
-            // autoChooser = AutoBuilder.buildAutoChooser();
-            // autoChooser.addOption("Do Nothing", Commands.none());
-            // SmartDashboard.putData("Auto Chooser", autoChooser);
+            autoChooser = AutoBuilder.buildAutoChooser();
+            autoChooser.setDefaultOption("Do Nothing", Commands.none());
+            SmartDashboard.putData("Auto Chooser", autoChooser);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -183,6 +190,15 @@ public class DriveSubsystem extends TestableSubsystem {
     public void periodic() {
         super.periodic();
         driveSystem.periodic();
+
+        LimelightHelpers.PoseEstimate frontCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.FRONT_CAMERA_NAME);
+        if(frontCameraPose.tagCount >= 2){
+            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(frontCameraPose.pose), frontCameraPose.timestampSeconds);
+        }
+        LimelightHelpers.PoseEstimate backCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.BACK_CAMERA_NAME);
+        if(backCameraPose.tagCount >= 2){
+            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(backCameraPose.pose), backCameraPose.timestampSeconds);
+        }
     }
 
     @Override
@@ -192,8 +208,19 @@ public class DriveSubsystem extends TestableSubsystem {
     }
 
     public Command getAutoCommand(){
-        return Commands.none();
-        // return autoChooser.getSelected();
+        return autoChooser.getSelected();
+    }
+
+    public void stopDrive(){
+        driveSystem.setChassisSpeed(ChassisSpeeds.fromRobotRelativeSpeeds(0,0,0, driveSystem.getGyro().getRotation2d()), Translation2d.kZero);
+    }
+
+    public void rotateChassis(double rotSpeed){
+        driveSystem.setChassisSpeed(ChassisSpeeds.fromRobotRelativeSpeeds(0, 0, rotSpeed, driveSystem.getGyro().getRotation2d()), Translation2d.kZero);
+    }
+
+    public Pose3d getBotPose() {
+        return driveSystem.getRobotPose3d();
     }
 
     @PostTest()

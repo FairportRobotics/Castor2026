@@ -6,8 +6,6 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
 
-import javax.lang.model.util.ElementScanner14;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
