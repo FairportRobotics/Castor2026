@@ -58,17 +58,17 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    turretSubsystem.setDefaultCommand(new ManualShootCommand(turretSubsystem, m_driverController.getHID()));
-    hopperSubsystem.setDefaultCommand(new ManualHopperCommand(hopperSubsystem, m_driverController.getHID()));
-    intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
+    // turretSubsystem.setDefaultCommand(new ManualShootCommand(turretSubsystem, m_driverController.getHID()));
+    // hopperSubsystem.setDefaultCommand(new ManualHopperCommand(hopperSubsystem, m_driverController.getHID()));
+    // intakeSubsystem.setDefaultCommand(new ManualIntake(intakeSubsystem, m_driverController.getHID()));
 
     m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
     m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
-    m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
+    // m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
+    // m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
 
     m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 

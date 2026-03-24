@@ -4,9 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.fairportrobotics.frc.robolib.vision.limelight.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,15 +44,21 @@ public class AutoShootCommandChassisTurret extends Command{
 
         this.addRequirements(driveSubsystem, hopperSubsystem, turretSubsystem);
 
-        autoCenterController = new PIDController(0.1, 0, 0);
-        autoCenterController.setTolerance(1); // Units is pixels
+        autoCenterController = new PIDController(0.1, 0, 0.0);
+        autoCenterController.setTolerance(0.2); // Units is pixels
         autoCenterController.setSetpoint(0);
- 
-        tagFilters = DriverStation.getAlliance().get() == Alliance.Blue ? Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS : Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
     }
 
     @Override
     public void initialize() {
+        DriverStation.getAlliance().ifPresent((aliance) -> {
+            if (aliance == Alliance.Blue) {
+                tagFilters = Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS;
+            } else {
+                tagFilters = Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
+            }
+        });
+
         turretSubsystem.setLauncher(2500);
         hopperSubsystem.spindexerOn();
 
@@ -63,8 +72,11 @@ public class AutoShootCommandChassisTurret extends Command{
     public void execute() {
         // Need to compute shoot speed and angle
 
+        Logger.recordOutput("AutoAlign-CenteringError", autoCenterController.getError());
+
         // No april tag in camera view. Rotate towards our theoretical closest tag
-        if(!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)){
+        if(!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)){ 
+            Logger.recordOutput("AutoAlignState", "Look for tag");
             Pose3d botPose = driveSubsystem.getBotPose();
             // Find closest target to us
             List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> filedTags.getTagPose(tagId).get()).toList();
@@ -77,14 +89,17 @@ public class AutoShootCommandChassisTurret extends Command{
         }
         else // We have an april tag, center it to the camera frame
         {
+            Logger.recordOutput("AutoAlignState", "Center on tag");
             // [tx, ty, tz, pitch, yaw, roll]
             double[] targetsPose = LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
-
-            driveSubsystem.rotateChassis(autoCenterController.calculate(targetsPose[0])); // This may need to be negated
+            if(targetsPose.length >= 1){
+                driveSubsystem.rotateChassis(-autoCenterController.calculate(targetsPose[0])); // This may need to be negated
+            }
         }
 
         // If robot is centered on HUB and shooter is up to speed. Run the kicker
         if(turretSubsystem.isLauncherUpToSpeed() && autoCenterController.atSetpoint()){
+            Logger.recordOutput("AutoAlignState", "FIRE!");
             hopperSubsystem.feedKicker();
         }
     }

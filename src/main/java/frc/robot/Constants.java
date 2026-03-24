@@ -26,14 +26,15 @@ public final class Constants {
     public static class IDFilters {
       public static final int[] RED_HUB_SHOOTING_IDS = new int[]{ 8, 9, 10, 11 };
       public static final int[] BLUE_HUB_SHOOTING_IDS = new int[]{ 27, 26, 25, 24 };
+      // public static final int[] BLUE_HUB_SHOOTING_IDS = new int[]{ 18, 19, 20, 21 };
     }
 
-    public static final String BACK_CAMERA_NAME = "back";
+    public static final String BACK_CAMERA_NAME = "limelight-back";
     public static final int BACK_LOCALIZATION_PIPELINE_NUMBER = 0;
     public static final int BACK_HUB_TRACKING_2D_PIPELINE_NUMBER = 1;
     public static final int BACK_HUB_TRACKING_3D_PIPELINE_NUMBER = 2;
 
-    public static final String FRONT_CAMERA_NAME = "front";
+    public static final String FRONT_CAMERA_NAME = "limelight-front";
     public static final int FRONT_LOCALIZATION_PIPELINE_NUMBER = 0;
   
   }
@@ -101,7 +102,7 @@ public final class Constants {
     public static final double TURRET_GEAR_RATIO  = 1;
 
     public static final int HOOD_SERVO_CHANNEL = 0;
-    public static final boolean HOOD_SERVO_INVERTED = true; // TODO: Test this
+    public static final boolean HOOD_SERVO_INVERTED = false; // TODO: Test this
     public static final int HOOD_ENCODER_ID = 4;
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);

@@ -27,6 +27,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Constants;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -106,12 +107,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void setTargetElevation(Angle elev)
   {
-    if(Constants.ShooterConstants.HOOD_SERVO_INVERTED){
-      elev=Units.Degrees.of(300).minus(elev);
-    }
-    elev=elev.div(1.5);
-    elev=elev.div(Constants.ShooterConstants.DEFLECTOR_SERVO_RATIO);
-    hood.setAngle(elev.in(Units.Degrees));
+    double angle = elev.in(Units.Degrees);
+    hood.setAngle(300/angle);
   }
 
   public Command revSpeedCommand()

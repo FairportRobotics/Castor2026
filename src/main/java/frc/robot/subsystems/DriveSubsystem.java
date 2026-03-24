@@ -15,6 +15,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -134,7 +135,7 @@ public class DriveSubsystem extends TestableSubsystem {
 
 
         // Set vision measurement confidence values
-        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 9999999));
+        // driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 0.7));
 
         this.setDefaultCommand(Commands.run(new Runnable() {
 
@@ -191,13 +192,17 @@ public class DriveSubsystem extends TestableSubsystem {
         super.periodic();
         driveSystem.periodic();
 
+        Logger.recordOutput("RobotPose", driveSystem.getRobotPose3d());
+
         LimelightHelpers.PoseEstimate frontCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.FRONT_CAMERA_NAME);
-        if(frontCameraPose.tagCount >= 2){
+        if(frontCameraPose.tagCount >= 1){
             driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(frontCameraPose.pose), frontCameraPose.timestampSeconds);
+            Logger.recordOutput("FrontPoseEstimate", frontCameraPose.pose);
         }
         LimelightHelpers.PoseEstimate backCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.BACK_CAMERA_NAME);
-        if(backCameraPose.tagCount >= 2){
+        if(backCameraPose.tagCount >= 1){
             driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(backCameraPose.pose), backCameraPose.timestampSeconds);
+            Logger.recordOutput("BackPoseEstimate", backCameraPose.pose);
         }
     }
 
