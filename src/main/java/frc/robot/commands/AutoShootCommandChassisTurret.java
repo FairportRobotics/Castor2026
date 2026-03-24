@@ -32,7 +32,7 @@ public class AutoShootCommandChassisTurret extends Command{
 
     private int[] tagFilters;
 
-    private AprilTagFieldLayout filedTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
     private final double chassisRotateSpeed = Math.PI * 0.1;
 
@@ -79,13 +79,11 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState", "Look for tag");
             Pose3d botPose = driveSubsystem.getBotPose();
             // Find closest target to us
-            List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> filedTags.getTagPose(tagId).get()).toList();
-            for(int i=0;i<tagFilters.length; i++)
-            {
-                Pose3d closet = botPose.nearest(tagPoses);
-                Transform3d delta = botPose.minus(closet);
-                driveSubsystem.rotateChassis(delta.getRotation().getAngle() > 0 ? chassisRotateSpeed : -chassisRotateSpeed); // May need to flip this
-            }
+            List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
+            Pose3d closest = botPose.nearest(tagPoses);
+            Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closest);
+            Transform3d delta = botPose.minus(closest);
+            driveSubsystem.rotateChassis(delta.getRotation().getAngle() > 0 ? chassisRotateSpeed : -chassisRotateSpeed); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {
