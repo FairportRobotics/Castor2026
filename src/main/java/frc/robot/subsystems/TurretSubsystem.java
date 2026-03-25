@@ -81,7 +81,7 @@ public class TurretSubsystem extends TestableSubsystem {
     SparkMaxConfig config = new SparkMaxConfig()
       .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
-    config.closedLoop.p(1).i(0).d(0.1).outputRange(0, 5000);
+    config.closedLoop.p(1).i(0).d(0.1);
     config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     launcherMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     launcherControler = launcherMotor.getClosedLoopController();
@@ -105,10 +105,11 @@ public class TurretSubsystem extends TestableSubsystem {
       turretMotor.setControl(new PositionVoltage(position));
   }
 
-  public void setTargetElevation(Angle elev)
+  public void setTargetElevation(double elev)
   {
-    double angle = elev.in(Units.Degrees);
-    hood.setAngle(300/angle);
+    double pos = Math.abs((elev - 300)/300);
+    Logger.recordOutput("ShooterHood-Angle", pos);
+    hood.set(pos);
   }
 
   public Command revSpeedCommand()
@@ -147,6 +148,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @Override
   public void periodic() {
+
     // This method will be called once per scheduler run
     switch (currentState) {
       case HOMING:

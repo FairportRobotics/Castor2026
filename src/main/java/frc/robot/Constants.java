@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -107,10 +108,10 @@ public final class Constants {
     public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
     public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
     public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final Angle DEFLECTOR_STORED_ANGLE = edu.wpi.first.units.Units.Degrees.of(0);
-    public static final Angle DEFLECTOR_SET_ANGLE1 = edu.wpi.first.units.Units.Degrees.of(100);
-    public static final Angle DEFLECTOR_SET_ANGLE2 = edu.wpi.first.units.Units.Degrees.of(200);
-    public static final Angle DEFLECTOR_SET_ANGLE3 = edu.wpi.first.units.Units.Degrees.of(300);
+    public static final double DEFLECTOR_STORED_ANGLE = 0;
+    public static final double DEFLECTOR_SET_ANGLE1 = 100;
+    public static final double DEFLECTOR_SET_ANGLE2 = 200;
+    public static final double DEFLECTOR_SET_ANGLE3 = 300;
     public static final double DEFLECTOR_SERVO_RATIO = 1.0;
   }
   

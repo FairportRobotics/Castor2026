@@ -61,6 +61,7 @@ public class AutoShootCommandChassisTurret extends Command{
 
         turretSubsystem.setLauncher(2500);
         hopperSubsystem.spindexerOn();
+        autoCenterController.calculate(-100);
 
         // Change to HUB tracking pipeline
         LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_2D_PIPELINE_NUMBER);
@@ -83,7 +84,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Pose3d closest = botPose.nearest(tagPoses);
             Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closest);
             Transform3d delta = botPose.minus(closest);
-            driveSubsystem.rotateChassis(delta.getRotation().getAngle() > 0 ? chassisRotateSpeed : -chassisRotateSpeed); // May need to flip this
+            driveSubsystem.rotateChassis(delta.getRotation().getAngle() > 0 ? -chassisRotateSpeed : chassisRotateSpeed); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {
