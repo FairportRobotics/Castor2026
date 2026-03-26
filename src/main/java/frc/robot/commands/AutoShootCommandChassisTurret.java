@@ -83,8 +83,9 @@ public class AutoShootCommandChassisTurret extends Command{
             List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
             Pose3d closest = botPose.nearest(tagPoses);
             Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closest);
-            Transform3d delta = botPose.minus(closest);
-            driveSubsystem.rotateChassis(delta.getRotation().getAngle() > 0 ? -chassisRotateSpeed : chassisRotateSpeed); // May need to flip this
+            Transform3d delta = closest.minus(botPose);
+            Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
+            driveSubsystem.rotateChassis(delta.getRotation().toRotation2d().getDegrees() > 0 ? chassisRotateSpeed : -chassisRotateSpeed); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {

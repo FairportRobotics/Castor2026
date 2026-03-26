@@ -135,7 +135,7 @@ public class DriveSubsystem extends TestableSubsystem {
 
 
         // Set vision measurement confidence values
-        // driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 0.7));
+        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 9999999));
 
         this.setDefaultCommand(Commands.run(new Runnable() {
 
@@ -145,8 +145,6 @@ public class DriveSubsystem extends TestableSubsystem {
                         -(xboxController.getLeftY() * Math.abs(xboxController.getLeftY())),
                         -(xboxController.getLeftX() * Math.abs(xboxController.getLeftX())),
                         -(xboxController.getRawAxis(4) * Math.abs(xboxController.getRawAxis(4))));
-
-                // driveSubsystem.setChassisSpeed(new ChassisSpeeds(1, 0, 0));
 
                 Logger.recordOutput("RequestedSwerveState", driveSystem.getRequestedModuleStates());
                 Logger.recordOutput("ActualSwerveState", driveSystem.getActualModuleStates());
