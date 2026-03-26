@@ -27,7 +27,6 @@ public final class Constants {
     public static class IDFilters {
       public static final int[] RED_HUB_SHOOTING_IDS = new int[]{ 8, 9, 10, 11 };
       public static final int[] BLUE_HUB_SHOOTING_IDS = new int[]{ 27, 26, 25, 24 };
-      // public static final int[] BLUE_HUB_SHOOTING_IDS = new int[]{ 18, 19, 20, 21 };
     }
 
     public static final String BACK_CAMERA_NAME = "limelight-back";
@@ -97,7 +96,7 @@ public final class Constants {
     public static final int TURRET_MOTOR_ID = 4;
     public static final InvertedValue TURRET_MOTOR_DIRECTION = InvertedValue.CounterClockwise_Positive;
     public static final int TURRET_LIMIT_CHANNEL = 0;
-    public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(265);
+    public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(165);
     public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
     public static final double HOMING_SPEED = .35;
     public static final double TURRET_GEAR_RATIO  = 1;

@@ -27,8 +27,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Constants;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
@@ -42,7 +40,6 @@ public class TurretSubsystem extends TestableSubsystem {
   }
 
   private final boolean LOGGING = true;
-
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
   private TalonFX turretMotor;
@@ -78,8 +75,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
     // Launcher configuration
     launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
-    SparkMaxConfig config = new SparkMaxConfig()
-      .apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
+    SparkMaxConfig config = new SparkMaxConfig().apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
     config.closedLoop.p(1).i(0).d(0.1);
     config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
@@ -119,13 +115,13 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void startHoming()
   {
-    //turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
-    //currentState = TurretState.HOMING;
+    turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
+    currentState = TurretState.HOMING;
   }
 
   public void startRotate(double speed)
   {
-    /*turretGoingPos=speed>0;
+    turretGoingPos=speed>0;
 
     if(!passedLimit())
     {
@@ -134,7 +130,7 @@ public class TurretSubsystem extends TestableSubsystem {
     else
     {
       turretMotor.set(0);
-    }*/
+    }
   }
 
   public boolean passedLimit(){
@@ -148,7 +144,6 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @Override
   public void periodic() {
-
     // This method will be called once per scheduler run
     switch (currentState) {
       case HOMING:
@@ -174,19 +169,36 @@ public class TurretSubsystem extends TestableSubsystem {
     if(turretLimitSwitch.get())
     {
       currentState = TurretState.MANUAL;
-      //turretMotor.set(0);
-      //turretMotor.setPosition(0);
+      turretMotor.set(0);
+      turretMotor.setPosition(0);
+      goTo(limitPos);
+    }
+  }
+
+  private void goTo(Angle pos)
+  {
+    if(pos.gt(limitNeg) && pos.lt(limitPos))
+    {
+      while(getTurretAngle()!=pos)
+    {
+      if(getTurretAngle().gt(pos))
+      {
+        turretMotor.set(.5);
+      }
+      else
+      {
+        turretMotor.set(-.5);
+      }
+    }
     }
   }
 
   private void periodicManual()
-  {
-    //If the turret move, it will be a uh-oh, so DONT MOVE IT
-    
-    /*if(passedLimit())
+  {   
+    if(passedLimit())
     {
-      //turretMotor.set(0);
-    }*/
+      turretMotor.set(0);
+    }
   }
 
   @PostTest()
