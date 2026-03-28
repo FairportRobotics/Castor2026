@@ -11,7 +11,14 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,11 +35,14 @@ public class AutoShootCommandChassisTurret extends Command{
     private HopperSubsystem hopperSubsystem;
     private TurretSubsystem turretSubsystem;
 
-    private PIDController autoCenterController;
+    private PIDController cameraAutoCenterController;
+    private PIDController deadreckoningAutoCenterController;
 
     private int[] tagFilters;
 
     private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+    private Pose3d closestTag;
 
     private final double chassisRotateSpeed = Math.PI * 0.1;
 
@@ -44,9 +54,14 @@ public class AutoShootCommandChassisTurret extends Command{
 
         this.addRequirements(driveSubsystem, hopperSubsystem, turretSubsystem);
 
-        autoCenterController = new PIDController(0.1, 0, 0.0);
-        autoCenterController.setTolerance(0.2); // Units is pixels
-        autoCenterController.setSetpoint(0);
+        cameraAutoCenterController = new PIDController(0.1, 0, 0.0);
+        cameraAutoCenterController.setTolerance(0.2); // Units is meters
+        cameraAutoCenterController.setSetpoint(0);
+
+
+        deadreckoningAutoCenterController = new PIDController(Math.PI * 0.1, 0, 0.0);
+        deadreckoningAutoCenterController.setTolerance(0.2); // Units is rotations
+        deadreckoningAutoCenterController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
@@ -61,31 +76,36 @@ public class AutoShootCommandChassisTurret extends Command{
 
         turretSubsystem.setLauncher(2500);
         hopperSubsystem.spindexerOn();
-        autoCenterController.calculate(-100);
+        cameraAutoCenterController.calculate(-100);
 
         // Change to HUB tracking pipeline
         LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_2D_PIPELINE_NUMBER);
         LimelightHelpers.SetFiducialIDFiltersOverride(Constants.CameraConstanst.BACK_CAMERA_NAME, tagFilters);
 
+        Pose3d botPose = driveSubsystem.getBotPose();
+        // Find closest target to us
+        List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
+        closestTag = botPose.nearest(tagPoses);
+        Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closestTag);
+
+        Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
+        Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
+
+        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().getRadians());
     }
 
     @Override
     public void execute() {
         // Need to compute shoot speed and angle
 
-        Logger.recordOutput("AutoAlign-CenteringError", autoCenterController.getError());
+        Logger.recordOutput("AutoAlign-CenteringError", cameraAutoCenterController.getError());
 
         // No april tag in camera view. Rotate towards our theoretical closest tag
         if(!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)){ 
             Logger.recordOutput("AutoAlignState", "Look for tag");
+
             Pose3d botPose = driveSubsystem.getBotPose();
-            // Find closest target to us
-            List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
-            Pose3d closest = botPose.nearest(tagPoses);
-            Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closest);
-            Transform3d delta = closest.minus(botPose);
-            Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
-            driveSubsystem.rotateChassis(delta.getRotation().toRotation2d().getDegrees() > 0 ? chassisRotateSpeed : -chassisRotateSpeed); // May need to flip this
+            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {
@@ -93,12 +113,12 @@ public class AutoShootCommandChassisTurret extends Command{
             // [tx, ty, tz, pitch, yaw, roll]
             double[] targetsPose = LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
             if(targetsPose.length >= 1){
-                driveSubsystem.rotateChassis(-autoCenterController.calculate(targetsPose[0])); // This may need to be negated
+                driveSubsystem.rotateChassis(-cameraAutoCenterController.calculate(targetsPose[0])); // This may need to be negated
             }
         }
 
         // If robot is centered on HUB and shooter is up to speed. Run the kicker
-        if(turretSubsystem.isLauncherUpToSpeed() && autoCenterController.atSetpoint()){
+        if(turretSubsystem.isLauncherUpToSpeed() && cameraAutoCenterController.atSetpoint()){
             Logger.recordOutput("AutoAlignState", "FIRE!");
             hopperSubsystem.feedKicker();
         }
