@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -43,6 +44,7 @@ public class TurretSubsystem extends TestableSubsystem {
   private TurretState currentState;
   private DigitalInput turretLimitSwitch;
   private TalonFX turretMotor;
+  private TalonFXSimState turretSim;
   private SparkMax launcherMotor;
   private SparkClosedLoopController launcherControler;
 
@@ -72,6 +74,8 @@ public class TurretSubsystem extends TestableSubsystem {
           new CurrentLimitsConfigs()
         )
     );
+
+    turretSim = turretMotor.getSimState();
 
     // Launcher configuration
     launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
@@ -119,7 +123,7 @@ public class TurretSubsystem extends TestableSubsystem {
     currentState = TurretState.HOMING;
   }
 
-  public void startRotate(double speed)
+  public void turretRotateDir(double speed)
   {
     turretGoingPos=speed>0;
 
@@ -139,23 +143,24 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public Angle getTurretAngle()
   {
-    return turretMotor.getPosition().refresh().getValue().times(Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    return turretMotor.getPosition().refresh().getValue().div(Constants.ShooterConstants.TURRET_GEAR_RATIO);
   }
+
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    switch (currentState) {
-      case HOMING:
-        periodicHoming();
-        break;
-      case MANUAL:
-        periodicManual();
-        break;
+    // switch (currentState) {
+    //   case HOMING:
+    //     periodicHoming();
+    //     break;
+    //   case MANUAL:
+    //     periodicManual();
+    //     break;
 
-      default:
-        break;
-    }
+    //   default:
+    //     break;
+    // }
 
     if(LOGGING)
     {
@@ -171,26 +176,14 @@ public class TurretSubsystem extends TestableSubsystem {
       currentState = TurretState.MANUAL;
       turretMotor.set(0);
       turretMotor.setPosition(0);
-      goTo(limitPos);
+      setTurretRotation(limitPos);
     }
   }
 
-  private void goTo(Angle pos)
+  public void setTurretRotation(Angle pos)
   {
-    if(pos.gt(limitNeg) && pos.lt(limitPos))
-    {
-      while(getTurretAngle()!=pos)
-    {
-      if(getTurretAngle().gt(pos))
-      {
-        turretMotor.set(.5);
-      }
-      else
-      {
-        turretMotor.set(-.5);
-      }
-    }
-    }
+    turretMotor.setControl(new PositionVoltage(pos.times(Constants.ShooterConstants.TURRET_GEAR_RATIO)));
+    turretSim.setRawRotorPosition(pos.times(Constants.ShooterConstants.TURRET_GEAR_RATIO));
   }
 
   private void periodicManual()
@@ -203,7 +196,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @PostTest()
   public void TurretSubsystem_CANDevicesConnected(){
-    assertThat(launcherMotor.getDeviceId()).as("Launcher motor not connected!").isGreaterThan(0);
+    assertThat(launcherMotor.getFaults().can).as("Launcher motor not connected!").isTrue();
     assertThat(turretMotor.isConnected()).as("Turret motor not connected!").isTrue();
   }
 

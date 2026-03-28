@@ -26,17 +26,17 @@ public class ManualShootCommand extends Command {
   public void execute() {
     if(m_controller.getRightTriggerAxis()>.5 && m_controller.getLeftTriggerAxis()==0)
     {
-      m_subsystem.startRotate(-.5);
+      m_subsystem.turretRotateDir(-.5);
       m_controller.setRumble(RumbleType.kRightRumble, 1);
     }
     else if(m_controller.getLeftTriggerAxis()>.5 && m_controller.getRightTriggerAxis()==0)
     {
-      m_subsystem.startRotate(.5);
+      m_subsystem.turretRotateDir(.5);
       m_controller.setRumble(RumbleType.kLeftRumble, 1);
     }
     else
     {
-      m_subsystem.startRotate(0);
+      m_subsystem.turretRotateDir(0);
       m_controller.setRumble(RumbleType.kBothRumble, 0);
     }
   }
