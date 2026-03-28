@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -81,7 +82,16 @@ public class AutoShootCommandChassisTurret extends Command{
         LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_2D_PIPELINE_NUMBER);
         LimelightHelpers.SetFiducialIDFiltersOverride(Constants.CameraConstanst.BACK_CAMERA_NAME, tagFilters);
 
-        deadreckoningAutoCenterController.setSetpoint(0);
+        Pose3d botPose = driveSubsystem.getBotPose();
+        // Find closest target to us
+        List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
+        closestTag = botPose.nearest(tagPoses);
+        Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closestTag);
+
+        Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
+        Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
+
+        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().getRadians());
     }
 
     @Override
@@ -95,17 +105,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState", "Look for tag");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            // Find closest target to us
-            List<Pose3d> tagPoses = Arrays.stream(tagFilters).mapToObj(tagId -> fieldTags.getTagPose(tagId).get()).toList();
-            closestTag = botPose.nearest(tagPoses);
-            Logger.recordOutput("AutoAlign-ClosestAprilTagPose", closestTag);
-
-            Pose3d relative = botPose.relativeTo(closestTag);
-            relative = relative.plus(new Transform3d(new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(180))));
-
-            Logger.recordOutput("AutoAlign-Relative", botPose.relativeTo(closestTag));
-
-            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(relative.getRotation().toRotation2d().getRadians())); // May need to flip this
+            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {
