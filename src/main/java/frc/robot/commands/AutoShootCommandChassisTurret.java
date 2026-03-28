@@ -40,7 +40,7 @@ public class AutoShootCommandChassisTurret extends Command{
 
     private int[] tagFilters;
 
-    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     private Pose3d closestTag;
 
@@ -91,7 +91,8 @@ public class AutoShootCommandChassisTurret extends Command{
         Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
 
-        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().getRadians());
+        // Add 180 because we want the back of the robot to face the HUB
+        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
     }
 
     @Override

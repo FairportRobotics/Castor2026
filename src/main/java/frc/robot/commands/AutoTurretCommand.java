@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +29,7 @@ public class AutoTurretCommand extends Command {
 
     private int[] shootingTagFilters;
 
-    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     private Pose3d closestTag;
     private Pose3d scoringHubPose;
@@ -43,13 +44,14 @@ public class AutoTurretCommand extends Command {
     @Override
     public void initialize() {
         // Perform auto-home
+        turretSubsystem.homeTurret();
 
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS;
 
                 scoringHubPose = fieldTags.getTagPose(26).get();
-                scoringHubPose = scoringHubPose.transformBy(new Transform3d(new Transform2d(0.5207, 0, Rotation2d.kZero)));
+                scoringHubPose = scoringHubPose.transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
             } else {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
 
@@ -71,7 +73,10 @@ public class AutoTurretCommand extends Command {
 
         Translation2d targetTranslation = scoringHubPose.getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());
         
-        turretSubsystem.setTurretRotation(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).getMeasure());
+        if(turretSubsystem.isTurretReady()){
+            turretSubsystem.setTurretRotation(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).getMeasure());
+            // turretSubsystem.setTurretRotation(Angle.ofRelativeUnits(45, Units.Degrees));
+        }
 
     }
 

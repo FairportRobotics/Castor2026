@@ -45,6 +45,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
+    // turretSubsystem.homeTurret();
 
     // Configure the trigger bindings
     configureBindings();
