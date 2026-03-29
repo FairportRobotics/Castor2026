@@ -72,10 +72,12 @@ public class AutoTurretCommand extends Command {
         Logger.recordOutput("AutoTurret-TurretPose", turretPose);
 
         Translation2d targetTranslation = scoringHubPose.getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());
-        
+        Logger.recordOutput("AutoTurret-Translation", targetTranslation);
+
+
         if(turretSubsystem.isTurretReady()){
-            turretSubsystem.setTurretRotation(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).getMeasure());
-            // turretSubsystem.setTurretRotation(Angle.ofRelativeUnits(45, Units.Degrees));
+            turretSubsystem.setTurretRotation(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).plus(Rotation2d.k180deg).getMeasure());
+            // turretSubsystem.setTurretRotation(Angle.ofRelativeUnits(-180, Units.Degrees));
         }
 
     }
