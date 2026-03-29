@@ -70,6 +70,11 @@ public class RobotContainer {
     // m_driverController.x().onTrue(intakeSubsystem.killSpeedCommand());
     // m_driverController.a().onTrue(intakeSubsystem.startSpeedCommand());
 
+
+
+    m_driverController.b().whileTrue(turretSubsystem.setShooter(1500));
+    m_driverController.x().whileTrue(turretSubsystem.setShooter(2000));
+    m_driverController.y().whileTrue(turretSubsystem.setShooter(3000));
     m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 
   }
