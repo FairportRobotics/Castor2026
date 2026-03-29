@@ -91,7 +91,7 @@ public class AutoShootCommandChassisTurret extends Command{
         Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
 
-        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().getRadians());
+        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState", "Look for tag");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
+            //driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {

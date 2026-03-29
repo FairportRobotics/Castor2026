@@ -135,7 +135,7 @@ public class DriveSubsystem extends TestableSubsystem {
 
 
         // Set vision measurement confidence values
-        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 9999999));
+        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 0.7));
 
         this.setDefaultCommand(Commands.run(new Runnable() {
 

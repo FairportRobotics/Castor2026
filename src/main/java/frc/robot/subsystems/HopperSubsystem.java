@@ -26,13 +26,13 @@ public class HopperSubsystem extends TestableSubsystem {
     kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(Constants.HopperConstants.KICKER_MOTOR_DIRECTION));
   } 
 
-  public void feedKicker() {kickerMotor.set(0.5);}
+  public void feedKicker() {kickerMotor.set(0.75);}
 
   public void reverseKicker() {kickerMotor.set(-0.5);} 
 
   public void stopKicker() {kickerMotor.stopMotor();}
 
-  public void spindexerOn() { spindexerMotor.set(0.5);}
+  public void spindexerOn() { spindexerMotor.set(0.75);}
 
   public void spindexerOff() { spindexerMotor.stopMotor();}
 
