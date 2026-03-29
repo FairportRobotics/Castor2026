@@ -74,7 +74,7 @@ public class AutoShootCommandChassisTurret extends Command{
             }
         });
 
-        turretSubsystem.setLauncher(2500);
+        turretSubsystem.setLauncher(5500);
         hopperSubsystem.spindexerOn();
         cameraAutoCenterController.calculate(-100);
 

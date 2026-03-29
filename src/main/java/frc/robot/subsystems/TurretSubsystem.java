@@ -20,6 +20,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -31,6 +32,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class TurretSubsystem extends TestableSubsystem {
   public enum TurretState {
@@ -77,8 +79,14 @@ public class TurretSubsystem extends TestableSubsystem {
     launcherMotor = new SparkMax(Constants.ShooterConstants.LAUNCHER_MOTOR_ID, MotorType.kBrushless);
     SparkMaxConfig config = new SparkMaxConfig().apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
-    config.closedLoop.p(1).i(0).d(0.1);
-    config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
+    config.voltageCompensation(10);
+    config.closedLoop.p(0.0001).i(0).d(0.0); // I = 0.0000001
+    config.closedLoop.feedForward.kS(0.2).kV(0.002).kA(0.00);
+    // config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
+    config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    config.closedLoop.positionWrappingEnabled(false);
+    // config.closedLoopRampRate(0.5);
+    // config.smartCurrentLimit(5, 50);
     launcherMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     launcherControler = launcherMotor.getClosedLoopController();
 
@@ -90,10 +98,13 @@ public class TurretSubsystem extends TestableSubsystem {
     turretGoingPos = false;
   }
 
-  public void setLauncher(double speed) {launcherControler.setSetpoint(speed, ControlType.kVelocity);}
+  public void setLauncher(double speed) {
+    launcherControler.setSetpoint(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    // launcherMotor.set(speed/1000);
+  }
 
   public boolean isLauncherUpToSpeed() {
-    return launcherControler.isAtSetpoint();
+    return true;
   }
 
   public void turretControl(double position)
@@ -111,6 +122,14 @@ public class TurretSubsystem extends TestableSubsystem {
   public Command revSpeedCommand()
   {
     return this.runOnce(() -> setLauncher(-.5));
+  }
+
+  public Command setShooter(int speedRPM){
+    return Commands.runEnd(() -> {
+      setLauncher(speedRPM);
+    }, () -> {
+      launcherMotor.stopMotor();
+    }, this);
   }
 
   public void startHoming()
@@ -159,7 +178,8 @@ public class TurretSubsystem extends TestableSubsystem {
 
     if(LOGGING)
     {
-      Logger.recordOutput("Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
+      Logger.recordOutput("TurretSubsystem-Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
+      Logger.recordOutput("TurretSubsystem-Launcher Volatge", launcherMotor.getOutputCurrent());
     }
 
   }
