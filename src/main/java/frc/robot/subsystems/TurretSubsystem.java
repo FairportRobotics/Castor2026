@@ -99,12 +99,18 @@ public class TurretSubsystem extends TestableSubsystem {
   }
 
   public void setLauncher(double speed) {
+    if(speed == 0)
+    {
+        launcherMotor.stopMotor();
+        return;
+    }
     launcherControler.setSetpoint(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-    // launcherMotor.set(speed/1000);
   }
 
   public boolean isLauncherUpToSpeed() {
-    return true;
+    // Valid if velcity is within 10% of setpoint.
+    // May need to lower this
+    return Math.abs(launcherControler.getSetpoint() - launcherMotor.getEncoder().getVelocity()) >= launcherControler.getSetpoint() * 0.1;
   }
 
   public void turretControl(double position)

@@ -102,14 +102,14 @@ public class AutoShootCommandChassisTurret extends Command{
 
         // No april tag in camera view. Rotate towards our theoretical closest tag
         if(!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)){ 
-            Logger.recordOutput("AutoAlignState", "Look for tag");
+            Logger.recordOutput("AutoAlignState-Tracking", "Deadreckoning");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            //driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
+            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
         }
         else // We have an april tag, center it to the camera frame
         {
-            Logger.recordOutput("AutoAlignState", "Center on tag");
+            Logger.recordOutput("AutoAlignState-Tracking", "Camera");
             // [tx, ty, tz, pitch, yaw, roll]
             double[] targetsPose = LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
             if(targetsPose.length >= 1){
@@ -119,8 +119,10 @@ public class AutoShootCommandChassisTurret extends Command{
 
         // If robot is centered on HUB and shooter is up to speed. Run the kicker
         if(turretSubsystem.isLauncherUpToSpeed() && cameraAutoCenterController.atSetpoint()){
-            Logger.recordOutput("AutoAlignState", "FIRE!");
+            Logger.recordOutput("AutoAlignState-Shoot", "FIRE!");
             hopperSubsystem.feedKicker();
+        }else{
+            Logger.recordOutput("AutoAlignState-Shoot", "Waiting");
         }
     }
 
