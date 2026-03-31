@@ -68,7 +68,7 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
-    m_driverController.rightBumper().whileTrue(intakeSubsystem.intake());
+    m_driverController.rightBumper().onTrue(intakeSubsystem.intake());
     m_driverController.y().onTrue(intakeSubsystem.deploy());
     m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
   }
