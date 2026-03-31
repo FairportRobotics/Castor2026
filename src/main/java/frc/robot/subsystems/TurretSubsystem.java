@@ -206,7 +206,7 @@ public class TurretSubsystem extends TestableSubsystem {
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(reverseLimit)
         );
-        setTurretRotation(Angle.ofRelativeUnits(180, Units.Degrees));
+        //setTurretRotation(Angle.ofRelativeUnits(180, Units.Degrees));
       }
     }
 
