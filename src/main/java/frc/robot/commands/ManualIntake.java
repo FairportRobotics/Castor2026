@@ -36,7 +36,7 @@ public class ManualIntake extends Command {
   public void execute() {
     if(m_XboxController.getYButton()==true)
     {
-      m_subsystem.extend();
+      m_subsystem.deploy();
     }
   }
 
