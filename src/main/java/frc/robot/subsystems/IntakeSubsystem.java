@@ -42,14 +42,14 @@ public class IntakeSubsystem extends TestableSubsystem {
       Commands.deadline(
         Commands.waitSeconds(2),
         this.runEnd(
-          () -> {deployMotor.set(-0.5);},
+          () -> {deployMotor.set(0.5);}, // Bump this speed up if intake doesn't deploy
           () -> {deployMotor.stopMotor();} 
         )
       ),
       Commands.deadline(
         Commands.waitSeconds(2),
         this.runEnd(
-          () -> { deployMotor.set(0.5); },
+          () -> { deployMotor.set(-0.5); }, // Same here
           () -> { deployMotor.stopMotor(); }
         )
       )
