@@ -159,7 +159,7 @@ public class TurretSubsystem extends TestableSubsystem {
     }, this);
   }
 
-  public void startHoming()
+  public void homeTurret()
   {
     turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
     turretState = TurretState.HOMING;
