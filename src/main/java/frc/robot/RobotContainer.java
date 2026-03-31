@@ -64,7 +64,7 @@ public class RobotContainer {
 
     m_driverController.rightBumper().whileTrue(intakeSubsystem.intake());
     m_driverController.y().onTrue(intakeSubsystem.deploy());
-    m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+    m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
   }
 
   /**
