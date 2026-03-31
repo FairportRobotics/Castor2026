@@ -40,7 +40,7 @@ public class AutoShootCommandChassisTurret extends Command{
 
     private int[] tagFilters;
 
-    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     private Pose3d closestTag;
 
@@ -91,6 +91,7 @@ public class AutoShootCommandChassisTurret extends Command{
         Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
 
+        // Add 180 because we want the back of the robot to face the HUB
         deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
     }
 
@@ -105,7 +106,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState-Tracking", "Deadreckoning");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians())); // May need to flip this
+            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
         }
         else // We have an april tag, center it to the camera frame
         {

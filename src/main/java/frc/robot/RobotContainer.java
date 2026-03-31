@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
+import frc.robot.commands.AutoTurretCommand;
 import frc.robot.commands.ManualHopperCommand;
 import frc.robot.commands.ManualIntake;
 import frc.robot.commands.ManualShootCommand;
@@ -42,6 +43,10 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
+    // turretSubsystem.homeTurret();
+
     // Configure the trigger bindings
     configureBindings();
   }

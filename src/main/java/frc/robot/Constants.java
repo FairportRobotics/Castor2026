@@ -99,7 +99,7 @@ public final class Constants {
     public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(165);
     public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
     public static final double HOMING_SPEED = .35;
-    public static final double TURRET_GEAR_RATIO  = 1;
+    public static final double TURRET_GEAR_RATIO  = 6;
 
     public static final int HOOD_SERVO_CHANNEL = 0;
     public static final boolean HOOD_SERVO_INVERTED = false; // TODO: Test this
