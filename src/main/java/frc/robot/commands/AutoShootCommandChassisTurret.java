@@ -59,7 +59,7 @@ public class AutoShootCommandChassisTurret extends Command{
         cameraAutoCenterController.setSetpoint(0);
 
 
-        deadreckoningAutoCenterController = new PIDController(Math.PI * 0.1, 0, 0.0);
+        deadreckoningAutoCenterController = new PIDController(Math.PI, 0, 0.0);
         deadreckoningAutoCenterController.setTolerance(0.2); // Units is rotations
         deadreckoningAutoCenterController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -92,12 +92,7 @@ public class AutoShootCommandChassisTurret extends Command{
         Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
 
-        DriverStation.getAlliance().ifPresent((aliance) -> {
-            if (aliance == Alliance.Blue) {
-                // Add 180 because we want the back of the robot to face the HUB
-                deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
-            }
-        });
+        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.kZero).getRadians());
     }
 
     @Override
@@ -111,7 +106,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState-Tracking", "Deadreckoning");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            driveSubsystem.rotateChassis(deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
+            driveSubsystem.rotateChassis(-deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
         }
         else // We have an april tag, center it to the camera frame
         {
