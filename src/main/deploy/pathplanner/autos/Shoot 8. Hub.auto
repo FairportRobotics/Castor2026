@@ -9,6 +9,25 @@
           "data": {
             "pathName": "S. Hub. shoot 8. E-Hub"
           }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 10.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ChassisAlignShoot"
+                }
+              }
+            ]
+          }
         }
       ]
     }

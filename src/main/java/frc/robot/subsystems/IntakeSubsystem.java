@@ -41,19 +41,16 @@ public class IntakeSubsystem extends TestableSubsystem {
     return Commands.sequence(
       Commands.deadline(
         Commands.waitSeconds(2),
-        this.runEnd(
-          () -> {deployMotor.set(0.5);}, // Bump this speed up if intake doesn't deploy
-          () -> {deployMotor.stopMotor();} 
+        this.runOnce(
+          () -> {deployMotor.set(1);} // Bump this speed up if intake doesn't deploy
         )
       ),
-      Commands.deadline(
-        Commands.waitSeconds(2),
-        this.runEnd(
-          () -> { deployMotor.set(-0.5); }, // Same here
-          () -> { deployMotor.stopMotor(); }
-        )
-      )
+      this.runOnce(() -> deployMotor.stopMotor())
     );
+  }
+
+  public Command resetDeploy(){
+    return this.runEnd(() -> deployMotor.set(-1), () -> deployMotor.stopMotor());
   }
 
   public void setSpeed(double speed)
@@ -63,7 +60,7 @@ public class IntakeSubsystem extends TestableSubsystem {
 
   public Command intake()
   {
-    return this.runOnce(() -> {if(intakeMotor.get()!=0){setSpeed(-.5);}else{intakeMotor.stopMotor();}});
+    return this.runOnce(() -> {if(intakeMotor.get()==0){setSpeed(-.5);}else{intakeMotor.stopMotor();}});
   }
 
   public Command reverseIntake()

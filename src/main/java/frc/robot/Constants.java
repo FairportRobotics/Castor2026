@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 
@@ -76,6 +82,19 @@ public final class Constants {
     public static final int BACK_RIGHT_DRIVE_ID = 42;
     public static final int BACK_RIGHT_ENCODER_ID = 43;
   }
+
+  public static class RobotChassisLimits{
+    // Max velocity in meters per second
+    public static final double MAX_ROBOT_LINEAR_VELOCITY = 3;
+    // In meters per second squared
+    public static final double MAX_ROBOT_LINEAR_VELOCITY_ACCEL = 2;
+
+    // In radians per second
+    public static final double MAX_ROBOT_ANGULAR_VELOCITY = Math.PI;
+    // In radians per second squared
+    public static final double MAX_ROBOT_ANGULAR_VELOCITY_ACCEL = Math.PI;
+  }
+
   //Bird
   public static class ExtraIDEntities {
     public static final int PIGEON_ID = 1;
@@ -120,5 +139,13 @@ public final class Constants {
 
     public static final int SPINDEXER_MOTOR_ID = 8;
     public static final InvertedValue SPINDEXER_MOTOR_DIRECTION = InvertedValue.CounterClockwise_Positive;
+  }
+
+  public static class FieldPoses {
+    private static AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
+    public static Pose3d BLUE_HUB_POSE = fieldTags.getTagPose(26).get().transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
+    public static Pose3d RED_HUB_POSE = fieldTags.getTagPose(10).get().transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
+
   }
 }

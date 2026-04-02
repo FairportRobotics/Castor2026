@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -11,10 +13,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
+import frc.robot.commands.AutoShootCommandChassisTurretPathPlanner;
 import frc.robot.commands.AutoTurretCommand;
 import frc.robot.commands.ManualHopperCommand;
 import frc.robot.commands.ManualIntake;
 import frc.robot.commands.ManualShootCommand;
+import frc.robot.commands.RelayCommand;
 import frc.robot.commands.SetDeflectorCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -45,11 +49,14 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
+    // turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
     // turretSubsystem.homeTurret();
 
     // Configure the trigger bindings
     configureBindings();
+
+    NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+
   }
 
   /**
@@ -68,8 +75,14 @@ public class RobotContainer {
     m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
+    m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
+    // m_driverController.a().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
+    m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+
+    m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
     m_driverController.rightBumper().onTrue(intakeSubsystem.intake());
-    m_driverController.y().onTrue(intakeSubsystem.deploy());
+    m_driverController.y().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
+    m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
     m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
   }
 
@@ -80,6 +93,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Commands.parallel(Commands.run(()-> {/*turretSubsystem.homeTurret();*/}, turretSubsystem),  driveSubsystem.getAutoCommand());
+    return Commands.parallel(intakeSubsystem.deploy(), Commands.run(()-> {turretSubsystem.homeTurret();}, turretSubsystem),  driveSubsystem.getAutoCommand());
   }
 }

@@ -75,6 +75,7 @@ public class AutoShootCommandChassisTurret extends Command{
         });
 
         turretSubsystem.setLauncher(5500);
+        turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
         hopperSubsystem.spindexerOn();
         cameraAutoCenterController.calculate(-100);
 
@@ -91,8 +92,12 @@ public class AutoShootCommandChassisTurret extends Command{
         Translation2d delta = botPose.getTranslation().toTranslation2d().minus(closestTag.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoAlign-ClosestAprilTagTransform", delta);
 
-        // Add 180 because we want the back of the robot to face the HUB
-        deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
+        DriverStation.getAlliance().ifPresent((aliance) -> {
+            if (aliance == Alliance.Blue) {
+                // Add 180 because we want the back of the robot to face the HUB
+                deadreckoningAutoCenterController.setSetpoint(delta.getAngle().plus(Rotation2d.k180deg).getRadians());
+            }
+        });
     }
 
     @Override

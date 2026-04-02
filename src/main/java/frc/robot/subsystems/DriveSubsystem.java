@@ -10,6 +10,8 @@ import org.fairportrobotics.frc.robolib.vision.limelight.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -50,8 +52,8 @@ public class DriveSubsystem extends TestableSubsystem {
         driveSystem = swerveBuilder
                 .withCanbusName("Drive")
                 .withPigeonId(Constants.ExtraIDEntities.PIGEON_ID)
-                .withMaxLinearVelocity(3.0)
-                .withMaxAngularVelocity(Math.PI)
+                .withMaxLinearVelocity(Constants.RobotChassisLimits.MAX_ROBOT_LINEAR_VELOCITY)
+                .withMaxAngularVelocity(Constants.RobotChassisLimits.MAX_ROBOT_ANGULAR_VELOCITY)
                 .withSwerveModule(
                         swerveBuilder.new SwerveModuleBuilder()
                                 .withDriveMotorId(Constants.SwerveDriveIDs.FRONT_LEFT_DRIVE_ID)
@@ -135,7 +137,7 @@ public class DriveSubsystem extends TestableSubsystem {
 
 
         // Set vision measurement confidence values
-        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 0.7));
+        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 999999));
 
         this.setDefaultCommand(Commands.run(new Runnable() {
 
@@ -163,8 +165,8 @@ public class DriveSubsystem extends TestableSubsystem {
                     driveSystem::getRobotRelativeSpeeds,
                     (speeds, feedforwards) -> driveSystem.setChassisSpeed(speeds, new Translation2d()),
                     new PPHolonomicDriveController(
-                            new PIDConstants(5.0, 0, 0),
-                            new PIDConstants(5.0, 0, 0)),
+                            new PIDConstants(1.5, 0, 0),
+                            new PIDConstants(Math.PI/2, 0, 0)),
                     config,
                     () -> {
                         var alliance = DriverStation.getAlliance();

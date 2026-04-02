@@ -29,8 +29,6 @@ public class AutoTurretCommand extends Command {
 
     private int[] shootingTagFilters;
 
-    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-
     private Pose3d closestTag;
     private Pose3d scoringHubPose;
 
@@ -49,14 +47,10 @@ public class AutoTurretCommand extends Command {
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS;
-
-                scoringHubPose = fieldTags.getTagPose(26).get();
-                scoringHubPose = scoringHubPose.transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
+                scoringHubPose = Constants.FieldPoses.BLUE_HUB_POSE;
             } else {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
-
-                scoringHubPose = fieldTags.getTagPose(10).get();
-                scoringHubPose = scoringHubPose.transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
+                scoringHubPose = Constants.FieldPoses.RED_HUB_POSE;
             }
             Logger.recordOutput("AutoTurret-ScoringTarget", scoringHubPose);
         });
@@ -76,7 +70,7 @@ public class AutoTurretCommand extends Command {
 
 
         if(turretSubsystem.isTurretReady()){
-            turretSubsystem.setTurretRotation(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).plus(Rotation2d.k180deg).getMeasure());
+            turretSubsystem.setTurretFieldRelative(botPose.getRotation().toRotation2d().minus(targetTranslation.getAngle()).plus(Rotation2d.k180deg).getMeasure());
             // turretSubsystem.setTurretRotation(Angle.ofRelativeUnits(-180, Units.Degrees));
         }
 
