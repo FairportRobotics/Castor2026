@@ -75,7 +75,7 @@ public class TurretSubsystem extends TestableSubsystem {
         .withSlot0(
           new Slot0Configs()
             .withKP(3)
-            .withKI(1)
+            .withKI(1.5)
             .withKD(0)
             .withKS(0.3)
         )
@@ -172,7 +172,7 @@ public class TurretSubsystem extends TestableSubsystem {
     turretMotor.set(speed);
   }
 
-  public Angle getTurretAngle()
+  public Angle getTurretAngleRobotRelative()
   {
     return getTurretMotorPosition().div(Constants.ShooterConstants.TURRET_GEAR_RATIO);
   }
@@ -200,12 +200,12 @@ public class TurretSubsystem extends TestableSubsystem {
         turretMotor.getConfigurator().apply(
           new SoftwareLimitSwitchConfigs()
             // .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(forwardLimit)
+            // .withForwardSoftLimitThreshold(forwardLimit)
             // .withReverseSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(reverseLimit)
+            // .withReverseSoftLimitThreshold(reverseLimit)
         );
         // setTurretRobotRelative(Angle.ofRelativeUnits(0, Units.Degrees));
-        setTurretMotorRotation(Angle.ofRelativeUnits(0, Units.Degrees));
+        setTurretMotorRotation(Angle.ofBaseUnits(1, Units.Degrees)); // Return to 0 after MIAMI VALLEY
       }
     }
 
@@ -214,10 +214,11 @@ public class TurretSubsystem extends TestableSubsystem {
       Logger.recordOutput("TurretSubsystem-TurretLimitSwitch", turretLimitSwitch.get());
       Logger.recordOutput("TurretSubsystem-Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
       Logger.recordOutput("TurretSubsystem-TurretState", turretState);
-      Logger.recordOutput("TurretSubsystem-TurretPosition", getTurretAngle().in(Units.Degrees));
+      Logger.recordOutput("TurretSubsystem-TurretPosition", getTurretAngleRobotRelative().in(Units.Degrees));
       Logger.recordOutput("TurretSubsystem-TurretMotorPositionWithOffset", getTurretMotorPosition().in(Units.Degrees));
       Logger.recordOutput("TurretSubsystem-TurretMotorPositionRaw", turretMotorPosition.refresh().getValue().in(Units.Degrees));
-      Logger.recordOutput("TurretSubsystem-TurretRequestedPos", turretControlMode.getPositionMeasure().in(Units.Degrees));
+      Logger.recordOutput("TurretSubsystem-TurretRequestedPosRaw", turretControlMode.getPositionMeasure().in(Units.Degrees));
+      Logger.recordOutput("TurretSubsystem-TurretRequestedPos", getRequestedPosTurretRelative().in(Units.Degrees));
       Logger.recordOutput("TurretSubsystem-TurretOffset", turretOffset.in(Units.Degrees));
       Logger.recordOutput("TurretSubsystem-TurretForwardLimitHit", turretMotorForwardLimit.refresh().getValue());
       Logger.recordOutput("TurretSubsystem-TurretReverseLimitHit", turretMotorReverseLimit.refresh().getValue());
@@ -245,9 +246,13 @@ public class TurretSubsystem extends TestableSubsystem {
     setTurretMotorRotation(pos.times(Constants.ShooterConstants.TURRET_GEAR_RATIO));
   }
 
-  private void setTurretMotorRotation(Angle pos){
+  public void setTurretMotorRotation(Angle pos){
     turretMotor.setControl(turretControlMode.withPosition(pos.plus(turretOffset).times(-1)));
     turretSim.setRawRotorPosition(pos.plus(turretOffset));
+  }
+
+  private Angle getRequestedPosTurretRelative() {
+    return turretControlMode.getPositionMeasure().minus(turretOffset).div(Constants.ShooterConstants.TURRET_GEAR_RATIO);
   }
 
   @PostTest()

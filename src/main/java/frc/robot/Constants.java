@@ -129,7 +129,7 @@ public final class Constants {
     public static final double DEFLECTOR_STORED_ANGLE = 0;
     public static final double DEFLECTOR_SET_ANGLE1 = 100;
     public static final double DEFLECTOR_SET_ANGLE2 = 200;
-    public static final double DEFLECTOR_SET_ANGLE3 = 300;
+    public static final double DEFLECTOR_SET_ANGLE3 = 200; // Return to 300 once hood is fixed
     public static final double DEFLECTOR_SERVO_RATIO = 1.0;
   }
   

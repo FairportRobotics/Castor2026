@@ -115,7 +115,7 @@ public class AutoShootCommandChassisTurretPathPlanner extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        pathFollowCommand.cancel();
+        CommandScheduler.getInstance().cancel(pathFollowCommand);
         turretSubsystem.setLauncher(0);
 
         hopperSubsystem.stopKicker();

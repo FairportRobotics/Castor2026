@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +32,7 @@ public class RelayCommand extends Command{
         turretSubsystem.setLauncher(5500);
         hopperSubsystem.spindexerOn();
         CommandScheduler.getInstance().schedule(waitCommand);
+        turretSubsystem.setTurretMotorRotation(Angle.ofBaseUnits(-6, Units.Degrees)); // Return to 0 after MIAMI VALLEY
     }
 
     @Override
@@ -54,6 +57,7 @@ public class RelayCommand extends Command{
 
         turretSubsystem.setLauncher(0);
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
+        turretSubsystem.setTurretMotorRotation(Angle.ofBaseUnits(1, Units.Degrees)); // Return to 0 after MIAMI VALLEY
     }
 
 }

@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
 
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -21,6 +22,8 @@ public class HopperSubsystem extends TestableSubsystem {
   public HopperSubsystem() {
     spindexerMotor = new TalonFX(Constants.HopperConstants.SPINDEXER_MOTOR_ID);
     spindexerMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(Constants.HopperConstants.SPINDEXER_MOTOR_DIRECTION));
+    // spindexerMotor.getConfigurator().apply(new ClosedLoopGeneralConfigs()
+    //   .);
 
     kickerMotor = new TalonFX(Constants.HopperConstants.KICKER_MOTOR_ID);
     kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(Constants.HopperConstants.KICKER_MOTOR_DIRECTION));

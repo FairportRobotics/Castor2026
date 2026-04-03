@@ -76,8 +76,8 @@ public class RobotContainer {
     m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
     m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-    // m_driverController.a().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-    m_driverController.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+    //m_driverController.a().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
+    // m_driverController:wa.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 
     m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
     m_driverController.rightBumper().onTrue(intakeSubsystem.intake());

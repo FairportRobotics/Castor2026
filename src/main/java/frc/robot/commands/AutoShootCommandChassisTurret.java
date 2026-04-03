@@ -54,12 +54,12 @@ public class AutoShootCommandChassisTurret extends Command{
 
         this.addRequirements(driveSubsystem, hopperSubsystem, turretSubsystem);
 
-        cameraAutoCenterController = new PIDController(0.1, 0, 0.0);
-        cameraAutoCenterController.setTolerance(0.2); // Units is meters
+        cameraAutoCenterController = new PIDController(0.15, 0.0, 0.0);
+        cameraAutoCenterController.setTolerance(0.2); // Units degrees
         cameraAutoCenterController.setSetpoint(0);
 
 
-        deadreckoningAutoCenterController = new PIDController(Math.PI, 0, 0.0);
+        deadreckoningAutoCenterController = new PIDController(Math.PI * 0.1, 0, 0.0);
         deadreckoningAutoCenterController.setTolerance(0.2); // Units is rotations
         deadreckoningAutoCenterController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -80,7 +80,7 @@ public class AutoShootCommandChassisTurret extends Command{
         cameraAutoCenterController.calculate(-100);
 
         // Change to HUB tracking pipeline
-        LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_2D_PIPELINE_NUMBER);
+        LimelightHelpers.setPipelineIndex(Constants.CameraConstanst.BACK_CAMERA_NAME, Constants.CameraConstanst.BACK_HUB_TRACKING_3D_PIPELINE_NUMBER);
         LimelightHelpers.SetFiducialIDFiltersOverride(Constants.CameraConstanst.BACK_CAMERA_NAME, tagFilters);
 
         Pose3d botPose = driveSubsystem.getBotPose();
@@ -106,7 +106,7 @@ public class AutoShootCommandChassisTurret extends Command{
             Logger.recordOutput("AutoAlignState-Tracking", "Deadreckoning");
 
             Pose3d botPose = driveSubsystem.getBotPose();
-            driveSubsystem.rotateChassis(-deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
+            //driveSubsystem.rotateChassis(-deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
         }
         else // We have an april tag, center it to the camera frame
         {
@@ -114,6 +114,11 @@ public class AutoShootCommandChassisTurret extends Command{
             // [tx, ty, tz, pitch, yaw, roll]
             double[] targetsPose = LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
             if(targetsPose.length >= 1){
+                Logger.recordOutput("AutoAlign-Target Distance", targetsPose[2]);
+
+                // Calculate turret Angle
+                double targetDistance = targetsPose[2];
+
                 driveSubsystem.rotateChassis(-cameraAutoCenterController.calculate(targetsPose[0])); // This may need to be negated
             }
         }
