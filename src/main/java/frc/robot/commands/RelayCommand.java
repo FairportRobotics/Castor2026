@@ -29,10 +29,10 @@ public class RelayCommand extends Command{
     @Override
     public void initialize() {
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3);
-        turretSubsystem.setLauncher(5500);
+        turretSubsystem.setLauncher(6000);
         hopperSubsystem.spindexerOn();
         CommandScheduler.getInstance().schedule(waitCommand);
-        turretSubsystem.setTurretMotorRotation(Angle.ofBaseUnits(-6, Units.Degrees)); // Return to 0 after MIAMI VALLEY
+        turretSubsystem.setTurretMotorRotation(1); // Return to 0 after MIAMI VALLEY
     }
 
     @Override
@@ -57,7 +57,7 @@ public class RelayCommand extends Command{
 
         turretSubsystem.setLauncher(0);
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
-        turretSubsystem.setTurretMotorRotation(Angle.ofBaseUnits(1, Units.Degrees)); // Return to 0 after MIAMI VALLEY
+        turretSubsystem.setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
     }
 
 }
