@@ -117,7 +117,18 @@ public class AutoShootCommandChassisTurret extends Command{
                 Logger.recordOutput("AutoAlign-Target Distance", targetsPose[2]);
 
                 // Calculate turret Angle
-                double targetDistance = targetsPose[2];
+                double cameraDistanceToTarget = targetsPose[2];
+                double cameraToShootDistance = 0.26035;
+                // a^2 + b^2 = c^2
+                double shooterDistanceToTarget = Math.sqrt(Math.pow(cameraDistanceToTarget, 2) + Math.pow(cameraToShootDistance, 2));
+                double angleAtShooter = Math.acos(cameraToShootDistance / shooterDistanceToTarget);
+                Logger.recordOutput("AutoAlign-TurretAngleOfTriagle", angleAtShooter);
+                double robotTurretAngle = (Math.PI/2) - angleAtShooter;
+                Logger.recordOutput("AutoAlign-TurretAngleRelativeToRobot", robotTurretAngle);
+                double robotTurretRotations = (robotTurretAngle / Math.PI) * Constants.ShooterConstants.TURRET_GEAR_RATIO;
+                Logger.recordOutput("AutoAlign-TurretRotations", robotTurretRotations);
+
+                turretSubsystem.setTurretMotorRotation(-robotTurretRotations);
 
                 driveSubsystem.rotateChassis(-cameraAutoCenterController.calculate(targetsPose[0])); // This may need to be negated
             }
