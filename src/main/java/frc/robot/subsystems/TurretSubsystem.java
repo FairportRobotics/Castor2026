@@ -74,10 +74,10 @@ public class TurretSubsystem extends TestableSubsystem {
       new TalonFXConfiguration()
         .withSlot0(
           new Slot0Configs()
-            .withKP(3)
-            .withKI(1.5)
-            .withKD(0)
-            .withKS(0.3)
+            .withKP(6)
+            .withKI(0)
+            .withKD(0.3)
+            .withKS(0)
         )
         .withMotorOutput(
           new MotorOutputConfigs()
@@ -131,7 +131,7 @@ public class TurretSubsystem extends TestableSubsystem {
   public boolean isLauncherUpToSpeed() {
     // Valid if velcity is within 10% of setpoint.
     // May need to lower this
-    return Math.abs(launcherControler.getSetpoint() - launcherMotor.getEncoder().getVelocity()) >= launcherControler.getSetpoint() * 0.075;
+    return Math.abs(launcherControler.getSetpoint() - launcherMotor.getEncoder().getVelocity()) >= launcherControler.getSetpoint() * 0.03;
   }
 
   public void setTargetElevation(double elev)

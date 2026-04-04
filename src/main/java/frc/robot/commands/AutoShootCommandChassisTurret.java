@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Utils;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -117,18 +118,8 @@ public class AutoShootCommandChassisTurret extends Command{
                 Logger.recordOutput("AutoAlign-Target Distance", targetsPose[2]);
 
                 // Calculate turret Angle
-                double cameraDistanceToTarget = targetsPose[2];
-                double cameraToShootDistance = 0.26035;
-                // a^2 + b^2 = c^2
-                double shooterDistanceToTarget = Math.sqrt(Math.pow(cameraDistanceToTarget, 2) + Math.pow(cameraToShootDistance, 2));
-                double angleAtShooter = Math.acos(cameraToShootDistance / shooterDistanceToTarget);
-                Logger.recordOutput("AutoAlign-TurretAngleOfTriagle", angleAtShooter);
-                double robotTurretAngle = (Math.PI/2) - angleAtShooter;
-                Logger.recordOutput("AutoAlign-TurretAngleRelativeToRobot", robotTurretAngle);
-                double robotTurretRotations = (robotTurretAngle / Math.PI) * Constants.ShooterConstants.TURRET_GEAR_RATIO;
-                Logger.recordOutput("AutoAlign-TurretRotations", robotTurretRotations);
-
-                turretSubsystem.setTurretMotorRotation(-robotTurretRotations);
+                double turretAngle = Utils.calculateTurretAngleFromCameraTagDistance(targetsPose[2]) * Constants.ShooterConstants.TURRET_GEAR_RATIO;
+                turretSubsystem.setTurretMotorRotation(-turretAngle);
 
                 driveSubsystem.rotateChassis(-cameraAutoCenterController.calculate(targetsPose[0])); // This may need to be negated
             }
