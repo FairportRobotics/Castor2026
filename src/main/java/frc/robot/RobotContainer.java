@@ -66,7 +66,7 @@ public class RobotContainer {
      * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
      * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
-   *
+     *
      */
     private void configureBindings() {
         m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
@@ -92,7 +92,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return Commands.parallel(intakeSubsystem.deploy(), Commands.run(() -> {
+        return Commands.parallel(Commands.parallel(intakeSubsystem.deploy(), intakeSubsystem.intake()), Commands.run(() -> {
             turretSubsystem.homeTurret();
         }, turretSubsystem), driveSubsystem.getAutoCommand());
     }
