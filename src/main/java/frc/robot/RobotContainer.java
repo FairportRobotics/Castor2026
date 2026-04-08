@@ -92,7 +92,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return Commands.parallel(Commands.parallel(intakeSubsystem.deploy(), intakeSubsystem.intake()), Commands.run(() -> {
+        return Commands.parallel(intakeSubsystem.deploy(), Commands.run(() -> {
             turretSubsystem.homeTurret();
         }, turretSubsystem), driveSubsystem.getAutoCommand());
     }
