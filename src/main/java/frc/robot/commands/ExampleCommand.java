@@ -4,25 +4,21 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.IntakeSubsystem;
-
-import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ManualIntake extends Command {
+public class ExampleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeSubsystem m_subsystem;
-  private final XboxController m_XboxController;
+  private final ExampleSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ManualIntake(IntakeSubsystem subsystem, XboxController xboxController) {
+  public ExampleCommand(ExampleSubsystem subsystem) {
     m_subsystem = subsystem;
-    m_XboxController = xboxController;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -33,12 +29,7 @@ public class ManualIntake extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(m_XboxController.getYButton()==true)
-    {
-      m_subsystem.extend();
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

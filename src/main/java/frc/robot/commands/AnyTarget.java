@@ -9,16 +9,9 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,11 +21,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
-public class AutoShootCommandChassisTurret extends Command{
-    
+public class AnyTarget extends Command {
+
     // For Chassis Control
     private DriveSubsystem driveSubsystem;
-    
+
     private HopperSubsystem hopperSubsystem;
     private TurretSubsystem turretSubsystem;
 
@@ -47,8 +40,7 @@ public class AutoShootCommandChassisTurret extends Command{
 
     private final double chassisRotateSpeed = Math.PI * 0.1;
 
-    public AutoShootCommandChassisTurret(DriveSubsystem driveSubsystem, HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem)
-    {
+    public AnyTarget(DriveSubsystem driveSubsystem, HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
@@ -58,7 +50,6 @@ public class AutoShootCommandChassisTurret extends Command{
         cameraAutoCenterController = new PIDController(0.15, 0.0, 0.0);
         cameraAutoCenterController.setTolerance(0.2); // Units degrees
         cameraAutoCenterController.setSetpoint(0);
-
 
         deadreckoningAutoCenterController = new PIDController(Math.PI * 0.1, 0, 0.0);
         deadreckoningAutoCenterController.setTolerance(0.2); // Units is rotations
@@ -103,18 +94,17 @@ public class AutoShootCommandChassisTurret extends Command{
         Logger.recordOutput("AutoAlign-CenteringError", cameraAutoCenterController.getError());
 
         // No april tag in camera view. Rotate towards our theoretical closest tag
-        if(!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)){ 
+        if (!LimelightHelpers.getTV(Constants.CameraConstanst.BACK_CAMERA_NAME)) {
             Logger.recordOutput("AutoAlignState-Tracking", "Deadreckoning");
 
             Pose3d botPose = driveSubsystem.getBotPose();
             //driveSubsystem.rotateChassis(-deadreckoningAutoCenterController.calculate(botPose.getRotation().toRotation2d().getRadians()));
-        }
-        else // We have an april tag, center it to the camera frame
+        } else // We have an april tag, center it to the camera frame
         {
             Logger.recordOutput("AutoAlignState-Tracking", "Camera");
             // [tx, ty, tz, pitch, yaw, roll]
             double[] targetsPose = LimelightHelpers.getTargetPose_CameraSpace(Constants.CameraConstanst.BACK_CAMERA_NAME);
-            if(targetsPose.length >= 1){
+            if (targetsPose.length >= 1) {
                 Logger.recordOutput("AutoAlign-Target Distance", targetsPose[2]);
 
                 // Calculate turret Angle
@@ -126,10 +116,10 @@ public class AutoShootCommandChassisTurret extends Command{
         }
 
         // If robot is centered on HUB and shooter is up to speed. Run the kicker
-        if(turretSubsystem.isLauncherUpToSpeed() && cameraAutoCenterController.atSetpoint()){
+        if (turretSubsystem.isLauncherUpToSpeed() && cameraAutoCenterController.atSetpoint()) {
             Logger.recordOutput("AutoAlignState-Shoot", "FIRE!");
             hopperSubsystem.feedKicker();
-        }else{
+        } else {
             Logger.recordOutput("AutoAlignState-Shoot", "Waiting");
         }
     }

@@ -17,6 +17,7 @@ import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import static org.fairportrobotics.frc.robolib.motors.Utils.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class IntakeSubsystem extends TestableSubsystem {
   /** Creates a new ExampleSubsystem. */
@@ -35,9 +36,21 @@ public class IntakeSubsystem extends TestableSubsystem {
     deployMotor.setInverted(Constants.IntakeConstants.DEPLOY_MOTOR_INVERTED);
   }
 
-  public void extend()
+  public Command deploy()
   {
-    deployMotor.set(1);
+    return Commands.sequence(
+      Commands.deadline(
+        Commands.waitSeconds(2),
+        this.runOnce(
+          () -> {deployMotor.set(1);} // Bump this speed up if intake doesn't deploy
+        )
+      ),
+      this.runOnce(() -> deployMotor.stopMotor())
+    );
+  }
+
+  public Command resetDeploy(){
+    return this.runEnd(() -> deployMotor.set(-1), () -> deployMotor.stopMotor());
   }
 
   public void setSpeed(double speed)
@@ -45,19 +58,14 @@ public class IntakeSubsystem extends TestableSubsystem {
     intakeMotor.set(speed);
   }
 
-  public Command startSpeedCommand()
+  public Command intake()
   {
-    return this.runOnce(() -> setSpeed(-.5));
+    return this.runOnce(() -> {if(intakeMotor.get()==0){setSpeed(-.5);}else{intakeMotor.stopMotor();}});
   }
 
-  public Command killSpeedCommand()
+  public Command reverseIntake()
   {
-    return this.runOnce(() -> setSpeed(0));
-  }
-
-  public Command revSpeedCommand()
-  {
-    return this.runOnce(() -> setSpeed(.5));
+    return this.runEnd(() -> setSpeed(.5), () -> { intakeMotor.stopMotor();});
   }
 
   @PostTest(enabled = true)
