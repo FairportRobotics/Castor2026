@@ -21,7 +21,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
-public class ZoneSwap extends Command {
+public class AnyTarget extends Command {
 
     // For Chassis Control
     private DriveSubsystem driveSubsystem;
@@ -40,7 +40,7 @@ public class ZoneSwap extends Command {
 
     private final double chassisRotateSpeed = Math.PI * 0.1;
 
-    public ZoneSwap(DriveSubsystem driveSubsystem, HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem) {
+    public AnyTarget(DriveSubsystem driveSubsystem, HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
