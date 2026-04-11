@@ -41,10 +41,13 @@ public class ZoneCheck extends Command {
                 switch (zone) {
                     case Blue:
                         System.out.println("BLUE");
+                            break;
                     case Neutral:
                         System.out.println("NEUTRAL");
+                            break;
                     case Red:
                         System.out.println("RED");
+                            break;
                     default:
                         System.out.println("****");
                 }
@@ -52,10 +55,13 @@ public class ZoneCheck extends Command {
                 switch (zone) {
                     case Blue:
                         System.out.println("BLUE");
+                            break;
                     case Neutral:
                         System.out.println("NEUTRAL");
+                            break;
                     case Red:
                         System.out.println("RED");
+                            break;
                     default:
                         System.out.println("****");
                 }

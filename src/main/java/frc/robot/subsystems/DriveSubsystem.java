@@ -165,8 +165,8 @@ public class DriveSubsystem extends TestableSubsystem {
                     driveSystem::getRobotRelativeSpeeds,
                     (speeds, feedforwards) -> driveSystem.setChassisSpeed(speeds, new Translation2d()),
                     new PPHolonomicDriveController(
-                            new PIDConstants(1.5, 0, 0),
-                            new PIDConstants(Math.PI / 2, 0, 0)),
+                            new PIDConstants(3, 0, 0),
+                            new PIDConstants(Math.PI, 0, 0)),
                     config,
                     () -> {
                         var alliance = DriverStation.getAlliance();
