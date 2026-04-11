@@ -171,7 +171,7 @@ public class DriveSubsystem extends TestableSubsystem {
                     () -> {
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
+                            return false;//alliance.get() == DriverStation.Alliance.Red;
                         }
                         return false;
                     },
