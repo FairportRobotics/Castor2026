@@ -45,9 +45,16 @@ public final class Constants {
 
         public static final String FRONT_CAMERA_NAME = "limelight-front";
         public static final int FRONT_LOCALIZATION_PIPELINE_NUMBER = 0;
-        public static final double[] BLUE_ZONE_COOR = new double[]{.04};
-        public static final double[] RED_ZONE_COOR = new double[]{12};
-        public static final double[] NEUTRAL_ZONE_COOR = new double[]{4.5};
+        public static final double[] BLUE_ZONE_COOR = new double[]{0, 3.5};
+        public static final double[] RED_ZONE_COOR = new double[]{13, 16};
+        public static final double[] NEUTRAL_ZONE_COOR = new double[]{5.5, 11};
+        public static final double[] NEUTRAL1_ZONE_COOR = new double[]{5.5, 11, 0, 3};
+        public static final double[] NEUTRAL2_ZONE_COOR = new double[]{5.5, 11, 5, 8};
+        public static final double[] BLUE1_ZONE_COOR = new double[]{0, 3.5, 0, 3};
+        public static final double[] BLUE2_ZONE_COOR = new double[]{0, 3.5, 5, 8};
+        public static final double[] RED1_ZONE_COOR = new double[]{13, 16, 0, 3};
+        public static final double[] RED2_ZONE_COOR = new double[]{13, 16, 5, 8};
+
     }
 
     public static class AdvantageKitConstants {
