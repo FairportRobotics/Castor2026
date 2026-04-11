@@ -40,24 +40,24 @@ public class ZoneCheck extends Command {
             if (aliance == Alliance.Blue) {
                 switch (zone) {
                     case Blue:
-                        System.out.println("Im Home");
+                        System.out.println("BLUE");
                     case Neutral:
-                        System.out.println("Uhhhhhhhh not red");
+                        System.out.println("NEUTRAL");
                     case Red:
-                        System.out.println("BOOOOO, BOOOO RED");
+                        System.out.println("RED");
                     default:
-                        System.out.println("Where am I :(");
+                        System.out.println("****");
                 }
             } else {
                 switch (zone) {
                     case Blue:
-                        System.out.println("Screw Blue");
+                        System.out.println("BLUE");
                     case Neutral:
-                        System.out.println("Uhhhhhhhh not red");
+                        System.out.println("NEUTRAL");
                     case Red:
-                        System.out.println("BOOOOO, BOOOO RED");
+                        System.out.println("RED");
                     default:
-                        System.out.println("Where am I :(");
+                        System.out.println("****");
                 }
             }
         });
