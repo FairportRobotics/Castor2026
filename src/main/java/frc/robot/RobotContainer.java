@@ -84,7 +84,7 @@ public class RobotContainer {
         m_driverController.y().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
-        m_driverController.b().toggleOnTrue(new ZoneCheck());
+        m_driverController.b().toggleOnTrue(new ZoneCheck(driveSubsystem));
     }
 
     /**

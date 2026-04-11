@@ -9,20 +9,27 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class ZoneCheck extends Command {
-
-    private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private Zone zone;
+    private DriveSubsystem driveSubsystem;
+
+    public ZoneCheck(DriveSubsystem driveSubsystem)
+    {
+        this.driveSubsystem = driveSubsystem;
+    }
 
     public enum Zone {
         Blue,
         Red,
-        Neutral;
+        Neutral,
+        INIT;
     }
 
     @Override
     public void initialize() {
+        zone = Zone.INIT;
     }
 
     @Override
@@ -36,8 +43,10 @@ public class ZoneCheck extends Command {
                         System.out.println("Im Home");
                     case Neutral:
                         System.out.println("Uhhhhhhhh not red");
-                    default:
+                    case Red:
                         System.out.println("BOOOOO, BOOOO RED");
+                    default:
+                        System.out.println("Where am I :(");
                 }
             } else {
                 switch (zone) {
@@ -45,8 +54,10 @@ public class ZoneCheck extends Command {
                         System.out.println("Screw Blue");
                     case Neutral:
                         System.out.println("Uhhhhhhhh not red");
+                    case Red:
+                        System.out.println("BOOOOO, BOOOO RED");
                     default:
-                        System.out.println("Im Home");
+                        System.out.println("Where am I :(");
                 }
             }
         });
@@ -57,14 +68,10 @@ public class ZoneCheck extends Command {
         return false;
     }
 
-    private double[] getBotPose() {
-        return LimelightHelpers.getBotPose_wpiBlue(Constants.CameraConstanst.BACK_CAMERA_NAME);
-    }
-
     private void getZone() {
-        if (getBotPose()[0] >= Constants.CameraConstanst.RED_ZONE_COOR[0]) {
+        if (driveSubsystem.getBotPose().getX() >= Constants.CameraConstanst.RED_ZONE_COOR[0]) {
             zone = Zone.Red;
-        } else if (getBotPose()[0] >= Constants.CameraConstanst.NEUTRAL_ZONE_COOR[0]) {
+        } else if (driveSubsystem.getBotPose().getX() >= Constants.CameraConstanst.NEUTRAL_ZONE_COOR[0]) {
             zone = Zone.Neutral;
         } else {
             zone = Zone.Blue;
