@@ -45,9 +45,9 @@ public final class Constants {
 
         public static final String FRONT_CAMERA_NAME = "limelight-front";
         public static final int FRONT_LOCALIZATION_PIPELINE_NUMBER = 0;
-        public static final double[] BLUE_ZONE_COOR = new double[]{1};
-        public static final double[] RED_ZONE_COOR = new double[]{1};
-        public static final double[] NEUTRAL_ZONE_COOR = new double[]{1};
+        public static final double[] BLUE_ZONE_COOR = new double[]{.04};
+        public static final double[] RED_ZONE_COOR = new double[]{12};
+        public static final double[] NEUTRAL_ZONE_COOR = new double[]{4.5};
     }
 
     public static class AdvantageKitConstants {
@@ -143,7 +143,7 @@ public final class Constants {
         public static final double DEFLECTOR_STORED_ANGLE = 0;
         public static final double DEFLECTOR_SET_ANGLE1 = 100;
         public static final double DEFLECTOR_SET_ANGLE2 = 200;
-        public static final double DEFLECTOR_SET_ANGLE3 = 200; // Return to 300 once hood is fixed
+        public static final double DEFLECTOR_SET_ANGLE3 = 300; // Return to 300 once hood is fixed
         public static final double DEFLECTOR_SERVO_RATIO = 1.0;
     }
 

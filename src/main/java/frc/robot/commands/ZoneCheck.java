@@ -20,12 +20,13 @@ public class ZoneCheck extends Command {
         Neutral;
     }
 
-    public ZoneCheck() {
-        getBotPose();
+    @Override
+    public void initialize() {
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
+        getZone();
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
                 switch (zone) {
@@ -33,29 +34,20 @@ public class ZoneCheck extends Command {
                         System.out.println("Im Home");
                     case Neutral:
                         System.out.println("Uhhhhhhhh not red");
-                        ;
                     default:
                         System.out.println("BOOOOO, BOOOO RED");
-                        ;
                 }
             } else {
                 switch (zone) {
                     case Blue:
                         System.out.println("Screw Blue");
-                        ;
                     case Neutral:
                         System.out.println("Uhhhhhhhh not red");
-                        ;
                     default:
                         System.out.println("Im Home");
                 }
             }
         });
-    }
-
-    @Override
-    public void execute() {
-
     }
 
     @Override
