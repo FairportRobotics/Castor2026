@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import org.fairportrobotics.frc.robolib.vision.limelight.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -27,6 +28,7 @@ public class ZoneCheck extends Command {
     @Override
     public void execute() {
         getZone();
+        Logger.recordOutput("FieldZone", zone);
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
                 switch (zone) {
