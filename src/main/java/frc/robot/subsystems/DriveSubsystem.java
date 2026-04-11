@@ -15,6 +15,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -179,6 +180,9 @@ public class DriveSubsystem extends TestableSubsystem {
             autoChooser = AutoBuilder.buildAutoChooser();
             autoChooser.setDefaultOption("Do Nothing", Commands.none());
             SmartDashboard.putData("Auto Chooser", autoChooser);
+
+            // PathPlannerLogging.setLogActivePathCallback((List<Pose2d> pose) -> {});
+            PathPlannerLogging.setLogTargetPoseCallback((Pose2d targetPose) -> { Logger.recordOutput("PathPlanner-TargetPose", targetPose);});
 
         } catch (Exception e) {
             e.printStackTrace();
