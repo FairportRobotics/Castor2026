@@ -36,7 +36,7 @@ public class DriveSubsystem extends TestableSubsystem {
     private SendableChooser<Command> autoChooser;
 
     private SwerveBuilder swerveBuilder = new SwerveBuilder();
-    private SwerveDriveSystem driveSystem;
+    public SwerveDriveSystem driveSystem;
 
     private double driveP = 0.1;
     private double driveI = 0.0;

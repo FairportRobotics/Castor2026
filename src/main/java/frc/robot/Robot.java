@@ -14,6 +14,8 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
+
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -90,6 +92,9 @@ public class Robot extends LoggedRobot {
 
     // Run all POST tests after robot has been initialized
     PostyManager.getInstance().runAllPOSTs();
+
+
+    m_robotContainer.driveSubsystem.driveSystem.setBrakeMode(false);
   }
 
   /**
@@ -117,7 +122,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    
+    m_robotContainer.driveSubsystem.driveSystem.setBrakeMode(true);
   }
 
   @Override
