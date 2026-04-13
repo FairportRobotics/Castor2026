@@ -53,6 +53,7 @@ public class RobotContainer {
         configureBindings();
 
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+        NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake());
 
         turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
     }
