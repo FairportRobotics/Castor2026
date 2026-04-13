@@ -9,6 +9,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
@@ -170,5 +171,50 @@ public final class Constants {
         public static Pose3d BLUE_HUB_POSE = fieldTags.getTagPose(26).get().transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
         public static Pose3d RED_HUB_POSE = fieldTags.getTagPose(10).get().transformBy(new Transform3d(new Transform2d(-0.5207, 0, Rotation2d.kZero)));
 
+        // These are the field targets for passing fuel to the Alliance Zone or to the Neutral Zone from the opponent's side.
+        // Left/Right are from driver's perspective. Coordinates assume origin at blue side of field.
+        // Rotation are zero because they don't matter.
+        public static Pose3d BLUE_LEFT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(1.99, 6.35, 0, new Rotation3d());
+        public static Pose3d BLUE_RIGHT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(1.99, 6.35, 0, new Rotation3d());
+        public static Pose3d BLUE_LEFT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 6.35, 0, new Rotation3d());
+        public static Pose3d BLUE_RIGHT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 1.72, 0, new Rotation3d());
+
+        public static Pose3d RED_LEFT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(14.55, 1.72, 0, new Rotation3d());
+        public static Pose3d RED_RIGHT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(14.55, 6.35, 0, new Rotation3d());
+        public static Pose3d RED_LEFT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 1.72, 0, new Rotation3d());
+        public static Pose3d RED_RIGHT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 6.35, 0, new Rotation3d());
+
+
+    }
+
+    // These represent the dividing lines for the regions in our shooting strategy.
+    public static class ShootingRegionDimensions {
+
+        public static double BLUE_ALLIANCE_ZONE_REGION_X_MAX = 3.5;
+        public static double RED_ALLIANCE_ZONE_REGION_X_MIN = 13.0;
+        public static double NEUTRAL_ZONE_REGION_X_MIN = 5.5;
+        public static double NEUTRAL_ZONE_REGION_X_MAX = 11.0;
+        public static double BLUE_RIGHT_REGION_Y_MAX = 3.0;
+        public static double RED_LEFT_REGION_Y_MAX = 3.0;               // same meaning as the previous one, but from red perspective
+        public static double BLUE_LEFT_REGION_Y_MIN = 5.0;
+        public static double RED_RIGHT_REGION_Y_MIN = 5.0;              // same meaning as the previous one, but from red perspective
+
+    }
+
+    // Regions that define the AutoTurret shooting behaviors.
+    // Color ID in the name reflects robot's alliance since region definitions vary by alliance.
+    // Left/Right are from driver's perspective.
+    public enum ShootingRegion {
+        NON_SHOOTING_REGION,                // Any part of the field that's not in one of the regions
+        BLUE_OWN_ALLIANCE_ZONE,
+        BLUE_LEFT_NEUTRAL_ZONE,
+        BLUE_RIGHT_NEUTRAL_ZONE,
+        BLUE_LEFT_OPPONENT_ALLIANCE_ZONE,
+        BLUE_RIGHT_OPPONENT_ALLIANCE_ZONE,
+        RED_OWN_ALLIANCE_ZONE,
+        RED_LEFT_NEUTRAL_ZONE,
+        RED_RIGHT_NEUTRAL_ZONE,
+        RED_LEFT_OPPONENT_ALLIANCE_ZONE,
+        RED_RIGHT_OPPONENT_ALLIANCE_ZONE        
     }
 }
