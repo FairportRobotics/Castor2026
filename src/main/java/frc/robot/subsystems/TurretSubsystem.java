@@ -34,6 +34,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -58,6 +61,9 @@ public class TurretSubsystem extends TestableSubsystem {
   private StatusSignal<Angle> turretMotorPosition;
   private StatusSignal<ForwardLimitValue> turretMotorForwardLimit;
   private StatusSignal<ReverseLimitValue> turretMotorReverseLimit;
+  private double forwardLimit = 0;
+  private double reverseLimit = 0;
+
   private SparkMax launcherMotor;
   private SparkClosedLoopController launcherControler;
 
@@ -192,20 +198,23 @@ public class TurretSubsystem extends TestableSubsystem {
       { // Turret has tripped the switch
         turretMotor.stopMotor();
         turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
+        if(!Robot.isReal()){
+          turretOffsetInRotations = 1.5; // Flip turret around
+        }
         turretState = TurretState.READY;
-        // Angle forwardLimit = Angle.ofRelativeUnits(-90, Units.Degrees).times(Constants.ShooterConstants.TURRET_GEAR_RATIO).plus(turretOffset);
-        // Angle reverseLimit = Angle.ofRelativeUnits(90, Units.Degrees).times(Constants.ShooterConstants.TURRET_GEAR_RATIO).minus(turretOffset);
-        // Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
-        // Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
+        forwardLimit = (1.5 + turretOffsetInRotations);
+        reverseLimit = (-1.5 + turretOffsetInRotations);
+        Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
+        Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
         turretMotor.getConfigurator().apply(
           new SoftwareLimitSwitchConfigs()
-            // .withForwardSoftLimitEnable(true)
-            // .withForwardSoftLimitThreshold(forwardLimit)
-            // .withReverseSoftLimitEnable(true)
-            // .withReverseSoftLimitThreshold(reverseLimit)
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(forwardLimit)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(reverseLimit)
         );
-        // setTurretRobotRelative(Angle.ofRelativeUnits(0, Units.Degrees));
-        setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
+        setTurretRobotRelative(0);
+        // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
       }
     }
 
@@ -214,10 +223,10 @@ public class TurretSubsystem extends TestableSubsystem {
       Logger.recordOutput("TurretSubsystem-TurretLimitSwitch", turretLimitSwitch.get());
       Logger.recordOutput("TurretSubsystem-Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
       Logger.recordOutput("TurretSubsystem-TurretState", turretState);
-      Logger.recordOutput("TurretSubsystem-TurretPosition", getTurretAngleRobotRelative());
+      Logger.recordOutput("TurretSubsystem-TurretPositionRobotRelative", getTurretAngleRobotRelative());
       Logger.recordOutput("TurretSubsystem-TurretMotorPositionWithOffset", getTurretMotorPosition());
-      Logger.recordOutput("TurretSubsystem-TurretMotorPositionRaw", turretMotorPosition.refresh().getValue().in(Units.Degrees));
-      Logger.recordOutput("TurretSubsystem-TurretRequestedPosRaw", turretControlMode.getPositionMeasure().in(Units.Degrees));
+      Logger.recordOutput("TurretSubsystem-TurretMotorPositionRaw", turretMotorPosition.refresh().getValue().in(Units.Rotations));
+      Logger.recordOutput("TurretSubsystem-TurretRequestedPosRaw", turretControlMode.getPositionMeasure().in(Units.Rotations));
       Logger.recordOutput("TurretSubsystem-TurretRequestedPos", getRequestedPosTurretRelative());
       Logger.recordOutput("TurretSubsystem-TurretOffset", turretOffsetInRotations);
       Logger.recordOutput("TurretSubsystem-TurretForwardLimitHit", turretMotorForwardLimit.refresh().getValue());
@@ -226,13 +235,21 @@ public class TurretSubsystem extends TestableSubsystem {
 
   }
 
-  public void setTurretFieldRelative(double pos)
+  public void setTurretFieldRelative(Pose3d robotPose, double pos)
   {
     if(turretState != TurretState.READY)
     {
       // Not ready to set angle
       return;
     }
+
+    double correctedPos = -pos; // Flip angle to match CCW positive. Add 0.5 to flip around
+
+    double robotRotations = robotPose.getRotation().toRotation2d().getRotations();
+
+    Angle turretAngle = Angle.ofRelativeUnits(robotRotations, Units.Rotations).plus(Angle.ofRelativeUnits(correctedPos, Units.Rotations));
+
+    setTurretMotorRotation((turretAngle.in(Units.Rotation) * Constants.ShooterConstants.TURRET_GEAR_RATIO));
   }
 
   public void setTurretRobotRelative(double pos)
@@ -243,12 +260,32 @@ public class TurretSubsystem extends TestableSubsystem {
       return;
     }
 
-    setTurretMotorRotation(pos * Constants.ShooterConstants.TURRET_GEAR_RATIO);
+    double correctedPos = -pos; // Flip angle to match CCW positive
+
+    setTurretMotorRotation(correctedPos * Constants.ShooterConstants.TURRET_GEAR_RATIO);
   }
 
   public void setTurretMotorRotation(double pos){
-    turretMotor.setControl(turretControlMode.withPosition((pos + turretOffsetInRotations)));
-    turretSim.setRawRotorPosition(pos + turretOffsetInRotations);
+    double posWithOffset = pos + turretOffsetInRotations;
+
+    Logger.recordOutput("Blah", posWithOffset);
+
+    if(Robot.isSimulation()){
+      if(posWithOffset >= forwardLimit){
+        turretSim.setForwardLimit(true);
+      } else {
+        turretSim.setForwardLimit(false);
+      }
+
+      if(posWithOffset <= reverseLimit){
+        turretSim.setReverseLimit(true);
+      } else {
+        turretSim.setReverseLimit(false);
+      }
+    }
+
+    turretMotor.setControl(turretControlMode.withPosition(posWithOffset));
+    turretSim.setRawRotorPosition(posWithOffset);
   }
 
   private double getRequestedPosTurretRelative() {

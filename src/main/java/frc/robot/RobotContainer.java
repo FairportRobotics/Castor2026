@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
 import frc.robot.commands.AutoShootCommandChassisTurretPathPlanner;
+import frc.robot.commands.AutoTurretCommand;
 import frc.robot.commands.RelayCommand;
 import frc.robot.commands.SetDeflectorCommand;
 import frc.robot.commands.ZoneCheck;
@@ -56,6 +57,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 
+        turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
     }
 
     /**
