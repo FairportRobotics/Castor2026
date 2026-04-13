@@ -19,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import frc.robot.Constants;
@@ -64,16 +65,16 @@ public class HopperSubsystem extends TestableSubsystem {
   } 
 
   public void feedKicker() {
-    kickerMotor.setControl(kickerControl.withVelocity(1000));
-    // kickerMotor.set(0.75);
+    //kickerMotor.setControl(kickerControl.withVelocity(1000));
+    kickerMotor.set(0.75);
   }
 
   public void reverseKicker() {
-    kickerMotor.setControl(kickerControl.withVelocity(-500));
-    // kickerMotor.set(-0.5);
+    //kickerMotor.setControl(kickerControl.withVelocity(-500));
+    kickerMotor.set(-0.5);
   } 
 
-  public void stopKicker() {kickerMotor.stopMotor();}
+ public void stopKicker() {kickerMotor.stopMotor();}
 
   public void spindexerOn() { spindexerMotor.set(0.75);}
 

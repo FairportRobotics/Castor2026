@@ -104,8 +104,8 @@ public class TurretSubsystem extends TestableSubsystem {
     SparkMaxConfig config = new SparkMaxConfig().apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
     config.voltageCompensation(10);
-    config.closedLoop.p(0.0001).i(0).d(0.0); // I = 0.0000001
-    config.closedLoop.feedForward.kS(0.2).kV(0.002).kA(0.00);
+    config.closedLoop.p(0.0002).i(0.000001).d(0.0005); // I = 0.0000001
+    config.closedLoop.feedForward.kS(0.2).kV(0.000).kA(0.000);
     // config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     config.closedLoop.positionWrappingEnabled(false);
