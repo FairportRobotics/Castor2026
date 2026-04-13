@@ -9,6 +9,12 @@
           "data": {
             "pathName": "9.1 Chaos Monkey Path"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot preload"
+          }
         }
       ]
     }
