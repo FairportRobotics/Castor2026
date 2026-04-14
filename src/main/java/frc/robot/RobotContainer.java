@@ -13,9 +13,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
 import frc.robot.commands.AutoShootCommandChassisTurretPathPlanner;
 import frc.robot.commands.AutoTurretCommand;
-import frc.robot.commands.RelayCommand;
-import frc.robot.commands.SetDeflectorCommand;
-import frc.robot.commands.ZoneCheck;
+import frc.robot.commands.Reverse;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -73,21 +71,20 @@ public class RobotContainer {
      *
      */
     private void configureBindings() {
-        m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
+        /*m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
         m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
         m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
-        m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
+        m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));*/
 
         m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-        //m_driverController.a().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-        // m_driverController:wa.a().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
 
         m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake()));
-        m_driverController.y().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
+        //m_driverController.y().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
-        m_driverController.b().toggleOnTrue(new ZoneCheck(driveSubsystem));
+        m_driverController.b().onTrue(new Reverse(intakeSubsystem, hopperSubsystem));
+        m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 
     /**
