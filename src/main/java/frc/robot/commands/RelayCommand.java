@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,13 +24,13 @@ public class RelayCommand extends Command{
         this.turretSubsystem = turretSubsystem;
         this.intakeSubsystem = intakeSubsystem;
 
-        addRequirements(hopperSubsystem, turretSubsystem, intakeSubsystem);
+        addRequirements(hopperSubsystem, intakeSubsystem);
     }
     
     @Override
     public void initialize() {
-        turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3);
-        turretSubsystem.setLauncher(6000);
+        // turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3);
+        turretSubsystem.setLauncher(3000);
         hopperSubsystem.spindexerOn();
         CommandScheduler.getInstance().schedule(waitCommand);
         turretSubsystem.setTurretMotorRotation(1); // Return to 0 after MIAMI VALLEY
