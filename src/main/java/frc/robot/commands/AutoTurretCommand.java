@@ -62,7 +62,7 @@ public class AutoTurretCommand extends Command {
 
         Pose3d botPose = driveSubsystem.getBotPose();
         Pose3d turretPose = botPose.plus(new Transform3d(new Translation3d(CENTER_TURRET_TO_ROBOT),
-                new Rotation3d(Rotation2d.fromRotations(turretSubsystem.getTurretAngleRobotRelative()))));
+                new Rotation3d(Rotation2d.fromRotations(turretSubsystem.getTurretAngleRobotRelative() + 0.5))));
         Logger.recordOutput("AutoTurret-TurretPose", turretPose);
 
         Translation2d targetTranslation = scoringHubPose.getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());

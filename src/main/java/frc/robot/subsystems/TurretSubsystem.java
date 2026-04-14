@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
 
 import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 
@@ -247,9 +248,11 @@ public class TurretSubsystem extends TestableSubsystem {
 
     double robotRotations = robotPose.getRotation().toRotation2d().getRotations();
 
-    Angle turretAngle = Angle.ofRelativeUnits(robotRotations, Units.Rotations).plus(Angle.ofRelativeUnits(correctedPos, Units.Rotations));
+    Rotation2d turretAngle = Rotation2d.fromRotations(correctedPos).plus(Rotation2d.fromRotations(robotRotations)).minus(Rotation2d.fromRotations(0.5));
 
-    setTurretMotorRotation((turretAngle.in(Units.Rotation) * Constants.ShooterConstants.TURRET_GEAR_RATIO));
+Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotations());
+
+    setTurretRobotRelative(((turretAngle.getRotations())));
   }
 
   public void setTurretRobotRelative(double pos)
