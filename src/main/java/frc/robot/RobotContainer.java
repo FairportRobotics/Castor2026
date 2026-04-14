@@ -13,6 +13,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
 import frc.robot.commands.AutoShootCommandChassisTurretPathPlanner;
 import frc.robot.commands.AutoTurretCommand;
+import frc.robot.commands.Reverse;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -82,7 +83,7 @@ public class RobotContainer {
         //m_driverController.y().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
-        m_driverController.b().onTrue(Commands.parallel(intakeSubsystem.reverseIntake(), null));
+        m_driverController.b().onTrue(new Reverse(intakeSubsystem, hopperSubsystem));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 

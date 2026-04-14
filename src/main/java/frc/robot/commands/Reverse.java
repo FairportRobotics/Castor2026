@@ -12,17 +12,17 @@ import frc.robot.subsystems.IntakeSubsystem;
  */
 public class Reverse extends Command {
 
-    private int m_subsystem;
+    private IntakeSubsystem intakeSubsystem;
+    private HopperSubsystem hopperSubsystem;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public Reverse() {
-        m_subsystem = subsystem;
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(subsystem);
+    public Reverse(IntakeSubsystem intakeSubsystem, HopperSubsystem hopperSubsystem) {
+        this.intakeSubsystem = intakeSubsystem;
+        this.hopperSubsystem = hopperSubsystem;
     }
 
     // Called when the command is initially scheduled.
@@ -33,6 +33,9 @@ public class Reverse extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        intakeSubsystem.reverseIntake();
+        hopperSubsystem.spindexerReverse();
+        hopperSubsystem.reverseKicker();
     }
 
     // Called once the command ends or is interrupted.
@@ -40,6 +43,7 @@ public class Reverse extends Command {
     public void end(boolean interrupted) {
         hopperSubsystem.stopKicker();
         hopperSubsystem.spindexerOff();
+        intakeSubsystem.stopIntake();
     }
 
     // Returns true when the command should end.
