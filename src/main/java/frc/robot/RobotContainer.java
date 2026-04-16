@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
-import frc.robot.commands.AutoShootCommandChassisTurretPathPlanner;
 import frc.robot.commands.AutoTurretCommand;
-import frc.robot.commands.RelayCommand;
 import frc.robot.commands.Reverse;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -77,15 +75,14 @@ public class RobotContainer {
         m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
         m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));*/
 
-        m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-
+        //m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake()));
-        m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
+        //m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
-        m_driverController.x().whileTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+        m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.b().onTrue(new Reverse(intakeSubsystem, hopperSubsystem));
-        //m_driverController.y().onTrue(intakeSubsystem.deploy());
+        m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 
     /**
