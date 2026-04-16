@@ -62,6 +62,7 @@ public class TurretSubsystem extends TestableSubsystem {
   private StatusSignal<Angle> turretMotorPosition;
   private StatusSignal<ForwardLimitValue> turretMotorForwardLimit;
   private StatusSignal<ReverseLimitValue> turretMotorReverseLimit;
+  private StatusSignal<Double> turretPositionError;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
 
@@ -71,6 +72,8 @@ public class TurretSubsystem extends TestableSubsystem {
   private double turretOffsetInRotations = 0;
 
   private Servo hood;
+
+  private Pose3d turretTarget;
 
   public TurretSubsystem() {
 
@@ -103,6 +106,7 @@ public class TurretSubsystem extends TestableSubsystem {
     turretMotorPosition = turretMotor.getPosition();
     turretMotorForwardLimit = turretMotor.getForwardLimit();
     turretMotorReverseLimit = turretMotor.getReverseLimit();
+    turretPositionError = turretMotor.getClosedLoopError();
 
     turretSim = turretMotor.getSimState();
 
@@ -185,6 +189,14 @@ public class TurretSubsystem extends TestableSubsystem {
     return getTurretMotorPosition() / Constants.ShooterConstants.TURRET_GEAR_RATIO;
   }
 
+  public void setTurretTargetPose(Pose3d targetPose){
+    turretTarget = targetPose;
+  }
+
+  public Pose3d getTurretTargetPose(){
+    return turretTarget;
+  }
+
   private double getTurretMotorPosition(){
     return turretMotorPosition.refresh().getValueAsDouble() - turretOffsetInRotations;
   }
@@ -215,7 +227,7 @@ public class TurretSubsystem extends TestableSubsystem {
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(reverseLimit)
         );
-        setTurretRobotRelative(0);
+        // setTurretRobotRelative(0);
         // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
       }
     }
@@ -290,6 +302,10 @@ Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotation
 
     turretMotor.setControl(turretControlMode.withPosition(posWithOffset));
     turretSim.setRawRotorPosition(posWithOffset);
+  }
+
+  public boolean isTurretAtTarget(){
+    return turretPositionError.getValueAsDouble() <= 0.5;
   }
 
   private double getRequestedPosTurretRelative() {

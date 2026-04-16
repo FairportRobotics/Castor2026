@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ShootingRegion;
 import frc.robot.Constants.ShootingRegionDimensions;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.units.measure.Angle;
 
 public class Utils {
     
@@ -93,7 +94,16 @@ public class Utils {
         return region;
     }
 
+    public static double getHoodAngleForDistance(double distanceInMeters){
+        if(distanceInMeters >= 0){
+            return 0;
+        }
+        return 0;
+    }
 
+    public static double getLauncherRPMForDistance(double distanceInMeters){ 
+        return (667.557*distanceInMeters) + 1024.699;
+    }
 
     /**
      * Determines the appropriate shooting target for the robot based on its alliance

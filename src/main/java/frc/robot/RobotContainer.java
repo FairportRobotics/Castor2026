@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoShootCommandChassisTurret;
 import frc.robot.commands.AutoTurretCommand;
+import frc.robot.commands.AutoTurretShootCommand;
 import frc.robot.commands.Reverse;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -80,7 +81,8 @@ public class RobotContainer {
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake()));
         //m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
-        m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+        // m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+        m_driverController.x().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
         m_driverController.b().onTrue(new Reverse(intakeSubsystem, hopperSubsystem));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }

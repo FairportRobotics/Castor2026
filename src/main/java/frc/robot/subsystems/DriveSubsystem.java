@@ -163,15 +163,15 @@ public class DriveSubsystem extends TestableSubsystem {
                     driveSystem::getRobotPose2d,
                     driveSystem::setPose2d,
                     driveSystem::getRobotRelativeSpeeds,
-                    (speeds, feedforwards) -> driveSystem.setChassisSpeed(speeds, new Translation2d()),
+                    (speeds, feedforwards) -> {driveSystem.setChassisSpeed(ChassisSpeeds.fromRobotRelativeSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, driveSystem.getRobotHeading()), new Translation2d());},
                     new PPHolonomicDriveController(
-                            new PIDConstants(3, 0, 0),
+                            new PIDConstants(5, 0, 0),
                             new PIDConstants(Math.PI, 0, 0)),
                     config,
                     () -> {
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
-                            return false;//alliance.get() == DriverStation.Alliance.Red;
+                            return alliance.get() == DriverStation.Alliance.Red;
                         }
                         return false;
                     },
@@ -187,6 +187,8 @@ public class DriveSubsystem extends TestableSubsystem {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        
 
     }
 

@@ -29,9 +29,6 @@ public class AutoTurretCommand extends Command {
 
     private int[] shootingTagFilters;
 
-    private Pose3d closestTag;
-    private Pose3d scoringHubPose;
-
     public AutoTurretCommand(TurretSubsystem turretSubsystem, DriveSubsystem driveSubsystem) {
         this.turretSubsystem = turretSubsystem;
         this.driveSubsystem = driveSubsystem;
@@ -47,12 +44,12 @@ public class AutoTurretCommand extends Command {
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS;
-                scoringHubPose = Constants.FieldPoses.BLUE_HUB_POSE;
+                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.BLUE_HUB_POSE);
             } else {
                 shootingTagFilters = Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
-                scoringHubPose = Constants.FieldPoses.RED_HUB_POSE;
+                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.RED_HUB_POSE);
             }
-            Logger.recordOutput("AutoTurret-ScoringTarget", scoringHubPose);
+            Logger.recordOutput("AutoTurret-ScoringTarget", turretSubsystem.getTurretTargetPose());
         });
 
     }
@@ -65,7 +62,7 @@ public class AutoTurretCommand extends Command {
                 new Rotation3d(Rotation2d.fromRotations(turretSubsystem.getTurretAngleRobotRelative() + 0.5))));
         Logger.recordOutput("AutoTurret-TurretPose", turretPose);
 
-        Translation2d targetTranslation = scoringHubPose.getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());
+        Translation2d targetTranslation = turretSubsystem.getTurretTargetPose().getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());
         Logger.recordOutput("AutoTurret-Translation", targetTranslation);
 
         if(turretSubsystem.isTurretReady()){
