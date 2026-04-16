@@ -55,6 +55,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
         NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake());
+        NamedCommands.registerCommand("TurretShoot", new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
 
         turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
     }
@@ -82,8 +83,9 @@ public class RobotContainer {
         //m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         // m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
+        m_driverController.a().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
         m_driverController.x().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
-        m_driverController.b().onTrue(new Reverse(intakeSubsystem, hopperSubsystem));
+        m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 

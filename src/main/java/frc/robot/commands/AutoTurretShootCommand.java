@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -11,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-import frc.robot.Constants.ShootingRegion;
 import frc.robot.Utils;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -28,7 +28,6 @@ public class AutoTurretShootCommand extends Command{
     private Command waitCommand = Commands.waitSeconds(1.5);
 
     private Alliance alliance;
-
     public AutoTurretShootCommand(HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem){
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
@@ -47,16 +46,11 @@ public class AutoTurretShootCommand extends Command{
 
     @Override
     public void execute() {
-
-        ShootingRegion shootingRegion = Utils.findRobotShootingRegion(driveSubsystem.getBotPose(), alliance);
-
-        // if(shootingRegion == )
-
         double distance = turretSubsystem.getTurretTargetPose().toPose2d().getTranslation().getDistance(driveSubsystem.getBotPose().getTranslation().toTranslation2d());
         Logger.recordOutput("AutoTurretShoot-DistanceToTarget(Meters)", distance);
 
-        turretSubsystem.setTargetElevation(Utils.getHoodAngleForDistance(0));
-        turretSubsystem.setLauncher(Utils.getLauncherRPMForDistance(0));
+        turretSubsystem.setTargetElevation(Utils.getHoodAngleForDistance(distance));
+        turretSubsystem.setLauncher(Utils.getLauncherRPMForDistance(distance));
 
         if(turretSubsystem.isLauncherUpToSpeed() && waitCommand.isFinished()){
             hopperSubsystem.feedKicker();
@@ -78,6 +72,15 @@ public class AutoTurretShootCommand extends Command{
 
         turretSubsystem.setLauncher(0);
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
+
+        DriverStation.getAlliance().ifPresent((aliance) -> {
+            if (aliance == Alliance.Blue) {
+                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.BLUE_HUB_POSE);
+            } else {
+                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.RED_HUB_POSE);
+            }
+        });
+
         // turretSubsystem.setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
     }
 

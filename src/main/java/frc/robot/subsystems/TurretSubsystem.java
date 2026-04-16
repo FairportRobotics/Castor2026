@@ -206,14 +206,12 @@ public class TurretSubsystem extends TestableSubsystem {
 
     if(turretState == TurretState.HOMING)
     {
-      turretMotor.set(0.05);
-
       if(turretLimitSwitch.get())
       { // Turret has tripped the switch
         turretMotor.stopMotor();
         turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
         if(!Robot.isReal()){
-          turretOffsetInRotations = 1.5; // Flip turret around
+          turretOffsetInRotations = 0; // Flip turret around
         }
         turretState = TurretState.READY;
         forwardLimit = (1.5 + turretOffsetInRotations);
@@ -301,7 +299,7 @@ Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotation
     }
 
     turretMotor.setControl(turretControlMode.withPosition(posWithOffset));
-    turretSim.setRawRotorPosition(posWithOffset);
+    turretSim.setRawRotorPosition(-posWithOffset);
   }
 
   public boolean isTurretAtTarget(){

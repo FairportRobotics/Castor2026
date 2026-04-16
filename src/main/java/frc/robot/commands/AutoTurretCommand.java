@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.ShootingRegion;
+import frc.robot.Utils;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
@@ -27,7 +29,7 @@ public class AutoTurretCommand extends Command {
     private TurretSubsystem turretSubsystem;
     private DriveSubsystem driveSubsystem;
 
-    private int[] shootingTagFilters;
+    private Alliance alliance;
 
     public AutoTurretCommand(TurretSubsystem turretSubsystem, DriveSubsystem driveSubsystem) {
         this.turretSubsystem = turretSubsystem;
@@ -43,19 +45,28 @@ public class AutoTurretCommand extends Command {
 
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {
-                shootingTagFilters = Constants.CameraConstanst.IDFilters.BLUE_HUB_SHOOTING_IDS;
                 turretSubsystem.setTurretTargetPose(Constants.FieldPoses.BLUE_HUB_POSE);
+                aliance = Alliance.Blue;
             } else {
-                shootingTagFilters = Constants.CameraConstanst.IDFilters.RED_HUB_SHOOTING_IDS;
                 turretSubsystem.setTurretTargetPose(Constants.FieldPoses.RED_HUB_POSE);
+                aliance = Alliance.Red;
             }
-            Logger.recordOutput("AutoTurret-ScoringTarget", turretSubsystem.getTurretTargetPose());
         });
 
     }
 
     @Override
     public void execute() {
+
+        ShootingRegion shootingRegion = Utils.findRobotShootingRegion(driveSubsystem.getBotPose(), DriverStation.getAlliance().get());
+
+        if(shootingRegion != ShootingRegion.NON_SHOOTING_REGION){
+            Pose3d targetPose = Utils.findShootingTarget(shootingRegion, DriverStation.getAlliance().get());
+
+            turretSubsystem.setTurretTargetPose(targetPose);
+        }
+
+        Logger.recordOutput("AutoTurret-ScoringTarget", turretSubsystem.getTurretTargetPose());
 
         Pose3d botPose = driveSubsystem.getBotPose();
         Pose3d turretPose = botPose.plus(new Transform3d(new Translation3d(CENTER_TURRET_TO_ROBOT),
