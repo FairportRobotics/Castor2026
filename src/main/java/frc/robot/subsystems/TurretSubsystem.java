@@ -233,7 +233,10 @@ public class TurretSubsystem extends TestableSubsystem {
             // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
           }
         }
-        turretMotor.set((turretMotor.get()*-1));
+        if(turretState != TurretState.READY)
+        {
+          turretMotor.set((turretMotor.get()*-1));
+        }
       }
     }
 
