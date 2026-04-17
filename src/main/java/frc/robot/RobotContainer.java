@@ -5,6 +5,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -55,7 +56,7 @@ public class RobotContainer {
         configureBindings();
 
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
-        NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake());
+        NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake(m_driverController.getHID()));
         NamedCommands.registerCommand("TurretShoot", new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
 
         turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
@@ -80,7 +81,7 @@ public class RobotContainer {
 
         //m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
-        m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake()));
+        m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
         //m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         // m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));

@@ -13,6 +13,8 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -64,12 +66,14 @@ public class IntakeSubsystem extends TestableSubsystem {
         });
     }
 
-    public Command intake() {
+    public Command intake(XboxController m_XboxController) {
         return this.runOnce(() -> {
             if (intakeMotor.get() == 0) {
                 setSpeed(-.5);
+                m_XboxController.setRumble(RumbleType.kBothRumble, .5);
             } else {
                 intakeMotor.stopMotor();
+                m_XboxController.setRumble(RumbleType.kBothRumble, .0);
             }
         });
     }
