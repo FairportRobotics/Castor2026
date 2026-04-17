@@ -115,7 +115,7 @@ public class TurretSubsystem extends TestableSubsystem {
     SparkMaxConfig config = new SparkMaxConfig().apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
     config.voltageCompensation(10);
-    config.closedLoop.p(0.0002).i(0.000001).d(0.0005); // I = 0.0000001
+    config.closedLoop.p(0.0001).i(0.000004).d(0.0010); // I = 0.0000001
     config.closedLoop.feedForward.kS(0.2).kV(0.000).kA(0.000);
     // config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -243,6 +243,7 @@ public class TurretSubsystem extends TestableSubsystem {
       Logger.recordOutput("TurretSubsystem-TurretOffset", turretOffsetInRotations);
       Logger.recordOutput("TurretSubsystem-TurretForwardLimitHit", turretMotorForwardLimit.refresh().getValue());
       Logger.recordOutput("TurretSubsystem-TurretReverseLimitHit", turretMotorReverseLimit.refresh().getValue());
+      Logger.recordOutput("TurretSubsystem-TurretPositionError", turretPositionError.refresh().getValueAsDouble());
     }
 
   }
@@ -261,7 +262,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
     Rotation2d turretAngle = Rotation2d.fromRotations(correctedPos).plus(Rotation2d.fromRotations(robotRotations)).minus(Rotation2d.fromRotations(0.5));
 
-Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotations());
+    Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotations());
 
     setTurretRobotRelative(((turretAngle.getRotations())));
   }
@@ -303,7 +304,7 @@ Logger.recordOutput("TurretSubsystem-TurretFieldTarget", turretAngle.getRotation
   }
 
   public boolean isTurretAtTarget(){
-    return turretPositionError.getValueAsDouble() <= 0.5;
+    return turretPositionError.refresh().getValueAsDouble() <= 0.1;
   }
 
   private double getRequestedPosTurretRelative() {

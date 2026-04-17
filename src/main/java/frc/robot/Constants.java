@@ -151,7 +151,7 @@ public final class Constants {
         public static final double DEFLECTOR_STORED_ANGLE = 0;
         public static final double DEFLECTOR_SET_ANGLE1 = 100;
         public static final double DEFLECTOR_SET_ANGLE2 = 200;
-        public static final double DEFLECTOR_SET_ANGLE3 = 300; // Return to 300 once hood is fixed
+        public static final double DEFLECTOR_SET_ANGLE3 = 300;
         public static final double DEFLECTOR_SERVO_RATIO = 1.0;
     }
 
@@ -175,7 +175,7 @@ public final class Constants {
         // Left/Right are from driver's perspective. Coordinates assume origin at blue side of field.
         // Rotation are zero because they don't matter.
         public static Pose3d BLUE_LEFT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(1.99, 6.35, 0, new Rotation3d());
-        public static Pose3d BLUE_RIGHT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(1.99, 6.35, 0, new Rotation3d());
+        public static Pose3d BLUE_RIGHT_ALLIANCE_ZONE_PASS_TARGET_POSE = new Pose3d(1.99, 1.72, 0, new Rotation3d());
         public static Pose3d BLUE_LEFT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 6.35, 0, new Rotation3d());
         public static Pose3d BLUE_RIGHT_NEUTRAL_ZONE_PASS_TARGET_POSE = new Pose3d(8.27, 1.72, 0, new Rotation3d());
 

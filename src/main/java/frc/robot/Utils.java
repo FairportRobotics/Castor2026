@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.Constants.ShootingRegion;
 import frc.robot.Constants.ShootingRegionDimensions;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
 
@@ -91,6 +94,9 @@ public class Utils {
                         region = Constants.ShootingRegion.RED_RIGHT_OPPONENT_ALLIANCE_ZONE;
                      }
         }
+
+        Logger.recordOutput("Utils-ShootingRegion", region);
+
         return region;
     }
 

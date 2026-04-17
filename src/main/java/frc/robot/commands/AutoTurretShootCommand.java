@@ -42,6 +42,7 @@ public class AutoTurretShootCommand extends Command{
         hopperSubsystem.spindexerOn();
         CommandScheduler.getInstance().schedule(waitCommand);
         alliance = DriverStation.getAlliance().get();
+        Logger.recordOutput("AutoTurretShoot-State", "SHOOTING");
     }
 
     @Override
@@ -72,6 +73,8 @@ public class AutoTurretShootCommand extends Command{
 
         turretSubsystem.setLauncher(0);
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
+
+        Logger.recordOutput("AutoTurretShoot-State", "NOT SHOOTING");
 
         DriverStation.getAlliance().ifPresent((aliance) -> {
             if (aliance == Alliance.Blue) {

@@ -1,8 +1,9 @@
 package frc.robot.subsystems;
 
+import static org.fairportrobotics.frc.posty.assertions.Assertions.assertThat;
+
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.fairportrobotics.frc.posty.test.PostTest;
-import static org.fairportrobotics.frc.posty.assertions.Assertions.*;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveBuilder;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveDriveSystem;
 import org.fairportrobotics.frc.robolib.drivesystems.swerve.SwerveModule;
@@ -10,8 +11,6 @@ import org.fairportrobotics.frc.robolib.vision.limelight.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -23,12 +22,12 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
 import frc.robot.Constants;
 
 public class DriveSubsystem extends TestableSubsystem {
@@ -137,7 +136,7 @@ public class DriveSubsystem extends TestableSubsystem {
                 .build();
 
         // Set vision measurement confidence values
-        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 999999));
+        driveSystem.getPoseEstimator().setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 0.7, 0.1));
 
         this.setDefaultCommand(Commands.run(new Runnable() {
 
@@ -199,16 +198,45 @@ public class DriveSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("RobotPose", driveSystem.getRobotPose3d());
 
-        LimelightHelpers.PoseEstimate frontCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.FRONT_CAMERA_NAME);
-        if (frontCameraPose.tagCount >= 1) {
-            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(frontCameraPose.pose), frontCameraPose.timestampSeconds);
-            Logger.recordOutput("FrontPoseEstimate", frontCameraPose.pose);
+        LimelightHelpers.SetRobotOrientation(Constants.CameraConstanst.FRONT_CAMERA_NAME, driveSystem.getRobotPose2d().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.CameraConstanst.BACK_CAMERA_NAME, driveSystem.getRobotPose2d().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+
+        // MegaTag 2 impl
+        if(RobotState.isDisabled()){
+            LimelightHelpers.SetIMUMode(Constants.CameraConstanst.FRONT_CAMERA_NAME, 1);
+            LimelightHelpers.SetIMUMode(Constants.CameraConstanst.BACK_CAMERA_NAME, 1);
+        }else{
+            LimelightHelpers.SetIMUMode(Constants.CameraConstanst.FRONT_CAMERA_NAME, 4);
+            LimelightHelpers.SetIMUMode(Constants.CameraConstanst.BACK_CAMERA_NAME, 4);
         }
-        LimelightHelpers.PoseEstimate backCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.BACK_CAMERA_NAME);
-        if (backCameraPose.tagCount >= 1) {
-            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(backCameraPose.pose), backCameraPose.timestampSeconds);
-            Logger.recordOutput("BackPoseEstimate", backCameraPose.pose);
+
+        LimelightHelpers.PoseEstimate frontTag = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.CameraConstanst.FRONT_CAMERA_NAME);
+        LimelightHelpers.PoseEstimate backTag = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.CameraConstanst.BACK_CAMERA_NAME);
+
+        if(frontTag.tagCount >= 2){
+            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(frontTag.pose), frontTag.timestampSeconds);
+            Logger.recordOutput("FrontPose-Estimate", frontTag.pose);
+            Logger.recordOutput("FrontPose-IsMegaTag2", frontTag.isMegaTag2);
         }
+
+        if(backTag.tagCount >= 2){
+            driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(backTag.pose), backTag.timestampSeconds);
+            Logger.recordOutput("BackPose-Estimate", backTag.pose);
+            Logger.recordOutput("BackPose-IsMegaTag2", frontTag.isMegaTag2);
+        }
+
+
+        // MegaTag 1 Impl
+        // LimelightHelpers.PoseEstimate frontCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.FRONT_CAMERA_NAME);
+        // if (frontCameraPose.tagCount >= 2) {
+        //     driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(frontCameraPose.pose), frontCameraPose.timestampSeconds);
+        //     Logger.recordOutput("FrontPoseEstimate", frontCameraPose.pose);
+        // }
+        // LimelightHelpers.PoseEstimate backCameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.CameraConstanst.BACK_CAMERA_NAME);
+        // if (backCameraPose.tagCount >= 2) {
+        //     driveSystem.getPoseEstimator().addVisionMeasurement(new Pose3d(backCameraPose.pose), backCameraPose.timestampSeconds);
+        //     Logger.recordOutput("BackPoseEstimate", backCameraPose.pose);
+        // }
     }
 
     @Override
