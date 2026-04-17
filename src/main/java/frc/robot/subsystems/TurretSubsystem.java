@@ -203,30 +203,37 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @Override
   public void periodic() {
-
     if(turretState == TurretState.HOMING)
     {
-      if(turretLimitSwitch.get())
-      { // Turret has tripped the switch
-        turretMotor.stopMotor();
-        turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
-        if(!Robot.isReal()){
-          turretOffsetInRotations = 0; // Flip turret around
+      while(turretState != TurretState.READY)
+      {
+        long start = System.currentTimeMillis();
+        while(System.currentTimeMillis()-1000<start)
+        {
+          if(turretLimitSwitch.get())
+          { // Turret has tripped the switch
+            turretMotor.stopMotor();
+            turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
+            if(!Robot.isReal()){
+              turretOffsetInRotations = 0; // Flip turret around
+            }
+            turretState = TurretState.READY;
+            forwardLimit = (1.5 + turretOffsetInRotations);
+            reverseLimit = (-1.5 + turretOffsetInRotations);
+            Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
+            Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
+            turretMotor.getConfigurator().apply(
+              new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitEnable(true)
+                .withForwardSoftLimitThreshold(forwardLimit)
+                .withReverseSoftLimitEnable(true)
+                .withReverseSoftLimitThreshold(reverseLimit)
+            );
+            // setTurretRobotRelative(0);
+            // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
+          }
         }
-        turretState = TurretState.READY;
-        forwardLimit = (1.5 + turretOffsetInRotations);
-        reverseLimit = (-1.5 + turretOffsetInRotations);
-        Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
-        Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
-        turretMotor.getConfigurator().apply(
-          new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(forwardLimit)
-            .withReverseSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(reverseLimit)
-        );
-        // setTurretRobotRelative(0);
-        // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
+        turretMotor.set((turretMotor.get()*-1));
       }
     }
 
