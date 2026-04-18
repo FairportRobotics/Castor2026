@@ -82,11 +82,9 @@ public class RobotContainer {
         //m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
-        //m_driverController.a().whileTrue(new RelayCommand(hopperSubsystem, turretSubsystem, intakeSubsystem));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
-        // m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
-        m_driverController.a().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
-        m_driverController.x().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
+        m_driverController.a().whileTrue(Commands.parallel(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem), intakeSubsystem.stopIntake(m_driverController.getHID())));
+        m_driverController.x().whileTrue(Commands.parallel(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem), intakeSubsystem.stopIntake(m_driverController.getHID())));
         m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }

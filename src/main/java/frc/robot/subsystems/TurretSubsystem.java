@@ -168,7 +168,7 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public void homeTurret()
   {
-    if(turretState == TurretState.HOMING){
+    if(turretState != TurretState.INIT){
       return; 
     }
     turretMotor.set(Constants.ShooterConstants.HOMING_SPEED);
