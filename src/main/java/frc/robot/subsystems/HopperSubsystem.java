@@ -17,6 +17,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
 public class HopperSubsystem extends TestableSubsystem {
@@ -85,6 +88,17 @@ public class HopperSubsystem extends TestableSubsystem {
     public void spindexerOff() {
         spindexerMotor.stopMotor();
     }
+
+    public Command spinny() {
+        return this.runOnce(() -> {
+            if (spindexerMotor.get() == 0) {
+                spindexerOn();
+            } else {
+                spindexerOff();
+            }
+        });
+    }
+
 
     @Override
     public void periodic() {

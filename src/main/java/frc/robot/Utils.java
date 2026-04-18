@@ -101,14 +101,14 @@ public class Utils {
     }
 
     public static double getHoodAngleForDistance(double distanceInMeters){
-        if(distanceInMeters >= 3){
+        if(distanceInMeters >= 4){
             return 200;
         }
         return 0;
     }
 
     public static double getLauncherRPMForDistance(double distanceInMeters){ 
-        return Math.min((667.557*distanceInMeters) + 1024.699, 6000);
+        return Math.min((667.557*distanceInMeters) + 1500.699, 5000);
     }
 
     /**

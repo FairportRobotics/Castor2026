@@ -115,7 +115,7 @@ public class TurretSubsystem extends TestableSubsystem {
     SparkMaxConfig config = new SparkMaxConfig().apply((SparkMaxConfig) SparkMaxConfig.Presets.REV_NEO);
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
     config.voltageCompensation(10);
-    config.closedLoop.p(0.0001).i(0.000004).d(0.000007); // I = 0.0000001
+    config.closedLoop.p(0.0002).i(0.000001).d(0.0005); // I = 0.0000001
     config.closedLoop.feedForward.kS(0.2).kV(0.000).kA(0.000);
     // config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -203,57 +203,45 @@ public class TurretSubsystem extends TestableSubsystem {
 
   @Override
   public void periodic() {
-    if(turretState == TurretState.HOMING)
-    {
-      while(turretState != TurretState.READY)
-      {
-        long start = System.currentTimeMillis();
-        while(System.currentTimeMillis()-1000<start)
-        {
-          if(turretLimitSwitch.get())
-          { // Turret has tripped the switch
-            turretMotor.stopMotor();
-            turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
-            if(!Robot.isReal()){
-              turretOffsetInRotations = 0; // Flip turret around
-            }
-            turretState = TurretState.READY;
-            forwardLimit = (1.5 + turretOffsetInRotations);
-            reverseLimit = (-1.5 + turretOffsetInRotations);
-            Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
-            Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
-            turretMotor.getConfigurator().apply(
-              new SoftwareLimitSwitchConfigs()
+    if (turretState == TurretState.HOMING) {
+      if (turretLimitSwitch.get()) { // Turret has tripped the switch
+        turretMotor.stopMotor();
+        turretOffsetInRotations = (turretMotorPosition.refresh().getValueAsDouble() - 1.323);
+        if (!Robot.isReal()) {
+          turretOffsetInRotations = 0; // Flip turret around
+        }
+        turretState = TurretState.READY;
+        forwardLimit = (1.5 + turretOffsetInRotations);
+        reverseLimit = (-1.5 + turretOffsetInRotations);
+        Logger.recordOutput("TurretSubsystem-TurretForwardLimit", forwardLimit);
+        Logger.recordOutput("TurretSubsystem-TurretReverseLimit", reverseLimit);
+        turretMotor.getConfigurator().apply(
+            new SoftwareLimitSwitchConfigs()
                 .withForwardSoftLimitEnable(true)
                 .withForwardSoftLimitThreshold(forwardLimit)
                 .withReverseSoftLimitEnable(true)
-                .withReverseSoftLimitThreshold(reverseLimit)
-            );
-            // setTurretRobotRelative(0);
-            // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
-          }
-        }
-        if(turretState != TurretState.READY)
-        {
-          turretMotor.set((turretMotor.get()*-1));
-        }
+                .withReverseSoftLimitThreshold(reverseLimit));
+        // setTurretRobotRelative(0);
+        // setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
       }
     }
 
-    if(LOGGING)
-    {
+    if (LOGGING) {
       Logger.recordOutput("TurretSubsystem-TurretLimitSwitch", turretLimitSwitch.get());
       Logger.recordOutput("TurretSubsystem-Launcher Speed (RPM)", launcherMotor.getEncoder().getVelocity());
       Logger.recordOutput("TurretSubsystem-TurretState", turretState);
       Logger.recordOutput("TurretSubsystem-TurretPositionRobotRelative", getTurretAngleRobotRelative());
       Logger.recordOutput("TurretSubsystem-TurretMotorPositionWithOffset", getTurretMotorPosition());
-      Logger.recordOutput("TurretSubsystem-TurretMotorPositionRaw", turretMotorPosition.refresh().getValue().in(Units.Rotations));
-      Logger.recordOutput("TurretSubsystem-TurretRequestedPosRaw", turretControlMode.getPositionMeasure().in(Units.Rotations));
+      Logger.recordOutput("TurretSubsystem-TurretMotorPositionRaw",
+          turretMotorPosition.refresh().getValue().in(Units.Rotations));
+      Logger.recordOutput("TurretSubsystem-TurretRequestedPosRaw",
+          turretControlMode.getPositionMeasure().in(Units.Rotations));
       Logger.recordOutput("TurretSubsystem-TurretRequestedPos", getRequestedPosTurretRelative());
       Logger.recordOutput("TurretSubsystem-TurretOffset", turretOffsetInRotations);
       Logger.recordOutput("TurretSubsystem-TurretForwardLimitHit", turretMotorForwardLimit.refresh().getValue());
       Logger.recordOutput("TurretSubsystem-TurretReverseLimitHit", turretMotorReverseLimit.refresh().getValue());
       Logger.recordOutput("TurretSubsystem-TurretPositionError", turretPositionError.refresh().getValueAsDouble());
+      Logger.recordOutput("TurretSubsystem-LauncherSetpoint(RPM)", launcherControler.getSetpoint());
     }
 
   }
@@ -314,7 +302,7 @@ public class TurretSubsystem extends TestableSubsystem {
   }
 
   public boolean isTurretAtTarget(){
-    return turretPositionError.refresh().getValueAsDouble() <= 0.1;
+    return Math.abs(turretPositionError.refresh().getValueAsDouble()) <= 0.1;
   }
 
   private double getRequestedPosTurretRelative() {

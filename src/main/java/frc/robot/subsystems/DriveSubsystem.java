@@ -149,7 +149,6 @@ public class DriveSubsystem extends TestableSubsystem {
 
                 Logger.recordOutput("RequestedSwerveState", driveSystem.getRequestedModuleStates());
                 Logger.recordOutput("ActualSwerveState", driveSystem.getActualModuleStates());
-                Logger.recordOutput("Pose Estimation", driveSystem.getRobotPose3d());
             }
 
         }, this));
