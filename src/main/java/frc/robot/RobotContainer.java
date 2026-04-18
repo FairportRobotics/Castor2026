@@ -87,7 +87,7 @@ public class RobotContainer {
         // m_driverController.x().toggleOnTrue(new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.a().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
         m_driverController.x().whileTrue(new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
-        m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem));
+        m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 

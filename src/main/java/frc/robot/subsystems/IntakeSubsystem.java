@@ -60,9 +60,10 @@ public class IntakeSubsystem extends TestableSubsystem {
         intakeMotor.set(speed);
     }
 
-    public Command stopIntake() {
+    public Command stopIntake(XboxController m_XboxController) {
         return this.runOnce(() -> {
             intakeMotor.stopMotor();
+            m_XboxController.setRumble(RumbleType.kBothRumble, .0);
         });
     }
 

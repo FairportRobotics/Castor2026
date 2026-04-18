@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -14,15 +15,17 @@ public class Reverse extends Command {
 
     private IntakeSubsystem intakeSubsystem;
     private HopperSubsystem hopperSubsystem;
+    private XboxController m_XboxController;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public Reverse(IntakeSubsystem intakeSubsystem, HopperSubsystem hopperSubsystem) {
+    public Reverse(IntakeSubsystem intakeSubsystem, HopperSubsystem hopperSubsystem, XboxController m_XboxController) {
         this.intakeSubsystem = intakeSubsystem;
         this.hopperSubsystem = hopperSubsystem;
+        this.m_XboxController = m_XboxController;
     }
 
     // Called when the command is initially scheduled.
@@ -43,7 +46,7 @@ public class Reverse extends Command {
     public void end(boolean interrupted) {
         hopperSubsystem.stopKicker();
         hopperSubsystem.spindexerOff();
-        intakeSubsystem.stopIntake();
+        intakeSubsystem.stopIntake(m_XboxController);
     }
 
     // Returns true when the command should end.
