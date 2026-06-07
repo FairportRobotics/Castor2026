@@ -9,7 +9,6 @@ import commands2
 import wpilib
 from pathplannerlib.auto import NamedCommands
 from pathplannerlib.config import RobotConfig
-
 import constants
 from autonomous.chassis_align_shoot import ChassisAlignShootCommand
 from autonomous.turret_shoot import TurretShootCommand
