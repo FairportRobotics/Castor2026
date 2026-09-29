@@ -170,26 +170,33 @@ public class TurretSubsystem extends TestableSubsystem {
 
   /**
    * Sets the launch (hood) angle when the target angle is known, in degrees.
+   * Does nothing if the requested angle is outside the hood's limits.
    * @param angleDegrees the commanded motor speed in RPM
    * @return nothing
    */
   public void setHoodToLaunchAngle(int angleDegrees)
   {
-    // Confirm target is within expected range. If not, do nothing.
-    if ((angleDegrees < Constants.ShooterConstants.HOOD_ANGLE_MIN_DEG) ||
-        (angleDegrees > Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG)) {
-      return;
-    }
-
-    // Grab min and max values to simplify the expressions and ensure precision
-    double minAngle = (double) Constants.ShooterConstants.HOOD_ANGLE_MIN_DEG;
-    double maxAngle = (double) Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG;
+    // Grab min and max values as doubles to simplify the expressions and ensure precision.
+    int minAngle = Constants.ShooterConstants.HOOD_ANGLE_MIN_DEG;
+    int maxAngle = Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG;
     
-    // Map so that min angle maps to "1" and max angle maps to "0."
-    double pos = (maxAngle - angleDegrees) / (maxAngle - minAngle);
+    // Confirm target is within expected range. If not, do nothing.
+    if ((angleDegrees <= maxAngle) &&
+        (angleDegrees >= minAngle)) {
+      
+      // Map so that min angle maps to "0" and max angle maps to "1."
+      // The min angle corresponds to the hood's tallest physical position.
+      double pos = (double)(angleDegrees - minAngle) / (maxAngle - minAngle);
 
+      // Actuate the hood.
+      hood.set(pos);
+    } else {
+      // Set pos to an invalid value so the error is visible through the Logger.
+      pos = -1.0;
+    }
+    
     Logger.recordOutput("ShooterHood-Angle", pos);
-    hood.set(pos);
+    
   }
 
 
