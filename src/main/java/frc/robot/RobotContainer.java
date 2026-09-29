@@ -16,6 +16,7 @@ import frc.robot.commands.AutoTurretCommand;
 import frc.robot.commands.AutoTurretShootCommand;
 import frc.robot.commands.Reverse;
 import frc.robot.commands.SetDeflectorCommand;
+import frc.robot.commands.UltraShooterCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -59,7 +60,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake(m_driverController.getHID()));
         NamedCommands.registerCommand("TurretShoot", new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
 
-        turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
+        // The default command below is commented out so that UltraShooterCommand can control turret while the shooter function is active.
+        // The default command can be re-instated if we choose to track a target at all times instead.
+        // turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
     }
 
     /**
@@ -74,6 +77,7 @@ public class RobotContainer {
      *
      */
     private void configureBindings() {
+        // These let the driver set the shooter hood position using the controller.
         // m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
         // m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
         // m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
@@ -83,8 +87,10 @@ public class RobotContainer {
         m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
-        m_driverController.a().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
-        m_driverController.x().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
+        // m_driverController.a().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
+        // m_driverController.x().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
+        //m_driverController.x().toggleOnTrue(getAutonomousCommand())((new UltraShooterCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
+        m_driverController.x().toggleOnTrue(new UltraShooterCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
         m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }

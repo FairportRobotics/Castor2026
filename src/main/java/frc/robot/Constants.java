@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 
+import java.util.Map;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -141,10 +143,27 @@ public final class Constants {
         public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
         public static final double HOMING_SPEED = .05;
         public static final double TURRET_GEAR_RATIO = 6;
+        public static final double TURRET_RANGE_ROTATIONS = 0.5;            // The turret can rotate 180°
 
         public static final int HOOD_SERVO_CHANNEL = 0;
         public static final boolean HOOD_SERVO_INVERTED = false; // TODO: Test this
         public static final int HOOD_ENCODER_ID = 4;
+        public static final int HOOD_ANGLE_MIN_DEG = 52;                    // Lowest possible position
+        public static final int HOOD_ANGLE_MAX_DEG = 70;                    // Highest possible position
+        public static final int HOOD_ANGLE_PASSING_DEG = 55;                // Default hood angle for passing
+        public static final int HOOD_ANGLE_SCORING_MAX_DEG = 70;            // Highest angle for scoring
+        public static final int HOOD_ANGLE_SCORING_MIN_DEG = 62;            // Lowest angle for scoring
+        public static final double SCORING_DISTANCE_LONG_IN = 225;          // Shortest scoring distance in inches used for finding hood angles
+        public static final double SCORING_DISTANCE_SHORT_IN = 60;          // Shortest scoring distance in inches used for finding hood angles
+        public static final double SCORING_DISTANCE_FIELD_MAX_METERS = 7;   // Sanity check value. Max distance from hub in Alliance Zone is ~6 meters
+        public static final double SCORING_DISTANCE_FIELD_MIN_METERS = 0.1; // Sanity check value.
+        public static final double SCORING_DISTANCE_MIN_ALLOWED_METERS = 1.5;   // The minimum distance from the hub we'll allow the robot to shoot from
+        public static final double SCORING_DISTANCE_MAX_ALLOWED_METERS = 7.0;   // The maximum distance from the hub we'll allow the robot to shoot from
+        // This is the distance increment in inches for adjusting hood angle according to distance from the target, in inches per degree:
+        public static final double HOOD_ANGLE_CALC_DIVISION = (SCORING_DISTANCE_LONG_IN - SCORING_DISTANCE_SHORT_IN) / (HOOD_ANGLE_SCORING_MAX_DEG - HOOD_ANGLE_SCORING_MIN_DEG);
+        public static final double SHOOTER_EFFICIENCY_GENERAL = 0.30;       // This is the baseline shooter efficiency assumption
+        public static final double SHOOTER_FLYWHEEL_DIAMETER_IN = 3.0;      // Flywheel diameter is 3.0 inches
+        public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 2.0;       // Flywheel moves at twice the RPM of the flywheel motor
         public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
         public static final Angle LIMIT_ELEVATION_POS = edu.wpi.first.units.Units.Degrees.of(90);
         public static final Angle LIMIT_ELEVATION_NEG = edu.wpi.first.units.Units.Degrees.of(0);
@@ -153,6 +172,41 @@ public final class Constants {
         public static final double DEFLECTOR_SET_ANGLE2 = 200;
         public static final double DEFLECTOR_SET_ANGLE3 = 300;
         public static final double DEFLECTOR_SERVO_RATIO = 1.0;
+
+        // Below are sets of quadratic coefficients that are to be used with each valid hood angle, for scoring and passing.
+        // These are from Table 2-2 in the AutoShooter document for use in scoring when distance is in meters.
+        record QuadraticCoef(double a, double b, double c) {}                               // Creates a basic record type with no special methods ("{}")
+        
+        public static Map<Integer, QuadraticCoef> SCORING_SPEED_COEFS_METERS = Map.of(      // Access this map to get scoring coefficients for each hood angle
+            62, new QuadraticCoef(-0.08267, 3.41207, 12.20000),
+            63, new QuadraticCoef(-0.12400, 3.85827, 11.50000),
+            64, new QuadraticCoef(-0.09300, 3.74016, 11.70000),
+            65, new QuadraticCoef(-0.06200, 3.54331, 12.40000),
+            66, new QuadraticCoef(-0.09300, 3.89764, 12.00000),
+            67, new QuadraticCoef(-0.06200, 3.85827, 12.20000),
+            68, new QuadraticCoef(0.00000, 3.54331, 13.00000),
+            69, new QuadraticCoef(0.03100, 3.58268, 13.10000),
+            70, new QuadraticCoef(0.12056, 3.25022, 13.96667));
+
+        // These are from Table 2-2 in the AutoShooter document for use in scoring when distance is in inches.
+        public static Map<Integer, QuadraticCoef> SCORING_SPEED_COEFS_INCHES = Map.of(      // Access this map to get scoring coefficients for each hood angle
+            62, new QuadraticCoef(-0.00005, 0.08667, 12.20000),
+            63, new QuadraticCoef(-0.00008, 0.09800, 11.50000),
+            64, new QuadraticCoef(-0.00006, 0.09500, 11.70000),
+            65, new QuadraticCoef(-0.00004, 0.09000, 12.40000),
+            66, new QuadraticCoef(-0.00006, 0.09900, 12.00000),
+            67, new QuadraticCoef(-0.00004, 0.09800, 12.20000),
+            68, new QuadraticCoef(0.00000, 0.09000, 13.00000),
+            69, new QuadraticCoef(0.00002, 0.09100, 13.10000),
+            70, new QuadraticCoef(0.00008, 0.08256, 13.96667));
+        
+        // These are from Table 2-1 in the AutoShooter document for use in passing when distance is in meters.
+        public static Map<Integer, QuadraticCoef> PASSING_SPEED_COEFS_METERS = Map.of(
+            55, new QuadraticCoef(-0.09751, 3.47134, 7.8890));
+        
+        // These are from Table 2-1 in the AutoShooter document for use in passing when distance is in inches.
+        public static Map<Integer, QuadraticCoef> PASSING_SPEED_COEFS_INCHES = Map.of(
+            55, new QuadraticCoef(-0.00006, 0.08817, 7.889));
     }
 
     public static class HopperConstants {
@@ -187,7 +241,7 @@ public final class Constants {
 
     }
 
-    // These represent the dividing lines for the regions in our shooting strategy.
+    // These represent the dividing lines for the regions in our shooting strategy. These values are in meters.
     public static class ShootingRegionDimensions {
 
         public static double BLUE_ALLIANCE_ZONE_REGION_X_MAX = 3.5;

@@ -7,8 +7,12 @@ import frc.robot.Constants.ShootingRegionDimensions;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+
+import java.util.Map;
 
 public class Utils {
     
@@ -37,8 +41,8 @@ public class Utils {
     /**
      * Determines the region for the robot based on its location and alliance.
      * Assumes the robot is a 27" square. Thresholds based on observations from simulator.
-     * @param robotPose: the robot's pose
-     * @param alliance: the red/blue alliance of the robot, as a sanity check
+     * @param robotPose the robot's pose
+     * @param alliance the red/blue alliance of the robot, as a sanity check
      * @return the robot's shooting region
      */
     public static ShootingRegion findRobotShootingRegion(Pose3d robotPose, Alliance alliance){
@@ -46,7 +50,7 @@ public class Utils {
         double robotX = robotPose.getX();
         double robotY = robotPose.getY();
 
-        // Receommended: Add a sanity check for invalid robot poses.
+        // Recommended: Add a sanity check for invalid robot poses.
 
         if (alliance == Alliance.Blue) {
             if (robotX < Constants.ShootingRegionDimensions.BLUE_ALLIANCE_ZONE_REGION_X_MAX) {
@@ -100,11 +104,131 @@ public class Utils {
         return region;
     }
 
+
+    /**
+     * Calculates the ideal hood angle based on the provided distance
+     * between the robot's turret and the target (hub).
+     * Implements the equation to find hood angle for scoring:
+     * Angle = MaxAngle - ((Distance - ShortDistance) / Div), where
+     *      MaxAngle = maximum hood angle for scoring
+     *      Distance = distance to target
+     *      ShortDistance = shortest distance used when evaluating hood angles
+     *      LongDistance = longest distance used when evaluating hood angles
+     *      Div = the distance from the target that requires 1° of hood angle change
+     *          = (LongDistance - ShortDistance) / (MaxAngle - MinAngle)
+     * These were all defined as constants in Constants.java.
+     * @param distanceInMeters distance between turret and target, in meters
+     * @return the ideal nearest-integer hood angle in degrees relative to the floor
+     */
+    public static int getScoringHoodAngleDegForDistance(double distanceInMeters){
+        double calculatedAngleDeg = Constants.ShooterConstants.HOOD_ANGLE_PASSING_DEG;      // init to the passing value
+        double distanceInInches = Units.metersToInches(distanceInMeters);                   // Convert to inches to match theory equations
+ 
+        // Limit the distance according to the min and max that were used in the theory calculations
+        MathUtil.clamp(distanceInInches, Constants.ShooterConstants.SCORING_DISTANCE_SHORT_IN, Constants.ShooterConstants.SCORING_DISTANCE_LONG_IN);
+
+        // Perfom the main calculation (Equation 2-5 in the AutoShooter document), then round the result to the nearest degree
+        calculatedAngleDeg = Constants.ShooterConstants.HOOD_ANGLE_SCORING_MAX_DEG - (((distanceInInches) - Constants.ShooterConstants.SCORING_DISTANCE_SHORT_IN) / 
+                                    Constants.ShooterConstants.HOOD_ANGLE_CALC_DIVISION);
+        int hoodAngleDeg = (int) Math.round(calculatedAngleDeg);
+
+        return (hoodAngleDeg);
+    }
+
+
+
     public static double getHoodAngleForDistance(double distanceInMeters){
         if(distanceInMeters >= 4){
             return 200;
         }
         return 0;
+    }
+
+
+    /**
+     * Calculates the appropriate launch speed in ft/s for scoring based on
+     * the provided hood angle and target distance in meters.
+     * This is done based on a series of quadratic regressions
+     * See the AutoShooter theory document.
+     * @param hoodAngleDeg the hood angle that the calculation should assume
+     * @param distanceInMeters distance between turret and target, in meters
+     * @return the appropriate launch speed for scoring in feet per second
+     * Returns 0 if a launch speed cannot be determined.
+     */
+    public static double findLaunchSpeedScoring(int hoodAngleDeg, double distanceInMeters){
+        // Check that the requested hood angle is in the expected shooting range
+        if ((hoodAngleDeg < Constants.ShooterConstants.HOOD_ANGLE_SCORING_MIN_DEG) ||
+           (hoodAngleDeg > Constants.ShooterConstants.HOOD_ANGLE_SCORING_MAX_DEG)) {
+            return 0;
+        }
+
+        // Check that the requested distance is reasonable. If the scoring distance is outside of this range, there was a problem.
+        if ((distanceInMeters < Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MIN_METERS) ||
+           (distanceInMeters > Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MAX_METERS)) {
+            return 0;
+        }
+                
+        // Get the quadratic coefficients for the hood angle. Return with the error value if none are found.
+        Constants.ShooterConstants.QuadraticCoef coefficients = Constants.ShooterConstants.SCORING_SPEED_COEFS_METERS.get(hoodAngleDeg);
+        if (coefficients == null) {
+            return 0;
+        }
+        
+        // Perform the quadratic calculation using the coefficients we retrieved if successful
+        double x = distanceInMeters;                            // Rename to "x" just to make the next expression simpler
+        double launchSpeedFPS = (coefficients.a() * x * x) + (coefficients.b() * x) + coefficients.c();
+
+        return launchSpeedFPS;
+    }
+
+    /**
+     * Calculates the appropriate launch speed in ft/s for passing based on
+     * the provided hood angle and target distance in meters.
+     * This is done based on a series of quadratic regressions
+     * See the AutoShooter theory document.
+     * @param hoodAngleDeg the hood angle that the calculation should assume
+     * @param distanceInMeters distance between turret and target, in meters
+     * @return the appropriate launch speed for passing in feet per second
+     * Returns 0 if a launch speed cannot be determined.
+     */
+    public static double findLaunchSpeedPassing(int hoodAngleDeg, double distanceInMeters){
+        // Check that the requested hood angle is in the expected angle range for passing.
+        if (hoodAngleDeg != Constants.ShooterConstants.HOOD_ANGLE_PASSING_DEG) {
+            return 0;
+        }
+
+        // Check that the distance is reasonable. If the scoring distance is outside of this range, there was a problem.
+        if ((distanceInMeters < Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MIN_METERS) ||
+           (distanceInMeters > Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MAX_METERS)) {
+            return 0;
+        }
+                
+        // Get the quadratic coefficients for the hood angle. Return with the error value if none are found.
+        Constants.ShooterConstants.QuadraticCoef coefficients = Constants.ShooterConstants.PASSING_SPEED_COEFS_METERS.get(hoodAngleDeg);
+        if (coefficients == null) {
+            return 0;
+        }
+        
+        // Perform the quadratic calculation using the coefficients we retrieved if successful
+        double x = distanceInMeters;                            // Rename to "x" just to make the next expression simpler
+        double launchSpeedFPS = (coefficients.a() * x * x) + (coefficients.b() * x) + coefficients.c();
+
+        return launchSpeedFPS;
+    }
+
+    /**
+     * Calculates the flywheel RPM that's required to achieve the provided
+     * launch speed in feet/second.
+     * This performs Equation 2-3 in the AutoShooter document.
+     * @param launchSpeedFPS the goal launch speed in ft/s
+     * @return the appropriate flywheel speed in RPM
+     */
+    public static double GetShooterRPMForLaunchSpeed(double launchSpeedFPS){
+        double flywheelDiameterFeet = Constants.ShooterConstants.SHOOTER_FLYWHEEL_DIAMETER_IN / 12;         // Change to feet to match launch speed units
+        double efficiency = Constants.ShooterConstants.SHOOTER_EFFICIENCY_GENERAL;                          // Use the appropriate efficiency
+        
+        double shooterRPM = (launchSpeedFPS / (efficiency * flywheelDiameterFeet * Math.PI)) * 60;          // Perform the calculation
+        return shooterRPM;
     }
 
     public static double getLauncherRPMForDistance(double distanceInMeters){ 
@@ -117,8 +241,8 @@ public class Utils {
      * Scoring hub, 2x passing from Neutral Zone, 2x passing from opponent's Alliance Zone,
      * and these exist for both red and blue alliances.
      * Right/left are from driver's perspective.
-     * @param region: the identifier of the robot's current field region
-     * @param alliance: the red/blue alliance of the robot, as a sanity check
+     * @param region the identifier of the robot's current field region
+     * @param alliance the red/blue alliance of the robot, as a sanity check
      * @return the shooting target for a robot with the provided properties. Returns all-zero
      * Pose3d object if the region/alliance combination is invalid.
      */

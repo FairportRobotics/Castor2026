@@ -38,6 +38,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -130,6 +131,14 @@ public class TurretSubsystem extends TestableSubsystem {
     turretState = TurretState.INIT;
   }
 
+  /**
+   * Sets the launcher motor controller (shooter flywheel motor) to achieve 
+   * the provided motor speed (in RPM) using the Spark controller's velocity control mode.
+   * The resulting shooter flywheel speed is twice the motor speed.
+   * @param speed the commanded motor speed in RPM
+   * @param distanceInMeters distance between turret and target, in meters
+   * @return nothing
+   */
   public void setLauncher(double speed) {
     if(speed == 0)
     {
@@ -146,12 +155,43 @@ public class TurretSubsystem extends TestableSubsystem {
     // return Math.abs(launcherControler.getSetpoint() - launcherMotor.getEncoder().getVelocity()) >= launcherControler.getSetpoint() * 0.03;
   }
 
+  /**
+   * Sets the hood angle when the target elevation servo position is known,
+   * from zero (lowest hood angle) to 300 (highest hood angle).
+   * @param elev the target servo motor position, from 0 to 300
+   * @return nothing
+   */
   public void setTargetElevation(double elev)
   {
     double pos = Math.abs((elev - 300)/300);
     Logger.recordOutput("ShooterHood-Angle", pos);
     hood.set(pos);
   }
+
+  /**
+   * Sets the launch (hood) angle when the target angle is known, in degrees.
+   * @param angleDegrees the commanded motor speed in RPM
+   * @return nothing
+   */
+  public void setHoodToLaunchAngle(int angleDegrees)
+  {
+    // Confirm target is within expected range. If not, do nothing.
+    if ((angleDegrees < Constants.ShooterConstants.HOOD_ANGLE_MIN_DEG) ||
+        (angleDegrees > Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG)) {
+      return;
+    }
+
+    // Grab min and max values to simplify the expressions and ensure precision
+    double minAngle = (double) Constants.ShooterConstants.HOOD_ANGLE_MIN_DEG;
+    double maxAngle = (double) Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG;
+    
+    // Map so that min angle maps to "1" and max angle maps to "0."
+    double pos = (maxAngle - angleDegrees) / (maxAngle - minAngle);
+
+    Logger.recordOutput("ShooterHood-Angle", pos);
+    hood.set(pos);
+  }
+
 
   public Command revSpeedCommand()
   {
@@ -246,6 +286,13 @@ public class TurretSubsystem extends TestableSubsystem {
 
   }
 
+  /**
+   * Commands turret to point in a specific field direction given
+   * the current heading of the robot. 
+   * @param robotPose the robot's field-relative pose
+   * @param pos the field-relative rotations of angle to the target
+   * @return nothing
+   */
   public void setTurretFieldRelative(Pose3d robotPose, double pos)
   {
     if(turretState != TurretState.READY)
@@ -303,6 +350,24 @@ public class TurretSubsystem extends TestableSubsystem {
 
   public boolean isTurretAtTarget(){
     return Math.abs(turretPositionError.refresh().getValueAsDouble()) <= 0.1;
+  }
+
+  /**
+   * Checks whether the turret can physically achieve the angle to the
+   * target based on the robot's heading.
+   * Uses Rotation2d to simplify the math.
+   * Assumes turret rotational midpoint is 180° opposite robot's heading.
+   * @param botPose the robot's field-relative pose
+   * @param targetTranslation the translation from the turret to the intended target
+   * @return true if angle is achieveable
+   */
+  public boolean isTurretAnglePossible(Pose3d botPose, Translation2d targetTranslation){
+    Rotation2d robotHeading = botPose.getRotation().toRotation2d();                           // Robot's field-relative heading (forward)
+    Rotation2d turretCenterPos = robotHeading.plus(Rotation2d.fromRotations(0.5));  // Turret's neutral azimuth
+    Rotation2d targetDirection = targetTranslation.getAngle();                                // Field-relative aiming angle
+    Rotation2d turretOffset = targetDirection.minus(turretCenterPos);                         // Difference between the two
+
+    return (Math.abs(turretOffset.getRotations()) <= (Constants.ShooterConstants.TURRET_RANGE_ROTATIONS / 2));
   }
 
   private double getRequestedPosTurretRelative() {
