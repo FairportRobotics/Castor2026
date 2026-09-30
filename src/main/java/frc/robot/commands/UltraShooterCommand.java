@@ -155,8 +155,8 @@ public class UltraShooterCommand extends Command{
 
         } else {
             // If we're in a non-shooting region while the shooting function is active,
-            // set the hood to a low setting to get under the trench and prevent shooting.
-            turretSubsystem.setHoodToLaunchAngle(Constants.ShooterConstants.HOOD_ANGLE_PASSING_DEG);
+            // set the hood to a low setting (high angle) to get under the trench and prevent shooting.
+            turretSubsystem.setHoodToLaunchAngle(Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG);
             okToShoot = false;
         }
         
