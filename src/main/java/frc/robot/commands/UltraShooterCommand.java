@@ -52,7 +52,6 @@ public class UltraShooterCommand extends Command{
         hopperSubsystem.stopKicker();                                       // Make sure kicker is off when command is called
         CommandScheduler.getInstance().schedule(waitCommand);               // Kick off a wait timer so robot doesn't shoot until hopper is ready
         alliance = DriverStation.getAlliance().get();                       // Fetch our alliance
-        // Logger.recordOutput("AutoTurretShoot-State", "SHOOTING");
         Logger.recordOutput("UltraShooter-State", "ACTIVE");
     }
 
@@ -112,16 +111,18 @@ public class UltraShooterCommand extends Command{
             }
 
             // STEP 5: Find final target based on the intial target and the robot's velocity.
-            // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT.
+            // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT. Make final target the same as initial.
             Pose3d finalTargetPose = initialTargetPose;
             double distanceToFinalTargetMeters = distanceToInitialTargetMeters;
             Logger.recordOutput("UltraShooter-FinalTarget", finalTargetPose);
             Logger.recordOutput("UltraShooter-DistanceToFinalTarget(Meters)", distanceToFinalTargetMeters);
 
             // STEP 6: Find hood angle and launch speed for the final target.
-            // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT:
+            // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT. Make final target the same as initial.
             double finalLaunchSpeedFPS = intitialLaunchSpeedFPS;
             int finalHoodAngleDegrees = initialHoodAngleDegrees;
+            Logger.recordOutput("UltraShooter-FinalLaunchSpeedFPS", finalLaunchSpeedFPS);
+            Logger.recordOutput("UltraShooter-FinalLaunchAngleDeg", finalHoodAngleDegrees);
             
             // Confirm we're at a valid scoring distance for the robot's capabilities. If not, don't shoot.
             if ((scoring) && 
@@ -132,6 +133,7 @@ public class UltraShooterCommand extends Command{
 
             // STEP 7: Find the flywheel RPM needed to achieve the launch speed we just calculated.
             double finalShooterRPM = Utils.GetShooterRPMForLaunchSpeed(finalLaunchSpeedFPS);
+            Logger.recordOutput("UltraShooter-FinalShooterFlywheelRPM", finalShooterRPM);
 
             // STEP 8: Command turretSubsystem to do what we need it to do for the launch speed and launch angle.
             // Adjust for the shooter flywheel-to-motor gear ratio when setting the flywheel motor speed.
