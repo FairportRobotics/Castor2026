@@ -116,7 +116,7 @@ public class TurretSubsystem extends TestableSubsystem {
     config.inverted(Constants.ShooterConstants.LAUNCHER_MOTOR_INVERTED);
     config.voltageCompensation(10);
     config.closedLoop.p(0.0002).i(0.000001).d(0.0005); // I = 0.0000001
-    config.closedLoop.feedForward.kS(0.2).kV(0.000).kA(0.000);
+    config.closedLoop.feedForward.kS(0.2).kV(0.00005).kA(0.001);
     // config.closedLoop.allowedClosedLoopError(10, ClosedLoopSlot.kSlot0);
     config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     config.closedLoop.positionWrappingEnabled(false);
