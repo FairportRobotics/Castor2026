@@ -1,28 +1,17 @@
 package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.Utils;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.HopperSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.subsystems.*;
 
 public class AutoTurretShootCommand extends Command{
 
     private HopperSubsystem hopperSubsystem;
     private TurretSubsystem turretSubsystem;
-    private IntakeSubsystem intakeSubsystem;
     private DriveSubsystem driveSubsystem;
 
     private Command waitCommand = Commands.waitSeconds(1.5);
@@ -31,7 +20,6 @@ public class AutoTurretShootCommand extends Command{
     public AutoTurretShootCommand(HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem){
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
-        this.intakeSubsystem = intakeSubsystem;
         this.driveSubsystem = driveSubsystem;
 
         addRequirements(hopperSubsystem, intakeSubsystem);

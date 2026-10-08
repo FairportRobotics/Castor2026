@@ -182,12 +182,13 @@ public class TurretSubsystem extends TestableSubsystem {
     int maxAngle = Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG;
     
     // Confirm target is within expected range. If not, do nothing.
+    double pos;
     if ((angleDegrees <= maxAngle) &&
         (angleDegrees >= minAngle)) {
       
       // Map so that min angle maps to "0" and max angle maps to "1."
       // The min angle corresponds to the hood's tallest physical position.
-      double pos = (double)(angleDegrees - minAngle) / (maxAngle - minAngle);
+      pos = (double)(angleDegrees - minAngle) / (maxAngle - minAngle);
 
       // Actuate the hood.
       hood.set(pos);
