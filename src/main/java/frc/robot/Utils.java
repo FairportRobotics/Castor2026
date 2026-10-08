@@ -217,6 +217,30 @@ public class Utils {
     }
 
     /**
+     * Estimates the fuel's time of flight until it his the target,
+     * where the target is the top of the hub when scoring and the floor when passing
+     * launch speed in feet/second.
+     * This performs Equations 3-7 and 3-8 in the AutoShooter document.
+     * @param scoring true if the bot is scoring into the hub (false means passing)
+     * @param launchAngleDeg the target launch angle in degrees
+     * @param launchSpeedFPS the target launch speed in ft/s
+     * @return the approxmate fuel flight time in seconds
+     */
+    public static double findTimeOfFlightScoring(boolean scoring, int launchAngleDeg, double launchSpeedFPS){
+        double velocityVertFPS = launchSpeedFPS * Math.sin(Math.toRadians((double)launchAngleDeg)); // The vertical component of fuel's velocity
+        double kGravityInFeet = 32.2;                                                               // Gravity constant in ft/s^2
+        double deltaHFeet = 0;                                                                      // Heigh difference between launcher and target
+        if (scoring) {
+            deltaHFeet = (Constants.ShooterConstants.SHOOTER_HEIGHT_INCHES - Constants.ShooterConstants.HUB_OPENING_HEIGHT_INCHES) / 12;
+        } else {
+            deltaHFeet = Constants.ShooterConstants.SHOOTER_HEIGHT_INCHES / 12;
+        }
+
+        return ((velocityVertFPS + Math.sqrt(Math.pow(velocityVertFPS, 2) - (2 * kGravityInFeet * deltaHFeet))) / kGravityInFeet);
+
+    }
+
+    /**
      * Calculates the flywheel RPM that's required to achieve the provided
      * launch speed in feet/second.
      * This performs Equation 2-3 in the AutoShooter document.

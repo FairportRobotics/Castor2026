@@ -144,9 +144,11 @@ public final class Constants {
         public static final double HOMING_SPEED = .05;
         public static final double TURRET_GEAR_RATIO = 6;
         public static final double TURRET_RANGE_ROTATIONS = 0.5;            // The turret can rotate 180°
+        public static final double SHOOTER_HEIGHT_INCHES = 22.0;            // Shooter is 22" from the floor
+        public static final double HUB_OPENING_HEIGHT_INCHES = 72.0;        // Hub opening (hexagon top) is 72" from the floor
 
         public static final int HOOD_SERVO_CHANNEL = 0;
-        public static final boolean HOOD_SERVO_INVERTED = false; // TODO: Test this
+        public static final boolean HOOD_SERVO_INVERTED = false;            // TODO: Test this
         public static final int HOOD_ENCODER_ID = 4;
         public static final int HOOD_ANGLE_MIN_DEG = 52;                    // Lowest possible position
         public static final int HOOD_ANGLE_MAX_DEG = 70;                    // Highest possible position

@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,7 +22,6 @@ import frc.robot.Constants.ShootingRegion;
 import frc.robot.Utils;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
 
@@ -29,21 +29,19 @@ public class UltraShooterCommand extends Command{
 
     private HopperSubsystem hopperSubsystem;
     private TurretSubsystem turretSubsystem;
-    private IntakeSubsystem intakeSubsystem;                // TODO: is this necessary?
     private DriveSubsystem driveSubsystem;
 
     private Command waitCommand = Commands.waitSeconds(1.5);
     private final Translation2d CENTER_TURRET_TO_ROBOT = new Translation2d(-0.1335024, -0.1824736);     // Defines physical offset of turret from robot center
 
-    private Alliance alliance;                              // Shooting behavior is based on the robot's alliance
+    private Alliance alliance;                                              // Shooting behavior is based on the robot's alliance
     
-    public UltraShooterCommand(HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem){
+    public UltraShooterCommand(HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem, DriveSubsystem driveSubsystem){
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
-        this.intakeSubsystem = intakeSubsystem;
         this.driveSubsystem = driveSubsystem;
 
-        addRequirements(hopperSubsystem, intakeSubsystem);                  // TODO: isintakeSubsystem necessary?
+        addRequirements(hopperSubsystem);
     }
     
     @Override
@@ -59,7 +57,7 @@ public class UltraShooterCommand extends Command{
     public void execute() {
         Boolean okToShoot = false;                      // Tracks whether conditions are OK for shooting.
         Boolean scoring = false;                        // Are we shooting into the hub?
-        Pose3d botPose = driveSubsystem.getBotPose();   // Find the pose once since we'll use it a few times
+        Pose3d botPose = driveSubsystem.getBotPose();   // Get and store the bot's pose once since we'll use it a few times
         
         // STEPS 1 & 2: Get the field location of the initial target
         // First, find the robot's current field location.
@@ -111,11 +109,44 @@ public class UltraShooterCommand extends Command{
             }
 
             // STEP 5: Find final target based on the intial target and the robot's velocity.
-            // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT. Make final target the same as initial.
+            // VELOCITY ADJUSTMENTS ARE COMMENTED OUT, SO ASSUME STATIONARY ROBOT. Make final target the same as initial.
             Pose3d finalTargetPose = initialTargetPose;
             double distanceToFinalTargetMeters = distanceToInitialTargetMeters;
             Logger.recordOutput("UltraShooter-FinalTarget", finalTargetPose);
             Logger.recordOutput("UltraShooter-DistanceToFinalTarget(Meters)", distanceToFinalTargetMeters);
+
+            /*
+            // VELOCITY ADJUSTEMENTS - READY TO TRY. Uncomment this block.
+            // Estimate the fuel's time of flight.
+            double timeOfFlightSeconds = Utils.findTimeOfFlightScoring(scoring, initialHoodAngleDegrees, intitialLaunchSpeedFPS);
+            // TBA: Get the bot's current velocity
+                // SwerveDriveSystem in RoboLib must make its ChassisSpeeds accessible.
+                // Get the robot-relative ChassisSpeeds and robot heading from the swerve system.
+                // Then create field-relative ChassisSpeeds using the robot heading.
+            
+            ChassisSpeeds robotBotRelativeSpeeds = driveSubsystem.driveSystem.GetRobotRelativeSpeeds();
+            Rotation2d botHeading = driveSubsystem.driveSystem.GetRobotHeading();   // TODO: adjust based on alliance since this comes straight from the Gyro?
+            ChassisSpeeds robotFieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotBotRelativeSpeeds, botHeading);
+            
+            // Get X and Y velocity values.
+            double botXVelMPS = robotFieldRelativeSpeeds.vxMetersPerSecond();
+            double botYVelMPS = robotFieldRelativeSpeeds.vyMetersPerSecond();
+            
+            // Get translaion of initialTarget.
+            Translation3d initialTargetTr = initialTargetPose.getTranslation();
+            
+            // Find X and Y displacements during flight.
+            double targetXDisplacementMeters = botXVelMPS * timeOfFlightSeconds;
+            double targetYDisplacementMeters = botYVelMPS * timeOfFlightSeconds;
+
+            // Find final target translation.
+            Translation3d adjustedTarget = new Translation3d(initialTargetTr.getX() - targetXDisplacementMeters,
+	                                                         initialTargetTr.getY() - targetYDisplacementMeters,
+	                                                         initialTargetTr.getZ());					// We don’t need to adjust z.
+
+            // TBA: Generate a Pose3d for the finalTarget
+            finalTargetPose = new Pose3d(adjustedTarget, initialTargetPose.getRotation());
+            */
 
             // STEP 6: Find hood angle and launch speed for the final target.
             // THIS IS NOT IMPLEMENTED - SO ASSUME STATIONARY ROBOT. Make final target the same as initial.
@@ -195,13 +226,16 @@ public class UltraShooterCommand extends Command{
 
         Logger.recordOutput("UltraShooter-State", "INACTIVE");
 
-        DriverStation.getAlliance().ifPresent((aliance) -> {
-            if (aliance == Alliance.Blue) {
+        // Removed the following since we're don't setting turret targets.
+        /*
+        DriverStation.getAlliance().ifPresent((alliance) -> {
+            if (alliance == Alliance.Blue) {
                 turretSubsystem.setTurretTargetPose(Constants.FieldPoses.BLUE_HUB_POSE);
             } else {
                 turretSubsystem.setTurretTargetPose(Constants.FieldPoses.RED_HUB_POSE);
             }
         });
+        */
 
         // turretSubsystem.setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
         // TODO: Deactivate rumble if we decided to use the rumble feature when the robot prevents shooting
