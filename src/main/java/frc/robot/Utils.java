@@ -197,11 +197,7 @@ public class Utils {
             return 0;
         }
 
-        // Check that the distance is reasonable. If the scoring distance is outside of this range, there was a problem.
-        if ((distanceInMeters < Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MIN_METERS) ||
-           (distanceInMeters > Constants.ShooterConstants.SCORING_DISTANCE_FIELD_MAX_METERS)) {
-            return 0;
-        }
+        // Note: there's currently no distance MIN/MAX test for passing.
                 
         // Get the quadratic coefficients for the hood angle. Return with the error value if none are found.
         Constants.ShooterConstants.QuadraticCoef coefficients = Constants.ShooterConstants.PASSING_SPEED_COEFS_METERS.get(hoodAngleDeg);
