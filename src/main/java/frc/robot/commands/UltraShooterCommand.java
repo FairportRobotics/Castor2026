@@ -46,7 +46,7 @@ public class UltraShooterCommand extends Command{
     
     @Override
     public void initialize() {
-        hopperSubsystem.spindexerOn();                                      // Activate spindexer so it's on while command is active
+        //hopperSubsystem.spindexerOn();                                      // Activate spindexer so it's on while command is active
         hopperSubsystem.stopKicker();                                       // Make sure kicker is off when command is called
         CommandScheduler.getInstance().schedule(waitCommand);               // Kick off a wait timer so robot doesn't shoot until hopper is ready
         alliance = DriverStation.getAlliance().get();                       // Fetch our alliance
@@ -218,7 +218,7 @@ public class UltraShooterCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         waitCommand.cancel();
-        hopperSubsystem.spindexerOff();
+        //hopperSubsystem.spindexerOff();
         hopperSubsystem.stopKicker();
 
         turretSubsystem.setLauncher(0);

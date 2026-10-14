@@ -53,6 +53,7 @@ public class RobotContainer {
 
         // turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
         turretSubsystem.homeTurret();
+        hopperSubsystem.spindexerOn();
         // Configure the trigger bindings
         configureBindings();
 
@@ -84,7 +85,6 @@ public class RobotContainer {
         // m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
 
         //m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
-        m_driverController.leftBumper().onTrue(Commands.runOnce(() -> turretSubsystem.homeTurret(), turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         // m_driverController.a().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
