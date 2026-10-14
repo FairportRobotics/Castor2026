@@ -163,7 +163,7 @@ public final class Constants {
         public static final double SCORING_DISTANCE_MAX_ALLOWED_METERS = 7.0;   // The maximum distance from the hub we'll allow the robot to shoot from
         // This is the distance increment in inches for adjusting hood angle according to distance from the target, in inches per degree:
         public static final double HOOD_ANGLE_CALC_DIVISION = (SCORING_DISTANCE_LONG_IN - SCORING_DISTANCE_SHORT_IN) / (HOOD_ANGLE_SCORING_MAX_DEG - HOOD_ANGLE_SCORING_MIN_DEG);
-        public static final double SHOOTER_EFFICIENCY_GENERAL = 0.30;       // This is the baseline shooter efficiency assumption
+        public static final double SHOOTER_EFFICIENCY_GENERAL = 0.31;       // This is the baseline shooter efficiency assumption
         public static final double SHOOTER_FLYWHEEL_DIAMETER_IN = 3.0;      // Flywheel diameter is 3.0 inches
         public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 2.0;       // Flywheel moves at twice the RPM of the flywheel motor
         public static final Angle TARGET_ELEVATION_DIF = edu.wpi.first.units.Units.Degrees.of(1);
