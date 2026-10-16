@@ -203,8 +203,6 @@ public class UltraShooterCommand extends Command{
         Logger.recordOutput("UltraShooter-OkToShoot", okToShoot);
     }
 
-    
-
     @Override
     public void end(boolean interrupted) {
         waitCommand.cancel();
