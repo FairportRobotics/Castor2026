@@ -79,17 +79,8 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // These let the driver set the shooter hood position using the controller.
-        // m_driverController.povDown().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE));
-        // m_driverController.povLeft().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE1));
-        // m_driverController.povRight().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE3));
-        // m_driverController.povUp().onTrue(new SetDeflectorCommand(turretSubsystem, Constants.ShooterConstants.DEFLECTOR_SET_ANGLE2));
-
-        //m_driverController.back().whileTrue(new AutoShootCommandChassisTurretPathPlanner(driveSubsystem, hopperSubsystem, turretSubsystem));
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
-        // m_driverController.a().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
-        // m_driverController.x().whileTrue((new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
-        //m_driverController.x().toggleOnTrue(getAutonomousCommand())((new UltraShooterCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem)));
         m_driverController.x().toggleOnTrue(new UltraShooterCommand(hopperSubsystem, turretSubsystem, driveSubsystem));
         m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));
         m_driverController.y().onTrue(intakeSubsystem.deploy());

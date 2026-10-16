@@ -21,10 +21,6 @@ import frc.robot.Constants;
 
 public class IntakeSubsystem extends TestableSubsystem {
 
-    /**
-     * Creates a new ExampleSubsystem.
-     */
-
     private TalonFX intakeMotor;
     private WPI_TalonSRX deployMotor;
 
@@ -40,16 +36,9 @@ public class IntakeSubsystem extends TestableSubsystem {
 
     public Command deploy() {
         return Commands.sequence(
-                Commands.deadline(
-                        Commands.waitSeconds(2),
-                        this.runOnce(
-                                () -> {
-                                    deployMotor.set(1);
-                                } // Bump this speed up if intake doesn't deploy
-                        )
-                ),
-                this.runOnce(() -> deployMotor.stopMotor())
-        );
+        Commands.deadline(
+        Commands.waitSeconds(2),
+        this.runOnce(() -> {deployMotor.set(1);})),this.runOnce(() -> deployMotor.stopMotor()));
     }
 
     public Command resetDeploy() {
