@@ -70,7 +70,7 @@ public class IntakeSubsystem extends TestableSubsystem {
     public Command intake(XboxController m_XboxController) {
         return this.runOnce(() -> {
             if (intakeMotor.get() == 0) {
-                setSpeed(-.5);
+                setSpeed(-.45);
                 m_XboxController.setRumble(RumbleType.kBothRumble, .5);
             } else {
                 intakeMotor.stopMotor();
@@ -80,7 +80,7 @@ public class IntakeSubsystem extends TestableSubsystem {
     }
 
     public Command reverseIntake() {
-        return this.runEnd(() -> setSpeed(.5), () -> {
+        return this.runEnd(() -> setSpeed(.45), () -> {
             intakeMotor.stopMotor();
         });
     }

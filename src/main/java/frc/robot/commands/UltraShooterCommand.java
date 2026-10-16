@@ -46,7 +46,6 @@ public class UltraShooterCommand extends Command{
     
     @Override
     public void initialize() {
-        //hopperSubsystem.spindexerOn();                                      // Activate spindexer so it's on while command is active
         hopperSubsystem.stopKicker();                                       // Make sure kicker is off when command is called
         CommandScheduler.getInstance().schedule(waitCommand);               // Kick off a wait timer so robot doesn't shoot until hopper is ready
         alliance = DriverStation.getAlliance().get();                       // Fetch our alliance
@@ -201,13 +200,6 @@ public class UltraShooterCommand extends Command{
             hopperSubsystem.stopKicker();
         }
         Logger.recordOutput("UltraShooter-OkToShoot", okToShoot);
-
-        // OPTIONAL: Activate rumble if it's not ok to shoot
-        if (!okToShoot) {
-            // ACTIVATE CONTROLLER RUMBLE
-        } else {
-            // DEACTIVATE CONTROLLER RUMBLE
-        }
     }
 
     @Override
@@ -218,27 +210,12 @@ public class UltraShooterCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         waitCommand.cancel();
-        //hopperSubsystem.spindexerOff();
         hopperSubsystem.stopKicker();
 
         turretSubsystem.setLauncher(0);
         turretSubsystem.setTargetElevation(Constants.ShooterConstants.DEFLECTOR_STORED_ANGLE);
 
         Logger.recordOutput("UltraShooter-State", "INACTIVE");
-
-        // Removed the following since we're don't setting turret targets.
-        /*
-        DriverStation.getAlliance().ifPresent((alliance) -> {
-            if (alliance == Alliance.Blue) {
-                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.BLUE_HUB_POSE);
-            } else {
-                turretSubsystem.setTurretTargetPose(Constants.FieldPoses.RED_HUB_POSE);
-            }
-        });
-        */
-
-        // turretSubsystem.setTurretMotorRotation(-0.34); // Return to 0 after MIAMI VALLEY
-        // TODO: Deactivate rumble if we decided to use the rumble feature when the robot prevents shooting
     }
 
 }

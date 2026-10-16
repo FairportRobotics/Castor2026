@@ -78,11 +78,11 @@ public class HopperSubsystem extends TestableSubsystem {
     }
 
     public void spindexerOn() {
-        spindexerMotor.set(0.75);
+        spindexerMotor.set(0.6);
     }
 
     public void spindexerReverse() {
-        spindexerMotor.set(-0.75);
+        spindexerMotor.set(-0.6);
     }
 
     public void spindexerOff() {
