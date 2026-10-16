@@ -35,7 +35,8 @@ public class UltraShooterCommand extends Command{
     private final Translation2d CENTER_TURRET_TO_ROBOT = new Translation2d(-0.1335024, -0.1824736);     // Defines physical offset of turret from robot center
 
     private Alliance alliance;                                              // Shooting behavior is based on the robot's alliance
-    
+    public boolean isFinished = false;
+
     public UltraShooterCommand(HopperSubsystem hopperSubsystem, TurretSubsystem turretSubsystem, DriveSubsystem driveSubsystem){
         this.hopperSubsystem = hopperSubsystem;
         this.turretSubsystem = turretSubsystem;
@@ -202,10 +203,7 @@ public class UltraShooterCommand extends Command{
         Logger.recordOutput("UltraShooter-OkToShoot", okToShoot);
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+    
 
     @Override
     public void end(boolean interrupted) {
