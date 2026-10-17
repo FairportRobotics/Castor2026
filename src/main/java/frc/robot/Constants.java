@@ -133,6 +133,7 @@ public final class Constants {
 
     public static class ShooterConstants {
 
+        public static final boolean VELOCITY_COMPENSATION = false;          // Set to true to include velocity compensation in shooter aiming.
         public static final int LAUNCHER_MOTOR_ID = 3;
         public static final boolean LAUNCHER_MOTOR_INVERTED = false;
 
