@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "POFC Path"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.55
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "POFC Path"
+                }
+              }
+            ]
           }
         },
         {

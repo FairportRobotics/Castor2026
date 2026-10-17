@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "PADR 1 Path"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.95
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "PADR 1 Path"
+                }
+              }
+            ]
           }
         },
         {
