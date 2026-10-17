@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -56,6 +57,186 @@ public class UltraShooterCommand extends Command{
 
     @Override
     public void execute() {
+        Boolean okToShoot = false;                      // Tracks whether conditions are OK for shooting.
+        Boolean scoring = false;                        // Are we shooting into the hub?
+        Pose3d botPose = driveSubsystem.getBotPose();   // Get and store the bot's pose once since we'll use it a few times
+        
+        // STEPS 1 & 2: Get the field location of the initial target
+        // First, find the robot's current field location.
+        ShootingRegion shootingRegion = Utils.findRobotShootingRegion(botPose, alliance);
+
+        // If robot is in a valid scoring or passing region, find the field pose for the appropriate target and perform calculations
+        if(shootingRegion != ShootingRegion.NON_SHOOTING_REGION){
+            
+            okToShoot = true;                                                                   // So far, so good
+            
+            // Check whether we're scoring, since it require some extra steps
+            if ((shootingRegion == ShootingRegion.BLUE_OWN_ALLIANCE_ZONE) || (shootingRegion == ShootingRegion.RED_OWN_ALLIANCE_ZONE)){
+                scoring = true;
+            }
+                        
+            Pose3d initialTargetPose = Utils.findShootingTarget(shootingRegion, alliance);      // Get initial target based on robot location
+            Logger.recordOutput("UltraShooter-InitialTarget", initialTargetPose);
+
+            // STEPS 3 & 4: calculate hood and flywheel values based on distance to the intiial target.
+            // First, find the turret's pose based on the robot's pose and the location of the turret relative to the robot's center.
+            // Note that the turret points backward, so its rotational property is +0.5 rotations.
+            Pose3d turretPose = botPose.plus(new Transform3d(new Translation3d(CENTER_TURRET_TO_ROBOT),
+                    new Rotation3d(Rotation2d.fromRotations(turretSubsystem.getTurretAngleRobotRelative() + 0.5))));
+            // Then calculate the linear distance between the initial target and the robot's turret.
+            double distanceToInitialTargetMeters = initialTargetPose.toPose2d().getTranslation().getDistance(turretPose.getTranslation().toTranslation2d());
+            Logger.recordOutput("UltraShooter-DistanceToInitialTarget(Meters)", distanceToInitialTargetMeters);
+
+            // STEP 3: Find the best hood angle
+            // Default to the passing hood angle if we're not shooting into a hub.
+            int initialHoodAngleDegrees = Constants.ShooterConstants.HOOD_ANGLE_PASSING_DEG;
+            // If we're scoring, run the calculations to find the best hood angle.
+            if (scoring) {
+                initialHoodAngleDegrees = Utils.getScoringHoodAngleDegForDistance(distanceToInitialTargetMeters);
+            }
+            Logger.recordOutput("UltraShooter-InitialLaunchAngleDeg", initialHoodAngleDegrees);
+
+            // STEP 4: determine the right shooter flywheel speed
+            // First, find the correct launch speed in feet/second. Note the unit changes!
+            // This covers the scoring scenario then the passing scenario.
+            double intitialLaunchSpeedFPS = 0;                                                  // The target launch speed in feet per second (FPS)
+            if (scoring) {
+                intitialLaunchSpeedFPS = Utils.findLaunchSpeedScoring(initialHoodAngleDegrees, distanceToInitialTargetMeters);
+            } else {
+                intitialLaunchSpeedFPS = Utils.findLaunchSpeedPassing(initialHoodAngleDegrees, distanceToInitialTargetMeters);
+            }
+            Logger.recordOutput("UltraShooter-InitialLaunchSpeedFPS", intitialLaunchSpeedFPS);
+
+            // Handle error condition in the launch speed calcs
+            if (intitialLaunchSpeedFPS == 0) {
+                okToShoot = false;                
+            }
+
+            // Perform velocity compensation if enabled.
+            // Set final variables to initial values so they're correct if velocity compensation is disabled.
+            Pose3d finalTargetPose = initialTargetPose;
+            double distanceToFinalTargetMeters = distanceToInitialTargetMeters;
+            double finalLaunchSpeedFPS = intitialLaunchSpeedFPS;
+            int finalHoodAngleDegrees = initialHoodAngleDegrees;
+            
+            // Calculate new values for the four variables above if velocity compensation is enabled.
+            if (Constants.ShooterConstants.VELOCITY_COMPENSATION) {
+                // STEP 5: Find final target based on the intial target and the robot's velocity.
+                // Estimate the fuel's time of flight.
+                double timeOfFlightSeconds = Utils.findTimeOfFlightScoring(scoring, initialHoodAngleDegrees, intitialLaunchSpeedFPS);
+                Logger.recordOutput("UltraShooter-TimeOfFlightSecondsCalculated", timeOfFlightSeconds);         // Logs the calculated value so we can see it on logger. Clamp it next.
+                timeOfFlightSeconds = MathUtil.clamp(timeOfFlightSeconds, 0.8, 3.0);                       // make sure this value isn't something crazy. Magic numbers. Bad form.
+                
+                // Get the bot's current velocity based on the robot's chassis-relative velocities,
+                // which we then convert to field-relative based on the robot's heading.
+                ChassisSpeeds robotBotRelativeSpeeds = driveSubsystem.driveSystem.getRobotRelativeSpeeds();
+                //Rotation2d botHeading = driveSubsystem.driveSystem.GetRobotHeading();                               // Questionable since this comes from the gyro. May not be field accurate (alliance-dependent).
+                Rotation2d botHeading = botPose.getRotation().toRotation2d();                                       // Get bot's rotational position based on its Pose3d.
+                ChassisSpeeds robotFieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotBotRelativeSpeeds, botHeading);
+                
+                // Get X and Y velocity values.
+                double botXVelMPS = robotFieldRelativeSpeeds.vxMetersPerSecond;
+                double botYVelMPS = robotFieldRelativeSpeeds.vyMetersPerSecond;
+                Logger.recordOutput("UltraShooter-BotFieldXVelocityMPS", botXVelMPS);
+                Logger.recordOutput("UltraShooter-BotFieldYVelocityMPS", botYVelMPS);
+                
+                // Get translaion of initialTarget - the x/y location of the target on the field.
+                Translation3d initialTargetTr = initialTargetPose.getTranslation();
+                
+                // Find X and Y displacements during flight (the effect on the fuel's flight from initial velocity due to bot movement)
+                double targetXDisplacementMeters = botXVelMPS * timeOfFlightSeconds;
+                double targetYDisplacementMeters = botYVelMPS * timeOfFlightSeconds;
+
+                // Find final target translation.
+                Translation3d adjustedTarget = new Translation3d(initialTargetTr.getX() - targetXDisplacementMeters,
+                                                                initialTargetTr.getY() - targetYDisplacementMeters,
+                                                                initialTargetTr.getZ());					// We don’t need to adjust z.
+
+                // Generate a Pose3d for the finalTarget and calculate distance from turret to final target
+                finalTargetPose = new Pose3d(adjustedTarget, initialTargetPose.getRotation());
+                distanceToFinalTargetMeters = finalTargetPose.toPose2d().getTranslation().getDistance(turretPose.getTranslation().toTranslation2d());
+                
+                // STEP 6: Find hood angle and launch speed for the final target.
+                finalHoodAngleDegrees = Constants.ShooterConstants.HOOD_ANGLE_PASSING_DEG;
+                // If we're scoring, run the calculations to find the best hood angle.
+                if (scoring) {
+                    finalHoodAngleDegrees = Utils.getScoringHoodAngleDegForDistance(distanceToFinalTargetMeters);
+                }
+                
+                // Find the final launch speed (ft/s) based on the final launch angle.
+                if (scoring) {
+                    finalLaunchSpeedFPS = Utils.findLaunchSpeedScoring(finalHoodAngleDegrees, distanceToFinalTargetMeters);
+                } else {
+                    finalLaunchSpeedFPS = Utils.findLaunchSpeedPassing(finalHoodAngleDegrees, distanceToFinalTargetMeters);
+                }
+            }
+
+            // Log important shooting values
+            Logger.recordOutput("UltraShooter-FinalTarget", finalTargetPose);
+            Logger.recordOutput("UltraShooter-DistanceToFinalTarget(Meters)", distanceToFinalTargetMeters);
+            Logger.recordOutput("UltraShooter-FinalLaunchSpeedFPS", finalLaunchSpeedFPS);
+            Logger.recordOutput("UltraShooter-FinalLaunchAngleDeg", finalHoodAngleDegrees);
+
+            // Confirm we're at a valid scoring distance for the robot's capabilities. If not, don't shoot.
+            if ((scoring) && 
+                ((distanceToFinalTargetMeters > Constants.ShooterConstants.SCORING_DISTANCE_MAX_ALLOWED_METERS) ||
+                (distanceToFinalTargetMeters < Constants.ShooterConstants.SCORING_DISTANCE_MIN_ALLOWED_METERS))) {
+                    okToShoot = false;
+            }
+
+            // STEP 7: Find the flywheel RPM needed to achieve the launch speed we just calculated.
+            double finalShooterRPM = Utils.GetShooterRPMForLaunchSpeed(finalLaunchSpeedFPS);
+            Logger.recordOutput("UltraShooter-FinalShooterFlywheelRPM", finalShooterRPM);
+
+            // STEP 8: Command turretSubsystem to do what we need it to do for the launch speed and launch angle.
+            // Adjust for the shooter flywheel-to-motor gear ratio when setting the flywheel motor speed.
+            // Optionally limit the requested motor speed based on the motor's properties in case of unexpected calc error somewhere.
+            turretSubsystem.setHoodToLaunchAngle(finalHoodAngleDegrees);
+            turretSubsystem.setLauncher(finalShooterRPM / Constants.ShooterConstants.SHOOTER_FLYWHEEL_GEAR_RATIO);
+            //turretSubsystem.setLauncher(Math.min((finalShooterRPM / Constants.ShooterConstants.SHOOTER_FLYWHEEL_GEAR_RATIO), Constants.ShooterConstants.SHOOTER_FLYWHEEL_MOT_MAX_RPM);
+
+            // STEP 9: Command the turretSubsystem to aim at the intended field target (azimuth control).
+            // First, find the x,y translation between the field positions of the robot's turret and the final target.
+            Translation2d finalTargetTranslation = finalTargetPose.getTranslation().toTranslation2d().minus(turretPose.getTranslation().toTranslation2d());
+            
+            // Find the rotations value, field-relative, between turret point and target point.
+            double turretToTargetRotation = finalTargetTranslation.getAngle().getRotations();
+            
+            // Command the turret to get to this field-relative angle.
+            // Don't try to set the turret if it's outside of it's physical capability, and prevent shooting.
+            if(turretSubsystem.isTurretReady() && turretSubsystem.isTurretAnglePossible(botPose, finalTargetTranslation)) {
+                turretSubsystem.setTurretFieldRelative(botPose, turretToTargetRotation);
+            } else {
+                okToShoot = false;
+            }
+
+        } else {
+            // If we're in a non-shooting region while the shooting function is active,
+            // set the hood to a low setting (high angle) to get under the trench and prevent shooting.
+            turretSubsystem.setHoodToLaunchAngle(Constants.ShooterConstants.HOOD_ANGLE_MAX_DEG);
+            okToShoot = false;
+        }
+        
+        // STEP 10: Run the kicker if all the calculations went ok, the turret is pointed at the target, and the motors are ready
+        // Note we don't call turretSubsystem.isLauncherUpToSpeed() because it currently does nothing.
+        if (waitCommand.isFinished() && (okToShoot)) {
+            hopperSubsystem.feedKicker();
+        } else{
+            hopperSubsystem.stopKicker();
+        }
+        Logger.recordOutput("UltraShooter-OkToShoot", okToShoot);
+
+        // OPTIONAL: Activate rumble if it's not ok to shoot
+        if (!okToShoot) {
+            // ACTIVATE CONTROLLER RUMBLE
+        } else {
+            // DEACTIVATE CONTROLLER RUMBLE
+        }
+    }
+
+    //@Override
+    // This is the previous execute() replaced with the version above. 10/16/2026.
+    public void executeStationary() {
         Boolean okToShoot = false;                      // Tracks whether conditions are OK for shooting.
         Boolean scoring = false;                        // Are we shooting into the hub?
         Pose3d botPose = driveSubsystem.getBotPose();   // Get and store the bot's pose once since we'll use it a few times
