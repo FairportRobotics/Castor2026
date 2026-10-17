@@ -82,7 +82,7 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // These let the driver set the shooter hood position using the controller.
-        m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
+        m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intakeNO()));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         m_driverController.x().toggleOnTrue(new UltraShooterCommand(hopperSubsystem, turretSubsystem, driveSubsystem));
         m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));

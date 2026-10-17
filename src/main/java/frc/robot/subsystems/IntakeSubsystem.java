@@ -68,6 +68,11 @@ public class IntakeSubsystem extends TestableSubsystem {
         });
     }
 
+    public Command intakeNO() {
+        return this.runOnce(() -> 
+        {setSpeed(-.45);});
+    }
+
     public Command intakeNR() {
         return this.runOnce(() -> 
         {if (intakeMotor.get() == 0) {setSpeed(-.45);} else {intakeMotor.stopMotor();}});
