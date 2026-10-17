@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PADC Path 1"
+            "pathName": "PADR 1 Path"
           }
         },
         {
@@ -107,7 +107,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "PADC Path 2"
+                              "pathName": "PADR 2 Path"
                             }
                           }
                         ]
