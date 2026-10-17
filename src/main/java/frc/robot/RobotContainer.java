@@ -58,7 +58,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Deploy", intakeSubsystem.deploy());
         NamedCommands.registerCommand("Spin Off", hopperSubsystem.spinOff());
         NamedCommands.registerCommand("Ultrashooter", new UltraShooterCommand(hopperSubsystem, turretSubsystem, driveSubsystem));
-        
+        NamedCommands.registerCommand("Intake", intakeSubsystem.intakeNR());
+
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
         NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake(m_driverController.getHID()));
         NamedCommands.registerCommand("TurretShoot", new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
