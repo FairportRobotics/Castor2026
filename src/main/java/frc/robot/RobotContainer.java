@@ -4,6 +4,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +37,6 @@ public class RobotContainer {
     private final CommandXboxController m_driverController
             = new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-    // private final CommandPS4Controller m_driverController = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
     public final DriveSubsystem driveSubsystem = new DriveSubsystem(m_driverController);
 
     public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
@@ -50,13 +50,15 @@ public class RobotContainer {
      * commands.
      */
     public RobotContainer() {
-
-        // turretSubsystem.setDefaultCommand(new AutoTurretCommand(turretSubsystem, driveSubsystem));
         turretSubsystem.homeTurret();
         hopperSubsystem.spindexerOn();
         // Configure the trigger bindings
         configureBindings();
 
+        NamedCommands.registerCommand("Deploy", intakeSubsystem.deploy());
+        NamedCommands.registerCommand("Spin Off", hopperSubsystem.spinOff());
+        NamedCommands.registerCommand("Ultrashooter", new UltraShooterCommand(hopperSubsystem, turretSubsystem, driveSubsystem));
+        
         NamedCommands.registerCommand("ChassisAlignShoot", new AutoShootCommandChassisTurret(driveSubsystem, hopperSubsystem, turretSubsystem));
         NamedCommands.registerCommand("RunIntake", intakeSubsystem.intake(m_driverController.getHID()));
         NamedCommands.registerCommand("TurretShoot", new AutoTurretShootCommand(hopperSubsystem, turretSubsystem, intakeSubsystem, driveSubsystem));
@@ -93,8 +95,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return Commands.parallel(intakeSubsystem.deploy(), Commands.run(() -> {
-            turretSubsystem.homeTurret();
-        }, turretSubsystem), driveSubsystem.getAutoCommand());
+        return Commands.parallel(Commands.run(() -> 
+        {turretSubsystem.homeTurret();}, turretSubsystem), driveSubsystem.getAutoCommand());
     }
 }

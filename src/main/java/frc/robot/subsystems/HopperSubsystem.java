@@ -99,6 +99,8 @@ public class HopperSubsystem extends TestableSubsystem {
         });
     }
 
+    public Command spinOff() {return this.runOnce(() -> {spindexerOff();});}
+
 
     @Override
     public void periodic() {

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S. Hub. shoot 8. E-Hub"
+            "pathName": "POFC Path"
           }
         },
         {
@@ -23,10 +23,22 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "TurretShoot"
+                  "name": "Ultrashooter"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Spin Off"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deploy"
           }
         }
       ]

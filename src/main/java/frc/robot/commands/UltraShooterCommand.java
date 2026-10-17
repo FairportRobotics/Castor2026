@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants;
 import frc.robot.Constants.ShootingRegion;
 import frc.robot.Utils;
@@ -47,6 +47,7 @@ public class UltraShooterCommand extends Command{
     
     @Override
     public void initialize() {
+        hopperSubsystem.spindexerOn();
         hopperSubsystem.stopKicker();                                       // Make sure kicker is off when command is called
         CommandScheduler.getInstance().schedule(waitCommand);               // Kick off a wait timer so robot doesn't shoot until hopper is ready
         alliance = DriverStation.getAlliance().get();                       // Fetch our alliance
@@ -213,5 +214,4 @@ public class UltraShooterCommand extends Command{
 
         Logger.recordOutput("UltraShooter-State", "INACTIVE");
     }
-
 }
