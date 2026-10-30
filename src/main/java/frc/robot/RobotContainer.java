@@ -74,7 +74,6 @@ public class RobotContainer {
         m_driverController.rightBumper().onTrue(Commands.parallel(intakeSubsystem.intake(m_driverController.getHID())));
         m_driverController.start().whileTrue(intakeSubsystem.resetDeploy());
         m_driverController.x().whileTrue((new DemoShoot(hopperSubsystem, turretSubsystem)));
-        m_driverController.b().whileTrue(new Reverse(intakeSubsystem, hopperSubsystem, m_driverController.getHID()));
         m_driverController.y().onTrue(intakeSubsystem.deploy());
     }
 
