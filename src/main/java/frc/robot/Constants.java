@@ -134,14 +134,6 @@ public final class Constants {
         public static final int LAUNCHER_MOTOR_ID = 3;
         public static final boolean LAUNCHER_MOTOR_INVERTED = false;
 
-        public static final int TURRET_MOTOR_ID = 4;
-        public static final InvertedValue TURRET_MOTOR_DIRECTION = InvertedValue.CounterClockwise_Positive;
-        public static final int TURRET_LIMIT_CHANNEL = 9;
-        public static final Angle LIMIT_AXIMUTH_POS = edu.wpi.first.units.Units.Degrees.of(165);
-        public static final Angle LIMIT_AXIMUTH_NEG = edu.wpi.first.units.Units.Degrees.of(5);
-        public static final double HOMING_SPEED = .05;
-        public static final double TURRET_GEAR_RATIO = 6;
-
         public static final int HOOD_SERVO_CHANNEL = 0;
         public static final boolean HOOD_SERVO_INVERTED = false; // TODO: Test this
         public static final int HOOD_ENCODER_ID = 4;
